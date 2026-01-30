@@ -1,0 +1,1 @@
+<td {{ $attributes->merge(['class' => 'p-3 break-words max-w-xs']) }}>{{ $slot }}</td>

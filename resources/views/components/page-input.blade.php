@@ -1,0 +1,1 @@
+<input {{ $attributes->merge(["class" => "input max-w-xs border-2 border-gray-400 rounded-lg"]) }}>

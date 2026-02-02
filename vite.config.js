@@ -24,7 +24,10 @@ export default defineConfig({
                 'resources/js/user/force-delete-user.js',
                 'resources/js/employee/delete-employee.js',
                 'resources/js/employee/edit-employee.js',
-                'resources/js/assets/dispose-asset/disposeAsset.js'
+                'resources/js/assets/dispose-asset/disposeAsset.js',
+                'resources/js/assets/edit-asset/getEditSubcategory.js',
+                'resources/js/assets/endOfLifeCalc.js',
+                'resources/js/assets/create-asset/getSubcategory.js'
             ],
             refresh: true,
         }),

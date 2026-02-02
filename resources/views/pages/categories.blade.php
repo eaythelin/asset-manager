@@ -23,7 +23,7 @@
       @endcan
     </div>
     <x-tables :columnNames="$columns" :centeredColumns="[3]">
-      <tbody class = "divide-y divide-gray-300">
+      <tbody class = "divide-y divide-gray-500">
           @foreach($categories as $category)
             <tr>
               <th class = "p-3 text-center">{{ $category -> id }}</th>

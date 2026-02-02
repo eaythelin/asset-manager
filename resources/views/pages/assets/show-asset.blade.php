@@ -28,7 +28,7 @@
   <div class="bg-white p-4 rounded-2xl shadow-xl mb-4">
     <div class="flex flex-col sm:flex-row items-center gap-4">
       {{-- Image --}}
-      <div class="size-32 flex-shrink-0">
+      <div class="size-32 shrink-0">
         @if($asset->image_path)
           <img src="{{ Storage::url($asset->image_path) }}" alt="{{ $asset->name }}" class="w-full h-full object-cover rounded-lg shadow-xl">
         @else
@@ -38,7 +38,7 @@
         @endif
       </div>
 
-      <div class="flex-grow text-center sm:text-left">
+      <div class="grow text-center sm:text-left">
         <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $asset->name }}</h2>
         <div class="flex items-center justify-center sm:justify-start gap-2 text-sm mt-1">
           <x-heroicon-s-hashtag class="text-gray-500 size-4"/>

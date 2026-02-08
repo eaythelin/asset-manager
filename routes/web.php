@@ -29,7 +29,6 @@ Route::middleware(['auth'])->group(function () {
       Route::group(["prefix" => "/create", "middleware" => "check.permission:manage assets"], function(){
         Route::get('/', [AssetsController::class, 'getCreateAsset'])->name('assets.create');
         Route::post('/store', [AssetsController::class, "storeAsset"])->name("assets.store");
-        
       });
 
       Route::group(["prefix" => "/edit", "middleware" => "check.permission:manage assets"], function(){
@@ -42,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
 
       Route::get('/subcategories/{categoryID}', [AssetsController::class, 'getSubcategories'])
         ->middleware('check.permission:manage assets')
-        ->name('subcategories.get');
+        ->name('assets.subcategories.get');
       
       Route::delete('/{id}/dispose', [AssetsController::class, 'disposeAsset'])
         ->middleware('check.permission:manage assets')
@@ -52,6 +51,14 @@ Route::middleware(['auth'])->group(function () {
     //Requests
     Route::group(["prefix" => "/requests", "middleware" => "check.permission:view requests"], function(){
       Route::get('/', [RequestsController::class, "getRequests"])->name('requests.index');
+      Route::group(["prefix" => "/create", "middleware" => "check.permission:view requests"], function(){
+        Route::get('/', [RequestsController::class, "getCreateRequest"])->name('requests.create');
+        Route::post('/', [RequestsController::class, "storeRequest"])->name('requests.store');
+      });
+
+      Route::get('/subcategories/{categoryID}', [RequestsController::class, 'getSubcategories'])
+        ->middleware('check.permission:view requests')
+        ->name('requests.subcategories.get');
     });
 
     //Workorders

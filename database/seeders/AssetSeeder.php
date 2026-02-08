@@ -52,7 +52,7 @@ class AssetSeeder extends Seeder
         ]);
 
         Asset::create([
-            "asset_code" => 'AST-04',
+            "asset_code" => 'AST-4',
             "name" => 'Office Chair',
             "description" => 'Chair for Admin',
             "acquisition_date" => fake()->date(),

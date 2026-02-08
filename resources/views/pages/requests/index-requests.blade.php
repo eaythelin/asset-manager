@@ -16,10 +16,12 @@
       <x-search-bar route="requests.index" placeholder="Search requests..."/>
       
       @can('create requests')
+      <a href = "{{ route('requests.create') }}">
         <x-buttons class="w-full sm:w-auto">
           <x-heroicon-s-plus class="size-5"/>
           Create New Request
         </x-buttons>
+      </a>
       @endcan
     </div>
     <x-tables :columnNames="$columns" :centeredColumns="$centeredColumns">

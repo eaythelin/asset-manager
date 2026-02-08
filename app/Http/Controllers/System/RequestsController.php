@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\System;
 
+use App\Enums\RequestTypes;
+use App\Enums\ServiceTypes;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\Request as RequestModel;
+use App\Models\Asset;
+use App\Models\Category;
+
 
 class RequestsController extends Controller
 {
@@ -41,5 +46,25 @@ class RequestsController extends Controller
         $requests = $query->paginate(5);
 
         return view('pages.requests.index-requests', compact('desc', 'requests', 'columns', 'centeredColumns'));
+    }
+
+    public function getCreateRequest(){
+        $latestRequest = RequestModel::withTrashed()->latest('id')->first();
+        $nextCode = $latestRequest ? 'REQ-' . ($latestRequest->id + 1): 'REQ-1';
+
+        $requestTypes = RequestTypes::cases();
+        $assets = Asset::orderBy('asset_code')->get();
+        $categories = Category::orderBy('name')->pluck('name', 'id');
+        $serviceTypes = ServiceTypes::cases();
+
+        return view('pages.requests.create-request', compact('nextCode', 'requestTypes', 'assets', 'categories', 'serviceTypes'));
+    }
+
+    public function getSubcategories(Category $categoryID){
+        return response()->json($categoryID->subCategories);
+    }
+
+    public function storeRequest(Request $request){
+        
     }
 }

@@ -159,7 +159,6 @@ class AssetsController extends Controller
     }
 
     public function updateAsset(Request $request, $id){
-
         $asset = Asset::findOrFail($id);
 
         $validated = $request->validate([

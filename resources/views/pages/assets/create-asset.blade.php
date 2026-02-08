@@ -59,9 +59,7 @@
 
           <div class = "form-row">
             <x-page-label for="description">Description</x-page-label>
-            <x-page-textarea name="description" id="description">
-              {{ old('description') }} 
-            </x-page-textarea>
+            <x-page-textarea name="description" id="description">{{ old('description') }}</x-page-textarea>
           </div>
         </div>
       </div>

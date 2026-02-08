@@ -27,7 +27,8 @@ export default defineConfig({
                 'resources/js/assets/dispose-asset/disposeAsset.js',
                 'resources/js/assets/edit-asset/getEditSubcategory.js',
                 'resources/js/assets/endOfLifeCalc.js',
-                'resources/js/assets/create-asset/getSubcategory.js'
+                'resources/js/assets/create-asset/getSubcategory.js',
+                'resources/js/requests/create-requests/getSubcategories.js'
             ],
             refresh: true,
         }),

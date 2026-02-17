@@ -27,8 +27,13 @@ export default defineConfig({
                 'resources/js/assets/dispose-asset/disposeAsset.js',
                 'resources/js/assets/edit-asset/getEditSubcategory.js',
                 'resources/js/assets/endOfLifeCalc.js',
+                'resources/js/assets/filepond-asset.js',
                 'resources/js/assets/create-asset/getSubcategory.js',
-                'resources/js/requests/create-requests/getSubcategories.js'
+                'resources/js/requests/create-requests/getSubcategories.js',
+                'resources/js/requests/submitRequest.js',
+                'resources/js/requests/softDeleteRequest.js',
+                'resources/js/requests/approveRequest.js',
+                'resources/js/requests/declineRequest.js'
             ],
             refresh: true,
         }),

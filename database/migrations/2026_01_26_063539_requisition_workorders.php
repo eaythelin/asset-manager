@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('acquisition_workorders', function(Blueprint $table){
+        Schema::create('requisition_workorders', function(Blueprint $table){
             $table->id();
             $table->foreignId('workorder_id')->constrained('workorders')->onDelete('cascade');
-            $table->date('acquisition_date');
+            $table->date('acquisition_date')->nullable();
+            $table->string('asset_name');
             $table->decimal('estimated_cost', 15, 2)->default(0);
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
             $table->text('description')->nullable();

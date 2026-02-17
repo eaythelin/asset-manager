@@ -28,7 +28,8 @@ class Workorder extends Model
       'end_date',
       'priority_level',
       'type',
-      'status'
+      'status',
+      'workorder_code'
     ];
 
     public function disposalWorkOrder(){
@@ -39,8 +40,8 @@ class Workorder extends Model
       return $this->hasOne(ServiceWorkorder::class);
     }
 
-    public function acquisitionWorkorder(){
-      return $this->hasOne(AcquisitionWorkorder::class);
+    public function requisitionWorkorder(){
+      return $this->hasOne(RequisitionWorkorder::class);
     }
 
     public function request(){

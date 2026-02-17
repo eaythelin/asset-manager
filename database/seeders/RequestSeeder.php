@@ -21,9 +21,10 @@ class RequestSeeder extends Seeder
             'description' => 'Laptop overheating',
             'date_requested' => fake()->date(),
             'requested_by' => 2,
-            'asset_id' => 2,
+            'asset_id' => 1,
             'type' => RequestTypes::SERVICE,
-            'service_type' => ServiceTypes::REPAIR
+            'service_type' => ServiceTypes::REPAIR,
+            'status' => RequestStatus::PENDING
         ]);
 
         Request::create([
@@ -35,6 +36,7 @@ class RequestSeeder extends Seeder
             'category_id' => 1,
             'sub_category_id' => 3,
             'type' => RequestTypes::REQUISITION,
+            'status' => RequestStatus::PENDING
         ]);
 
         Request::create([
@@ -44,16 +46,7 @@ class RequestSeeder extends Seeder
             'requested_by' => 2,
             'asset_id' => 2,
             'type' => RequestTypes::DISPOSAL,
-        ]);
-
-        Request::create([
-            'request_code' => 'REQ-4',
-            'description' => 'Old Table',
-            'date_requested' => fake()->date(),
-            'requested_by' => 2,
-            'asset_id' => 3,
-            'type' => RequestTypes::DISPOSAL,
-            'status' => RequestStatus::APPROVED
+            'status' => RequestStatus::PENDING
         ]);
     }
 }

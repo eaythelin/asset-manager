@@ -11,7 +11,7 @@
           <option value="{{ $id }}">{{ $name }}</option>
         @endforeach
       </select>
-      <x-label for="create_description" :required="true">Description </x-label>
+      <x-label for="create_description">Description </x-label>
       <x-modal-text-area-box id="create_description" name="description" />
       <x-buttons class="mt-2" type="Submit">Submit</x-buttons>
     </div>

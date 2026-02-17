@@ -12,6 +12,7 @@ use App\Http\Controllers\System\UsersController;
 use App\Http\Controllers\System\DashboardController;
 use App\Http\Controllers\System\WorkordersController;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\Routing\RequestContext;
 
 Route::middleware(['auth'])->group(function () {
 
@@ -54,6 +55,10 @@ Route::middleware(['auth'])->group(function () {
       Route::group(["prefix" => "/create", "middleware" => "check.permission:view requests"], function(){
         Route::get('/', [RequestsController::class, "getCreateRequest"])->name('requests.create');
         Route::post('/', [RequestsController::class, "storeRequest"])->name('requests.store');
+        Route::put('/{id}/submit', [RequestsController::class, "submitRequest"])->name('requests.submit');
+        Route::delete('/{id}/delete', [RequestsController::class, 'cancelRequest'])->name('requests.cancel');
+        Route::put('/{id}/approve', [RequestsController::class, 'approveRequest'])->name('requests.approve');
+        Route::put('/{id}/decline', [RequestsController::class, 'declineRequest'])->name('requests.decline');
       });
 
       Route::get('/subcategories/{categoryID}', [RequestsController::class, 'getSubcategories'])
@@ -137,7 +142,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logoutUser');
 
     Route::get('/placeholder', [PlaceholderController::class, 'getPlaceholder'])->name('placeholder');
-
 });
 
 

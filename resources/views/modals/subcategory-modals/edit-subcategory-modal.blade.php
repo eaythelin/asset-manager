@@ -12,7 +12,7 @@
           <option value="{{ $id }}">{{ $name }}</option>
         @endforeach
       </select>
-      <x-label for="edit_description" :required="true">Description </x-label>
+      <x-label for="edit_description">Description </x-label>
       <x-modal-text-area-box id="edit_description" name="description" />
       <x-buttons class="mt-2" type="Submit">Submit</x-buttons>
     </div>

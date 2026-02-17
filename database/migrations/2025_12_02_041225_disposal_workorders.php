@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('workorder_id')->constrained('workorders')->onDelete('cascade');
             //even if asset gets deleted the disposal record stays
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
-            $table->string('disposal_method');
-            $table->dateTime('disposal_date');
+            $table->string('disposal_method')->nullable();
+            $table->dateTime('disposal_date')->nullable();
             $table->text('reason')->nullable();
             $table->timestamps();
         });

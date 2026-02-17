@@ -24,7 +24,7 @@
 
           <div class = "form-row">
             <x-page-label for="asset_name" :required="true">Asset Name</x-page-label>
-            <x-page-input name="asset_name" id="asset_name" value="{{ old('name') }}" />
+            <x-page-input name="asset_name" id="asset_name" value="{{ old('asset_name') }}" />
           </div>
 
           <div class = "form-row">
@@ -34,7 +34,9 @@
 
           <div class = "form-row">
             <x-page-label for="image_path">Asset Image</x-page-label>
-            <input type="file" class="file-input" name="image_path" id="image_path">
+            <div class="w-full xl:flex-1 xl:max-w-xs">
+              <input type="file" class="filepond-asset" name="image_path" id="image_path">
+            </div>
           </div>
         </div>
 
@@ -183,4 +185,5 @@
 @section('scripts')
   @vite('resources/js/assets/create-asset/getSubcategory.js')
   @vite('resources/js/assets/endOfLifeCalc.js')
+  @vite('resources/js/assets/filepond-asset.js')
 @endsection

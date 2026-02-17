@@ -5,7 +5,7 @@ namespace App\Enums;
 enum RequestStatus:string
 {
     case PENDING = "pending";
-    case REJECTED = "rejected";
+    case DECLINE = "declined";
     case APPROVED = "approved";
     case CANCELLED = "cancelled";
 
@@ -15,7 +15,7 @@ enum RequestStatus:string
     {
         return match($this) {
             self::PENDING => "Pending",
-            self::REJECTED => "Rejected",
+            self::DECLINE => "Declined",
             self::APPROVED => "Approved",
             self::CANCELLED => "Cancelled",
             self::DRAFT => "Draft"
@@ -26,10 +26,10 @@ enum RequestStatus:string
     {
         return match($this){
             self::PENDING => "badge-warning",
-            self::REJECTED => "badge-error",
+            self::DECLINE => "badge-error",
             self::APPROVED => "badge-success",
-            self::CANCELLED => "badge-ghost",
-            self::DRAFT => "badge-neutral"
+            self::CANCELLED => "badge-error",
+            self::DRAFT => "badge-accent"
         };
     }
 }

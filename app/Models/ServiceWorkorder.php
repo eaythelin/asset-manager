@@ -16,7 +16,8 @@ class ServiceWorkorder extends Model
         'cost',
         'done_by',
         'is_vehicle',
-        'details'
+        'details',
+        'service_type'
     ];
 
     protected $casts = [

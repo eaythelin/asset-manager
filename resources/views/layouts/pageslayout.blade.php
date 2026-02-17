@@ -21,6 +21,8 @@
     @include("partials.pages-sidebar")    
   </div>
 
+  <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+  <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
   {{-- Page-specific scripts --}}
   @yield("scripts")
 </body>

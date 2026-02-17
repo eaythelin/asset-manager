@@ -9,7 +9,7 @@ use App\Models\Workorder;
 class WorkordersController extends Controller
 {
     public function getWorkOrders(){
-        $query = Workorder::with('request', 'disposalWorkOrder', 'serviceWorkorder', 'acquisitionWorkorder');
+        $query = Workorder::with('request', 'disposalWorkOrder', 'serviceWorkorder', 'requisitionWorkorder');
         $columns = ["Workorder Code", "Request Code", "Type", "Priority", "Start Date", "End Date", "Status", "Actions"];
         $workorders = $query->paginate(5);
         return view('pages.workorders.index-workorders', compact('workorders', 'columns'));

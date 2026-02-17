@@ -34,7 +34,8 @@ class Asset extends Model
         'department_id',
         'useful_life_in_years',
         'salvage_value',
-        'end_of_life_date'
+        'end_of_life_date',
+        'status'
     ];
 
     public function custodian(){

@@ -21,7 +21,7 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
             <x-page-label for="request_code" :required="true">Request Code</x-page-label>
-            <x-page-input value="{{ $nextCode }}" name="request_code" id="request_code" readonly />
+            <x-page-input value="{{ $nextCode }}" name="request_code" id="request_code" readonly/>
           </div>
         </div>
         {{-- Right Column!! --}}
@@ -162,7 +162,25 @@
         </div>
       </template>
       <template x-if="selectedRequestType !== ''">
-        <div>
+        {{-- x-init = run this code when this div gets added to the page --}}
+        <div x-init="
+            {{-- nextTick = basically says to only run this code once the DOM is fully updated --}}
+            $nextTick(() => {
+              const input = document.getElementById('attachments');
+              if (input && !input._pond) {
+                FilePond.registerPlugin(FilePondPluginImagePreview);
+                input._pond = FilePond.create(input, {
+                  allowMultiple: true,
+                  maxFiles: 5,
+                  maxFileSize: '10MB',
+                  acceptedFileTypes: ['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                  credits: false,
+                  instantUpload: false,
+                  storeAsFile: true
+                });
+              }
+            })
+          ">
           <hr class="border-gray-300 m-5">
           <div class="flex flex-row items-center gap-2 mb-4">
             <x-heroicon-s-arrow-up-tray  class="size-6 text-green-700"/>
@@ -172,7 +190,9 @@
           <div class="flex flex-col gap-4">
             <div class="form-row">
               <x-page-label for="attachments">Attachments</x-page-label>
-              <input type="file" class="file-input w-full" name="attachments[]" id="attachments" multiple>
+              <div class="w-full">
+                <input type="file" class="filepond" name="attachments[]" id="attachments" accept="image/*,.pdf,.doc,.docx" multiple>
+              </div>
             </div>
           </div>
           <div class = "flex justify-end mt-4">

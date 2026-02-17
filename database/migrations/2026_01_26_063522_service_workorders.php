@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
             $table->string('service_type');
             $table->decimal('cost', 15, 2)->default(0);
-            $table->string("done_by");
+            $table->string("done_by")->nullable();
             $table->boolean("is_vehicle")->default(false);
-            $table->json('details');
+            $table->json('details')->nullable();
             $table->timestamps();
         });
     }

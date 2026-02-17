@@ -35,7 +35,9 @@
 
           <div class = "form-row">
             <x-page-label for="image_path">Asset Image</x-page-label>
-            <input type="file" class="file-input" name="image_path" id="image_path">
+            <div class="md:w-full md:px-9 md:ml-3">
+              <input type="file" class="filepond-asset" name="image_path" id="image_path">
+            </div>
           </div>
         </div>
         {{-- Right Column --}}
@@ -193,4 +195,5 @@
 @section('scripts')
   @vite('resources/js/assets/edit-asset/getEditSubcategory.js')
   @vite('resources/js/assets/endOfLifeCalc.js')
+  @vite('resources/js/assets/filepond-asset.js')
 @endsection

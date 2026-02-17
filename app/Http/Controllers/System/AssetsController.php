@@ -61,8 +61,8 @@ class AssetsController extends Controller
 
     public function getCreateAsset(){
         //gets the latest asset id and add 1, if it doesnt exist default to AST-1
-        $latestAsset = Asset::withTrashed()->latest('id')->first();
-        $nextCode = $latestAsset ? 'AST-' . ($latestAsset->id + 1): 'AST-1';
+        $count = Asset::withTrashed()->count();
+        $nextCode = 'AST-'.($count + 1);
         
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $departments = Department::orderBy('name')->pluck('name', 'id');
@@ -231,10 +231,15 @@ class AssetsController extends Controller
             "reason" => ["nullable", "string", "max:255"]
         ]);
 
+        
+
         //this make is so the DB updates in one go and if anything fails then everything fails!!
         try{
             DB::transaction(function() use($validated, $id){
                 $asset = Asset::findOrFail($id);
+
+                $count = Workorder::withTrashed()->where('type', WorkorderType::DISPOSAL)->count();
+                $nextCode = 'WO-DIS-'.($count + 1);
 
                 if($asset->status === AssetStatus::DISPOSED){
                     return redirect()->route("assets.index")->with('error', 'This asset is already disposed!');
@@ -242,6 +247,7 @@ class AssetsController extends Controller
 
                 //first create workorder!
                 $workorder = Workorder::create([
+                    "workorder_code" => $nextCode,
                     "completed_by" => auth()->user()->id,
                     "start_date" => now(),
                     "end_date" => now(),
@@ -267,6 +273,6 @@ class AssetsController extends Controller
             return redirect()->route("assets.index")->with('error', 'Something went wrong!');
         }
 
-        return redirect()->route("assets.index")->with('success', 'Asset disposed Successfully!');
+        return redirect()->route("assets.index")->with('success', 'Asset disposed successfully!');
     }
 }

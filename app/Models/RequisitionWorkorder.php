@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AcquisitionWorkorder extends Model
+class RequisitionWorkorder extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -13,7 +13,8 @@ class AcquisitionWorkorder extends Model
         'acquisition_date',
         'estimated_cost',
         'supplier_id',
-        'description'
+        'description',
+        'asset_name'
     ];
 
     public function workorder(){

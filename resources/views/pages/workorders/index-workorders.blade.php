@@ -29,8 +29,8 @@
                   {{ $workorder->priority_level->label() }}
                 </span>
               </x-td>
-              <x-td>{{ $workorder->start_date->format('M d, Y') }}</x-td>
-              <x-td>{{ $workorder->end_date->format('M d, Y') }}</x-td>
+              <x-td>{{ $workorder->start_date?->format('M d, Y') }}</x-td>
+              <x-td>{{ $workorder->end_date?->format('M d, Y') }}</x-td>
               <x-td class="text-center">
                 <span class="badge {{ $workorder->status->badgeClass() }} text-white font-medium text-sm">
                   {{ $workorder->status->label() }}

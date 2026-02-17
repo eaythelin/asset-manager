@@ -15,7 +15,8 @@ class DashboardController extends Controller
     public function getDashboard(){
 
         //The Assets per department are hidden if role = Department Head
-        $role = Auth::user() -> getRoleNames() -> first();
+        $role = Auth::user()->getRoleNames() -> first();
+        $userDepartment = auth()->user()->employee->department->id;
 
         $gridNumber = $role === "Department Head" ? "md:grid-cols-2" : "md:grid-cols-3";
         $toggleTable = $role === "Department Head" ? "hidden" : "block";
@@ -25,8 +26,17 @@ class DashboardController extends Controller
         $categories = Category::orderBy('name')->pluck('name', 'id');
 
         //asset numbers for the cards
-        $activeAssets = Asset::where('status', 'active')->count();
-        $disposedAssets = Asset::withTrashed()->where('status', 'disposed')->count();
+        $activeAssetQuery = Asset::where('status', 'active');
+        if(auth()->user()->getRoleNames()->contains('Department Head')){
+            $activeAssetQuery->where('department_id', $userDepartment);
+        }
+        $activeAssets = $activeAssetQuery->count();
+
+        $disposeAssetsQuery = Asset::withTrashed()->where('status', 'disposed');
+        if(auth()->user()->getRoleNames()->contains('Department Head')){
+            $disposeAssetsQuery->where('department_id', $userDepartment);
+        }
+        $disposedAssets = $disposeAssetsQuery->count();
 
         //Column names for Filter Subcategory by Category and Assets per Department
         $subcategoryFilterColumns = ["", "Subcategory", "Count"];

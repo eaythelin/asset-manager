@@ -22,12 +22,12 @@ return new class extends Migration
             $table->foreignId('requested_by')->constrained('users', 'id')->onDelete('restrict');
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('restrict');
             $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->onDelete('set null');
-            $table->foreignId('approved_by')->nullable()->constrained('users', 'id')->onDelete('restrict');
+            $table->foreignId('handled_by')->nullable()->constrained('users', 'id')->onDelete('restrict');
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
             //enums
             $table->string('type');
             $table->string('service_type')->nullable(); //if its a service
-            $table->string('status')->default('pending');
+            $table->string('status')->default('draft');
             
             $table->softDeletes();
             $table->timestamps();

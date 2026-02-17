@@ -17,12 +17,12 @@
       <x-search-bar route="assets.index" placeholder="Search assets..."/>
       
       @can('manage assets')
-      <div class = "flex flex-col sm:flex-row gap-3">
-        <x-buttons class="bg-green-700">
+      <div class = "flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <x-buttons class="w-full sm:w-auto bg-green-700">
           <x-heroicon-o-document-arrow-down class="size-5"/>
           Import from Excel
         </x-buttons>
-        <a href="{{ route('assets.create') }}">
+        <a href="{{ route('assets.create') }}" class="w-full sm:w-auto">
           <x-buttons class="w-full">
             <x-heroicon-s-plus class="size-5"/>
             Create Asset

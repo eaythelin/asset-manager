@@ -20,8 +20,12 @@ class Request extends Model
         'requested_by',
         'category_id',
         'sub_category_id',
-        'approved_by',
+        'handled_by',
         'asset_id',
+        'request_code',
+        'type',
+        'status',
+        'service_type'
     ];
 
     protected $casts = [
@@ -53,5 +57,9 @@ class Request extends Model
 
     public function workorder(){
         return $this->hasOne(Workorder::class);
+    }
+
+    public function files(){
+        return $this->hasMany(RequestFile::class);
     }
 }

@@ -93,7 +93,7 @@
           <div class="form-row">
             <x-page-label for="custodian">Custodian</x-page-label>
             <x-page-select name="custodian" id="custodian">
-              <option value="" disabled>--Select Employee--</option>
+              <option value="" disabled {{ old('custodian', $asset->custodian_id) ? '' : 'selected' }}>--Select Employee--</option>
               @foreach($employees as $id=>$name)
                 <option value="{{ $id }}" {{ old('custodian', $asset->custodian_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach

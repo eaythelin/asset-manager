@@ -36,7 +36,7 @@
     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Assigned Assets</h3>
     @if($employee->assets->count() > 0)
     <!-- if assets assigned -->
-      <x-tables :columnNames="$columns" :centeredColumns="[0]">
+      <x-tables :columnNames="$columns" :centeredColumns="[0,6]">
         <tbody class = "divide-y divide-gray-400">
           @foreach($employee->assets as $asset)
           <tr>
@@ -46,9 +46,16 @@
             <x-td>{{ $asset->department->name}}</x-td>
             <x-td>{{ $asset->category->name }}</x-td>
             <x-td>{{ $asset->subCategory?->name }}</x-td>
-            <x-td>
-              @if($asset->status->label() === "Active")
-                <span class = "badge badge-success text-white font-medium text">Active</span>
+            <x-td class="text-center">
+              @if($asset->computed_status === "expired")
+                <span class = "badge badge-warning text-white font-medium text-sm p-3 tooltip tooltip-top"
+                  data-tip="Asset has reach the end of its lifecycle">Expired</span>
+              @elseif($asset->computed_status === "disposed")
+                <span class = "badge badge-error text-white font-medium text-sm">Disposed</span>
+              @elseif($asset->computed_status === "under_service")
+                <span class = "badge badge-info text-white font-medium text-sm">Under Service</span>
+              @elseif($asset->computed_status === "active")
+                <span class = "badge badge-success text-white font-medium text-sm">Active</span>
               @endif
             </x-td>
           </tr>

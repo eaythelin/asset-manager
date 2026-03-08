@@ -16,15 +16,15 @@ use App\Models\Asset;
 use App\Models\Category;
 use App\Models\Workorder;
 use App\Models\DisposalWorkorder;
-use Illuminate\Validation\Rules\Enum;
 use App\Enums\RequestStatus;
 use App\Enums\WorkorderType;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\RequestValidation;
 
 class RequestsController extends Controller
 {
-    public function getRequests(){
+    public function getRequests(Request $request){
 
         $role = Auth::user()->getRoleNames()->first();
 
@@ -84,65 +84,45 @@ class RequestsController extends Controller
         return response()->json($categoryID->subCategories);
     }
 
-    public function storeRequest(Request $request){
-        $rules = [
-            "request_code" => ["required", "unique:requests"],
-            "type" => ["required", new Enum(RequestTypes::class)],
-            "description" => ["nullable", "string", "max:500"],
+    public function storeRequest(RequestValidation $request){
+        $validated = $request->validated();
 
-            //filez
-            "attachments" => ["nullable", "array", "max:5"],
-            "attachments.*" => ["file", "max:10240", "mimes:jpg,jpeg,png,pdf,doc,docx"]
-        ];
-
-        $validated = $request->validate(
-            match($request->type){
-            RequestTypes::REQUISITION->value => array_merge($rules, [
-                "asset_name" => ["required", "max:100", "string"],
-                "category" => ["required", "exists:categories,id"],
-                "subcategory" => ["nullable", "exists:sub_categories,id"],
-            ]),
-            RequestTypes::SERVICE->value => array_merge($rules,[
-                "asset_id" => ["required", "exists:assets,id"],
-                "service_type" => ["required", new Enum(ServiceTypes::class)]
-            ]),
-            RequestTypes::DISPOSAL->value => array_merge($rules, [
-                "asset_id" => ["required", "exists:assets,id"]
-            ]),
-            default => $rules
-        });
-
-        $requestModel = RequestModel::create([
-            'request_code' => $validated['request_code'],
-            'type' => $validated['type'],
-            'description' => $validated['description'],
-            'requested_by' => auth()->id(),
-            'date_requested' => now(),
-            
-            // Requisition fields (nullable)
-            'asset_name' => $validated['asset_name'] ?? null,
-            'category_id' => $validated['category'] ?? null,
-            'subcategory_id' => $validated['subcategory'] ?? null,
-            
-            // Service/Disposal fields (nullable)
-            'asset_id' => $validated['asset_id'] ?? null,
-            'service_type' => $validated['service_type'] ?? null,
-        ]);
-
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('request-attachments');
-                
-                RequestFile::create([
-                    'request_id' => $requestModel->id,
-                    'file_path' => $path,
-                    'file_type' => $file->getMimeType(),
-                    'original_name' => $file->getClientOriginalName()
+        try{
+            DB::transaction(function () use ($request, $validated){
+                $requestModel = RequestModel::create([
+                    'request_code' => $validated['request_code'],
+                    'type' => $validated['type'],
+                    'description' => $validated['description'],
+                    'requested_by' => auth()->id(),
+                    'date_requested' => now(),
+                    
+                    // Requisition fields (nullable)
+                    'asset_name' => $validated['asset_name'] ?? null,
+                    'category_id' => $validated['category'] ?? null,
+                    'sub_category_id' => $validated['subcategory'] ?? null,
+                    
+                    // Service/Disposal fields (nullable)
+                    'asset_id' => $validated['asset_id'] ?? null,
+                    'service_type' => $validated['service_type'] ?? null,
                 ]);
-            }
-        }
 
-        return redirect()->route('requests.index')->with('success', 'Request Successfully Created!');
+                if ($request->hasFile('attachments')) {
+                    foreach ($request->file('attachments') as $file) {
+                        $path = $file->store('request-attachments');
+                        
+                        RequestFile::create([
+                            'request_id' => $requestModel->id,
+                            'file_path' => $path,
+                            'file_type' => $file->getMimeType(),
+                            'original_name' => $file->getClientOriginalName()
+                        ]);
+                    }
+                }
+            });
+            return redirect()->route('requests.index')->with('success', 'Request Successfully Created!');
+        }catch (\Exception $e){
+            return redirect()->route("requests.index")->with('error', 'Something went wrong!');
+        }
     }
 
     public function submitRequest($id){
@@ -183,7 +163,7 @@ class RequestsController extends Controller
 
                     RequisitionWorkorder::create([
                         "workorder_id" => $workorder->id,
-                        "asset_name" => $requestModel->asset_name
+                        "asset_name" => $requestModel->asset_name,
                     ]);
                 }elseif($requestModel->type === RequestTypes::SERVICE){
                     $count = Workorder::withTrashed()->where('type', WorkorderType::SERVICE)->count();
@@ -220,7 +200,7 @@ class RequestsController extends Controller
                 }
             });
 
-            return redirect()->route('requests.index')->with('success', 'Request successfully approved!');
+            return redirect()->route('requests.index')->with('success', 'Request Successfully Approved!');
             
         } catch (\Exception $e) {
             return redirect()->route("requests.index")->with('error', 'Something went wrong!');
@@ -235,6 +215,88 @@ class RequestsController extends Controller
             "date_approved" => now()
         ]);
 
-        return redirect()->route('requests.index')->with('success', 'Request successfully declined!');
+        return redirect()->route('requests.index')->with('success', 'Request Successfully Declined!');
+    }
+
+    public function getEditRequest($id){
+        $requestModel = RequestModel::with(['category','subCategory','asset','files'])->findOrFail($id);
+        $requestTypes = RequestTypes::cases();
+        $assets = Asset::orderBy('asset_code')->get();
+        $categories = Category::orderBy('name')->pluck('name', 'id');
+        $serviceTypes = ServiceTypes::cases();
+        return view('pages.requests.edit-request', compact('requestModel', 'requestTypes', 'categories', 'assets', 'serviceTypes'));
+    }
+
+    public function updateRequest(RequestValidation $request, $id){
+        $validated = $request->validated();
+        $requestModel = RequestModel::findOrFail($id);
+        if($request->hasFile('attachments')){
+            $existingCount = $requestModel->files()->count();
+            $deleteCount = $request->has('delete_files') ? count($request->delete_files) : 0;
+            $newfiles = $request->file('attachments');
+
+            if($existingCount - $deleteCount + count($newfiles) > 5){
+                return redirect()->route("requests.edit", $requestModel->id)->with('error', 'Maximum of 5 attachment allowed!');
+            }
+        }
+
+        try{
+            DB::transaction(function() use($id, $validated,$request,$requestModel){
+
+                $requestModel->update([
+                    'request_code' => $validated['request_code'],
+                    'type' => $validated['type'],
+                    'description' => $validated['description'],
+                    
+                    // Requisition fields (nullable)
+                    'asset_name' => $validated['asset_name'] ?? null,
+                    'category_id' => $validated['category'] ?? null,
+                    'sub_category_id' => $validated['subcategory'] ?? null,
+                    
+                    // Service/Disposal fields (nullable)
+                    'asset_id' => $validated['asset_id'] ?? null,
+                    'service_type' => $validated['service_type'] ?? null,
+                ]);
+
+                if($request->has('delete_files')){
+                    foreach($request->delete_files as $fileID){
+                        $file = RequestFile::findOrFail($fileID);
+                        Storage::delete($file->file_path);
+                        $file->delete();
+                    }
+                }
+
+                if($request->has('attachments')){
+                    $existingCount = $requestModel->files()->count();
+                    $newfiles = $request->file('attachments');
+
+                    if($existingCount + count($newfiles) > 5){
+                        return redirect()->route("requests.index")->with('error', 'Maximum of 5 attachment allowed!');
+                    }
+                    foreach($request->file('attachments') as $file){
+                        
+                        $path = $file->store('request-attachments');
+                        RequestFile::create([
+                            'request_id' => $requestModel->id,
+                            'file_path' => $path,
+                            'file_type' => $file->getMimeType(),
+                            'original_name' => $file->getClientOriginalName()
+                        ]);
+                    }
+                }
+            });
+            return redirect()->route('requests.index')->with('success', 'Request Successfully Edited!');
+        }catch(\Exception $e){
+            return redirect()->route("requests.index")->with('error', 'Something went wrong!');
+        }
+    }
+
+    public function serveAttachments($id){
+        $file = RequestFile::findOrFail($id);
+        return Storage::response($file->file_path);
+    }
+
+    public function getPageRequest($id){
+        return view('pages.requests.show-request');
     }
 }

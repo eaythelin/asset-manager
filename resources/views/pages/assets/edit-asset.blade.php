@@ -11,10 +11,9 @@
     @csrf
     @method('PUT')
     <div class="bg-white p-4 rounded-2xl shadow-2xl mt-4">
-      <div class="flex flex-row items-center gap-2 mb-4">
+      <x-page-section-header title="General Details">
         <x-heroicon-s-information-circle class="size-6 text-blue-700"/>
-        <p class="text-lg font-bold">General Details</p>
-      </div>
+      </x-page-section-header>
       <div class="flex flex-col sm:flex-row gap-6">
         {{-- Left Column --}}
         <div class = "flex flex-col flex-1 gap-4">
@@ -31,13 +30,6 @@
           <div class="form-row">
             <x-page-label for="serial_name" :required="true">Serial Name</x-page-label>
             <x-page-input name="serial_name" id="serial_name" value="{{ old('serial_name', $asset->serial_name) }}"/>
-          </div>
-
-          <div class = "form-row">
-            <x-page-label for="image_path">Asset Image</x-page-label>
-            <div class="md:w-full md:px-9 md:ml-3">
-              <input type="file" class="filepond-asset" name="image_path" id="image_path">
-            </div>
           </div>
         </div>
         {{-- Right Column --}}
@@ -69,11 +61,9 @@
       </div>
 
       <hr class="border-gray-300 m-5">
-      <div class="flex flex-row items-center gap-2 mb-4">
+      <x-page-section-header title="Assignment Details">
         <x-heroicon-s-user-group class="size-6 text-green-700"/>
-        <p class="text-lg font-bold">Assignment Details</p>
-      </div>
-
+      </x-page-section-header>
       <div class="flex flex-col sm:flex-row gap-6">
         {{-- Left Column --}}
         <div class = "flex flex-col flex-1 gap-4">
@@ -103,11 +93,9 @@
       </div>
 
       <hr class="border-gray-300 m-5">
-      <div class="flex flex-row items-center gap-2 mb-4">
+      <x-page-section-header title="Financial Details">
         <x-heroicon-s-currency-dollar class="size-6 text-yellow-400"/>
-        <p class="text-lg font-bold">Financial Details</p>
-      </div>
-
+      </x-page-section-header>
       <div class="flex flex-col sm:flex-row gap-6" x-data="{ isDepreciable: {{ old('is_depreciable', $asset->is_depreciable ?? false) ? 'true' : 'false' }} }">
         {{-- Left Column --}}
         <div class = "flex flex-col flex-1 gap-4">
@@ -158,11 +146,9 @@
         </div>
       </div>
       <hr class="border-gray-300 m-5">
-      <div class="flex flex-row items-center gap-2 mb-4">
+      <x-page-section-header title="Misc. Details">
         <x-heroicon-s-clipboard-document-list class="size-6 text-gray-600"/>
-        <p class="text-lg font-bold">Misc. Details</p>
-      </div>
-
+      </x-page-section-header>
       <div class="flex flex-col sm:flex-row gap-6">
         {{-- Left Column --}}
         <div class = "flex flex-col flex-1 gap-4">
@@ -178,7 +164,14 @@
         </div>
 
         {{-- Right Column --}}
-        <div class = "flex flex-col flex-1 gap-4"></div>
+        <div class = "flex flex-col flex-1 gap-4">
+          <div class = "form-row">
+            <x-page-label for="image_path">Asset Image</x-page-label>
+            <div class="md:w-full md:px-9 md:ml-3">
+              <input type="file" class="filepond-asset" name="image_path" id="image_path">
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="flex justify-end mt-2">

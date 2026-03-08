@@ -54,12 +54,14 @@
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
                 @if($request->status->value != "draft")
-                  <x-buttons
-                    class="viewBtn tooltip tooltip-top"
-                    data-tip="View"
-                    aria-label="View Request">
-                    <x-heroicon-s-eye class="size-4 sm:size-5" />
-                  </x-buttons>
+                  <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.show', $request->id) }}">
+                    <x-buttons
+                      class="viewBtn tooltip tooltip-top"
+                      data-tip="View"
+                      aria-label="View Request">
+                      <x-heroicon-s-eye class="size-4 sm:size-5" />
+                    </x-buttons>
+                  </a>
                 @endif
                 @if(auth()->user()->can('create requests') && $request->status->value === "draft")
                   <x-buttons onclick="submitRequest.showModal()"
@@ -69,12 +71,14 @@
                     data-route="{{ route('requests.submit', $request->id )}}">
                     <x-heroicon-s-paper-airplane class="size-4 sm:size-5"/>
                   </x-buttons>
-                  <x-buttons
-                    class="editBtn tooltip tooltip-top"
-                    data-tip="Edit"
-                    aria-label="Edit Request">
-                    <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
-                  </x-buttons>
+                  <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.edit', $request->id) }}">
+                    <x-buttons
+                      class="editBtn tooltip tooltip-top"
+                      data-tip="Edit"
+                      aria-label="Edit Request">
+                      <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
+                    </x-buttons>
+                  </a>
                   <x-buttons onclick="cancelRequest.showModal()"
                     class="cancelBtn bg-red-700 tooltip tooltip-top"
                     data-tip="Cancel"

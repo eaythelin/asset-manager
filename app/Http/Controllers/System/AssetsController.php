@@ -8,6 +8,7 @@ use App\Enums\PriorityLevel;
 use App\Enums\WorkorderStatus;
 use App\Enums\WorkorderType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AssetValidation;
 use App\Models\Department;
 use App\Models\DisposalWorkorder;
 use App\Models\Employee;
@@ -16,7 +17,6 @@ use App\Models\Workorder;
 use Illuminate\Http\Request;
 use App\Models\Asset;
 use App\Models\Category;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Support\Facades\DB;
@@ -97,32 +97,8 @@ class AssetsController extends Controller
         return response()->json($categoryID->subCategories);
     }
 
-    public function storeAsset(Request $request){
-        $validated = $request->validate([
-            //general fields
-            "asset_code" => ["required", "unique:assets"],
-            "asset_name" => ["required", "string", "max:100"],
-            "serial_name" => ["nullable", "string", "max:100"],
-            "category" => ["required", "exists:categories,id"],
-            "subcategory" => ["nullable", "exists:sub_categories,id"],
-            "description" => ["nullable", "string", "max:255"],
-            "image_path" => ["nullable", "image", "mimes:jpeg,png,jpg,gif", "max:2048"], //max 2MB
-
-            //assignment fields
-            "department" => ["required", "exists:departments,id"],
-            "custodian" => ["nullable", "exists:employees,id"],
-
-            //financial fields!!
-            "is_depreciable" => ["nullable"],
-            "cost" => ["required_if:is_depreciable,on", "nullable", "numeric", "min:0"],
-            "salvage_value" => ["required_if:is_depreciable,on", "nullable", "numeric", "min:0"],
-            "acquisition_date" => ["required_if:is_depreciable,on", "nullable", "date"],
-            "useful_life_in_years" => ["required_if:is_depreciable,on", "nullable", "integer", "min:1"],
-            "end_of_life_date" => ["required_if:is_depreciable,on", "nullable", "date"],
-
-            //misc fields
-            "supplier" => ["nullable", "exists:suppliers,id"]
-        ]);
+    public function storeAsset(AssetValidation $request){
+        $validated = $request->validated();
 
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
@@ -158,34 +134,9 @@ class AssetsController extends Controller
         return redirect()->route('assets.index')->with('success', 'Asset successfully created!');
     }
 
-    public function updateAsset(Request $request, $id){
+    public function updateAsset(AssetValidation $request, $id){
         $asset = Asset::findOrFail($id);
-
-        $validated = $request->validate([
-            //general fields
-            "asset_code" => ["required", Rule::unique('assets', 'asset_code')->ignore($id)],
-            "asset_name" => ["required", "string", "max:100"],
-            "serial_name" => ["nullable", "string", "max:100"],
-            "category" => ["required", "exists:categories,id"],
-            "subcategory" => ["nullable", "exists:sub_categories,id"],
-            "description" => ["nullable", "string", "max:255"],
-            "image_path" => ["nullable", "image", "mimes:jpeg,png,jpg,gif", "max:2048"],
-
-            //assignment fields
-            "department" => ["required", "exists:departments,id"],
-            "custodian" => ["nullable", "exists:employees,id"],
-
-            //financial fields!!
-            "is_depreciable" => ["nullable"],
-            "cost" => ["required_if:is_depreciable,on", "nullable", "numeric", "min:0"],
-            "salvage_value" => ["required_if:is_depreciable,on", "nullable", "numeric", "min:0"],
-            "acquisition_date" => ["required_if:is_depreciable,on", "nullable", "date"],
-            "useful_life_in_years" => ["required_if:is_depreciable,on", "nullable", "integer", "min:1"],
-            "end_of_life_date" => ["required_if:is_depreciable,on", "nullable", "date"],
-
-            //misc fields
-            "supplier" => ["nullable", "exists:suppliers,id"]
-        ]);
+        $validated = $request->validated();
 
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
@@ -230,8 +181,6 @@ class AssetsController extends Controller
             "disposal_method" => ["required", new Enum(DisposalMethods::class)],
             "reason" => ["nullable", "string", "max:255"]
         ]);
-
-        
 
         //this make is so the DB updates in one go and if anything fails then everything fails!!
         try{

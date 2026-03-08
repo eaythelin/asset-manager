@@ -52,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
     //Requests
     Route::group(["prefix" => "/requests", "middleware" => "check.permission:view requests"], function(){
       Route::get('/', [RequestsController::class, "getRequests"])->name('requests.index');
-      Route::group(["prefix" => "/create", "middleware" => "check.permission:view requests"], function(){
+      Route::group(["prefix" => "/create", "middleware" => "check.permission:create requests"], function(){
         Route::get('/', [RequestsController::class, "getCreateRequest"])->name('requests.create');
         Route::post('/', [RequestsController::class, "storeRequest"])->name('requests.store');
         Route::put('/{id}/submit', [RequestsController::class, "submitRequest"])->name('requests.submit');
@@ -61,9 +61,18 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}/decline', [RequestsController::class, 'declineRequest'])->name('requests.decline');
       });
 
+      Route::group(["prefix" => "/edit", "middleware" => "check.permission:create requests"], function(){
+        Route::get("/{id}", [RequestsController::class,"getEditRequest"])->name("requests.edit");
+        Route::put("/{id}/update", [RequestsController::class,"updateRequest"])->name("requests.update");
+      });
+
+      Route::get('/view/{id}',[RequestsController::class,'getPageRequest'])->name('requests.show');
       Route::get('/subcategories/{categoryID}', [RequestsController::class, 'getSubcategories'])
-        ->middleware('check.permission:view requests')
+        ->middleware('check.permission:create requests')
         ->name('requests.subcategories.get');
+      Route::get('/attachments/{id}', [RequestsController::class,'serveAttachments'])
+        ->middleware('check.permission:create requests')
+        ->name('requests.attachments');
     });
 
     //Workorders

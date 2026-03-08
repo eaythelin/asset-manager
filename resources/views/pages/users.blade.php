@@ -8,7 +8,6 @@
 <x-session-error />
 
 <div class = "md:m-4">
-  {{-- show the errors! --}}
   <x-validation-error />
 
   <div class = "bg-white p-4 rounded-2xl shadow-xl">

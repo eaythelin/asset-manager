@@ -90,20 +90,7 @@
           </div>
           <div class = "flex flex-col sm:flex-row gap-6">
             <div class = "flex flex-col flex-1 gap-4">
-              <div class = "form-row">
-                <x-page-label for="asset_id">Asset Name</x-page-label>
-                <x-page-select name="asset_id" id="asset_id">
-                <option value="" disabled selected {{ old('asset_id') ? '' : 'selected' }}>--Select Asset--</option>
-                @foreach($assets as $asset)
-                  <option value="{{ $asset->id }}" {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
-                    {{ $asset->asset_code }} - {{ $asset->name }} 
-                    @if($asset->serial_name)
-                      ({{ $asset->serial_name }})
-                    @endif
-                  </option>
-                @endforeach
-                </x-page-select>
-              </div>
+              <x-request-asset-select :assets="$assets"/>
               
               <div class="form-row">
                 <x-page-label for="service_type" :required="true">Service Type</x-page-label>
@@ -136,20 +123,7 @@
 
           <div class = "flex flex-col sm:flex-row gap-6">
             <div class = "flex flex-col flex-1 gap-4">
-              <div class = "form-row">
-                <x-page-label for="asset_id">Asset Name</x-page-label>
-                <x-page-select name="asset_id" id="asset_id">
-                <option value="" disabled selected {{ old('asset_id') ? '' : 'selected' }}>--Select Asset--</option>
-                @foreach($assets as $asset)
-                  <option value="{{ $asset->id }}" {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
-                    {{ $asset->asset_code }} - {{ $asset->name }} 
-                    @if($asset->serial_name)
-                      ({{ $asset->serial_name }})
-                    @endif
-                  </option>
-                @endforeach
-                </x-page-select>
-              </div>
+              <x-request-asset-select :assets="$assets"/>
             </div>
 
             <div class = "flex flex-col flex-1 gap-4">
@@ -163,24 +137,7 @@
       </template>
       <template x-if="selectedRequestType !== ''">
         {{-- x-init = run this code when this div gets added to the page --}}
-        <div x-init="
-            {{-- nextTick = basically says to only run this code once the DOM is fully updated --}}
-            $nextTick(() => {
-              const input = document.getElementById('attachments');
-              if (input && !input._pond) {
-                FilePond.registerPlugin(FilePondPluginImagePreview);
-                input._pond = FilePond.create(input, {
-                  allowMultiple: true,
-                  maxFiles: 5,
-                  maxFileSize: '10MB',
-                  acceptedFileTypes: ['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-                  credits: false,
-                  instantUpload: false,
-                  storeAsFile: true
-                });
-              }
-            })
-          ">
+        <div x-init="$nextTick(() => initFilePond())">
           <hr class="border-gray-300 m-5">
           <div class="flex flex-row items-center gap-2 mb-4">
             <x-heroicon-s-arrow-up-tray  class="size-6 text-green-700"/>
@@ -189,7 +146,10 @@
 
           <div class="flex flex-col gap-4">
             <div class="form-row">
-              <x-page-label for="attachments">Attachments</x-page-label>
+              <x-page-label for="attachments">
+                Attachments
+                <span class="text-xs text-gray-500 align-super tooltip tooltip-info" data-tip="Max 5 files • 10MB per file">?</span>
+              </x-page-label>
               <div class="w-full">
                 <input type="file" class="filepond" name="attachments[]" id="attachments" accept="image/*,.pdf,.doc,.docx" multiple>
               </div>
@@ -209,5 +169,6 @@
 @endsection
 
 @section('scripts')
-  @vite('resources/js/requests/create-requests/getSubcategories.js')
+  @vite('resources/js/requests/create-requests/getReqSubcategories.js')
+  @vite('resources/js/requests/reqFilepond.js')
 @endsection

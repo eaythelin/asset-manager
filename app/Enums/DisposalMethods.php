@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Enums;
-
 enum DisposalMethods: string
 {
     case SOLD = "sold";

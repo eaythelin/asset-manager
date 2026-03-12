@@ -57,8 +57,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', [RequestsController::class, "storeRequest"])->name('requests.store');
         Route::put('/{id}/submit', [RequestsController::class, "submitRequest"])->name('requests.submit');
         Route::delete('/{id}/delete', [RequestsController::class, 'cancelRequest'])->name('requests.cancel');
-        Route::put('/{id}/approve', [RequestsController::class, 'approveRequest'])->name('requests.approve');
-        Route::put('/{id}/decline', [RequestsController::class, 'declineRequest'])->name('requests.decline');
       });
 
       Route::group(["prefix" => "/edit", "middleware" => "check.permission:create requests"], function(){
@@ -73,6 +71,13 @@ Route::middleware(['auth'])->group(function () {
       Route::get('/attachments/{id}', [RequestsController::class,'serveAttachments'])
         ->middleware('check.permission:create requests')
         ->name('requests.attachments');
+
+      Route::put('/{id}/approve', [RequestsController::class, 'approveRequest'])
+        ->middleware('check.permission:approve requests')
+        ->name('requests.approve');
+      Route::put('/{id}/decline', [RequestsController::class, 'declineRequest'])
+        ->middleware('check.permission:decline requests')
+        ->name('requests.decline');
     });
 
     //Workorders

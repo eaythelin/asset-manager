@@ -1,5 +1,5 @@
 <div class="form-row">
-    <x-page-label for="asset_id">Asset Name</x-page-label>
+    <x-page-label for="asset_id" :required="true">Asset Name</x-page-label>
     <x-page-select name="asset_id" id="asset_id">
         <option value="" disabled {{ old('asset_id', $selected) ? '' : 'selected' }}>--Select Asset--</option>
         @foreach($assets as $asset)

@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div class="bg-white p-4 rounded-2xl shadow-xl mb-4">
+  <x-view-page-header-card>
     <div class="flex flex-col sm:flex-row items-center gap-4">
       {{-- Image --}}
       <div class="size-32 shrink-0">
@@ -42,30 +42,31 @@
         <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $asset->name }}</h2>
         <div class="flex items-center justify-center sm:justify-start gap-2 text-sm mt-1">
           <x-heroicon-s-hashtag class="text-gray-500 size-4"/>
-          <span class="text-gray-500">Asset Code:</span>
-          <span class="font-semibold text-gray-700">{{ $asset->asset_code }}</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Asset Code:</span>
+          <span class="text-sm py-0.5 px-2 bg-gray-100 text-gray-600 rounded-md font-mono">
+            {{ $asset->asset_code }}
+          </span>
         </div>
         <div class="flex items-center justify-center sm:justify-start gap-2 text-sm mt-1">
           <x-heroicon-s-identification class="text-gray-500 size-4"/>
-          <span class="text-gray-500">Serial Name:</span>
-          <span class="font-semibold text-gray-700">{{ $asset->serial_name ?? 'N/A' }}</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Serial Name:</span>
+          <span class="text-sm py-0.5 px-2 bg-gray-100 text-gray-600 rounded-md font-mono">
+            {{ $asset->serial_name ?? 'N/A' }}
+          </span>
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        @if($asset->computed_status === "expired")
-          <span class="badge badge-warning text-white font-medium text-sm p-3 tooltip tooltip-top"
-            data-tip="Asset has reached the end of its lifecycle">Expired</span>
-        @elseif($asset->computed_status === "disposed")
-          <span class="badge badge-error text-white font-medium text-sm p-3">Disposed</span>
-        @elseif($asset->computed_status === "under_service")
-          <span class="badge badge-info text-white font-medium text-sm p-3">Under Service</span>
-        @elseif($asset->computed_status === "active")
-          <span class="badge badge-success text-white font-medium text-sm p-3">Active</span>
-        @endif
+      <div class="flex flex-col items-center sm:items-end gap-2">
+        <span class="badge {{ $asset->getStatusColor() }} text-white font-medium text-sm p-3">
+          {{ Str::headline($asset->computed_status) }}
+        </span>
+        <span class="text-xs text-gray-400 flex items-center gap-1">
+          <x-heroicon-c-clock class="size-3"/>
+          Updated {{ $asset->updated_at->diffForHumans() }}
+        </span>
       </div>
     </div>
-  </div>
+  </x-view-page-header-card>
 
   <div role="tablist" class="tabs tabs-lifted">
     {{-- Overview Tab --}}

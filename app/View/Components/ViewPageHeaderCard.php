@@ -6,19 +6,14 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class PageSectionHeader extends Component
+class ViewPageHeaderCard extends Component
 {
     /**
      * Create a new component instance.
      */
-
-    public $title;
-    public $breakline;
-
-    public function __construct($title, $breakline=false)
+    public function __construct()
     {
-        $this->title=$title;
-        $this->breakline=$breakline;
+        //
     }
 
     /**
@@ -26,6 +21,6 @@ class PageSectionHeader extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.page-section-header');
+        return view('components.view-page-header-card');
     }
 }

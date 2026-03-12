@@ -27,6 +27,7 @@ return new class extends Migration
             //enums
             $table->string('type');
             $table->string('service_type')->nullable(); //if its a service
+            $table->string('condition')->nullable();//if its disposal
             $table->string('status')->default('draft');
             
             $table->softDeletes();

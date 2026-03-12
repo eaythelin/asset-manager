@@ -106,6 +106,19 @@ class Asset extends Model
         return $this->status->value;
     }
 
+    // Inside app/Models/Asset.php
+
+    public function getStatusColor(): string
+    {
+        return match($this->computed_status) {
+            'active'        => 'badge-success',
+            'expired'       => 'badge-warning',
+            'disposed'      => 'badge-error',
+            'under_service' => 'badge-info',
+            default         => 'bg-gray-500',
+        };
+    }
+
     public function scopeSearch($query, $search){
         if (!$search) return $query;
 

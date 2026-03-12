@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\System;
 
 use App\Enums\AssetStatus;
+use App\Enums\DisposalConditions;
 use App\Enums\RequestTypes;
 use App\Enums\ServiceTypes;
 use App\Http\Controllers\Controller;
@@ -76,8 +77,9 @@ class RequestsController extends Controller
         $assets = Asset::orderBy('asset_code')->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $serviceTypes = ServiceTypes::cases();
+        $disposalConditions = DisposalConditions::cases();
 
-        return view('pages.requests.create-request', compact('nextCode', 'requestTypes', 'assets', 'categories', 'serviceTypes'));
+        return view('pages.requests.create-request', compact('nextCode', 'requestTypes', 'assets', 'categories', 'serviceTypes', 'disposalConditions'));
     }
 
     public function getSubcategories(Category $categoryID){
@@ -104,6 +106,7 @@ class RequestsController extends Controller
                     // Service/Disposal fields (nullable)
                     'asset_id' => $validated['asset_id'] ?? null,
                     'service_type' => $validated['service_type'] ?? null,
+                    'condition' => $validated['condition'] ?? null
                 ]);
 
                 if ($request->hasFile('attachments')) {
@@ -168,6 +171,7 @@ class RequestsController extends Controller
                 }elseif($requestModel->type === RequestTypes::SERVICE){
                     $count = Workorder::withTrashed()->where('type', WorkorderType::SERVICE)->count();
                     $nextCode = 'WO-SER-'.($count + 1);
+
                     $workorder = Workorder::create([
                         "workorder_code" => $nextCode,
                         "type" => WorkorderType::SERVICE,
@@ -180,7 +184,7 @@ class RequestsController extends Controller
                         "service_type" => $requestModel->service_type->value
                     ]);
 
-                    Asset::find($requestModel->asset_id)->update([
+                    Asset::findOrFail($requestModel->asset_id)->update([
                         'status' => AssetStatus::UNDER_SERVICE
                     ]);
                     
@@ -224,7 +228,8 @@ class RequestsController extends Controller
         $assets = Asset::orderBy('asset_code')->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $serviceTypes = ServiceTypes::cases();
-        return view('pages.requests.edit-request', compact('requestModel', 'requestTypes', 'categories', 'assets', 'serviceTypes'));
+        $disposalConditions = DisposalConditions::cases();
+        return view('pages.requests.edit-request', compact('requestModel', 'requestTypes', 'categories', 'assets', 'serviceTypes', 'disposalConditions'));
     }
 
     public function updateRequest(RequestValidation $request, $id){
@@ -256,6 +261,7 @@ class RequestsController extends Controller
                     // Service/Disposal fields (nullable)
                     'asset_id' => $validated['asset_id'] ?? null,
                     'service_type' => $validated['service_type'] ?? null,
+                    'condition' => $validated['condition'] ?? null
                 ]);
 
                 if($request->has('delete_files')){
@@ -297,6 +303,9 @@ class RequestsController extends Controller
     }
 
     public function getPageRequest($id){
-        return view('pages.requests.show-request');
+        $requestModel = RequestModel::with(['category','subCategory','asset','files'])->findOrFail($id);
+        $requestTypes = RequestTypes::cases();
+        $requestStatus = RequestStatus::cases();
+        return view('pages.requests.show-request', compact('requestModel','requestTypes','requestTypes'));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\DisposalConditions;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -48,7 +49,8 @@ class RequestValidation extends FormRequest
                 "service_type" => ["required", new Enum(ServiceTypes::class)]
             ]),
             RequestTypes::DISPOSAL->value => array_merge($baseRules, [
-                "asset_id" => ["required", "exists:assets,id"]
+                "asset_id" => ["required", "exists:assets,id"],
+                "condition" => ["required", new Enum(DisposalConditions::class)]
             ]),
             default => $baseRules
         };

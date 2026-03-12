@@ -56,11 +56,9 @@
                     });
                     })
                 ">
-                <hr class="border-gray-300 m-5">
-                <div class="flex flex-row items-center gap-2 mb-4">
+                <x-page-section-header title="Requisition Details" :breakline="true">
                     <x-heroicon-s-archive-box  class="size-6 text-green-700"/>
-                    <p class="text-lg font-bold">Requisition Details</p>
-                </div>
+                </x-page-section-header>
 
                 <div class = "flex flex-col sm:flex-row gap-6">
                     <div class = "flex flex-col flex-1 gap-4">
@@ -99,8 +97,7 @@
 
         <template x-if="selectedRequestType === 'service'">
             <div>
-                <hr class="border-gray-300 m-5">
-                <x-page-section-header title="Service Details">
+                <x-page-section-header title="Service Details" :breakline="true">
                     <x-heroicon-s-wrench-screwdriver class="size-6 text-gray-700"/>
                 </x-page-section-header>
 
@@ -135,14 +132,26 @@
 
         <template x-if="selectedRequestType === 'disposal'">
             <div>
-                <hr class="border-gray-300 m-5">
-                <x-page-section-header title="Disposal Details">
+                <x-page-section-header title="Disposal Details" :breakline="true">
                     <x-heroicon-s-archive-box class="size-6 text-red-700"/>
                 </x-page-section-header>
 
-                <div class = "flex flex-col sm:flex-row gap-6">
+                <div class = "flex flex-col sm:flex-row gap-6"> 
                     <div class = "flex flex-col flex-1 gap-4">
                         <x-request-asset-select :assets="$assets" :selected="$requestModel->asset_id"/>
+                        <div class="form-row">
+                            <x-page-label for="condition" :required="true">Condition</x-page-label>
+                            <x-page-select name="condition" id="condition">
+                                <option value="" disabled selected {{ old('condition') ? '' : 'selected' }}>--Select Asset Condition--</option>
+                                @foreach($disposalConditions as $condition)
+                                    <option 
+                                        value="{{ $condition->value }}" 
+                                        {{ old('condition', $requestModel->condition?->value) == $condition->value ? 'selected' : '' }}>
+                                        {{ $condition->label() }}
+                                    </option>
+                                @endforeach
+                            </x-page-select>
+                        </div>
                     </div>
 
                     <div class = "flex flex-col flex-1 gap-4">
@@ -157,8 +166,7 @@
 
         <template x-if="selectedRequestType !== ''">
             <div x-init="$nextTick(() => initFilePond())">
-                <hr class="border-gray-300 m-5">
-                <x-page-section-header title="Uploads">
+                <x-page-section-header title="Uploads" :breakline="true">
                     <x-heroicon-s-arrow-up-tray  class="size-6 text-green-700"/>
                 </x-page-section-header>
 

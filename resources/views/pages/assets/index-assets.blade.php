@@ -42,16 +42,9 @@
               <x-td>{{ $asset->custodian?->first_name}} {{ $asset->custodian?->last_name}}</x-td>
               <x-td>{{ $asset->category->name}}</x-td>
               <x-td class="text-center">
-                @if($asset->computed_status === "expired")
-                  <span class = "badge badge-warning text-white font-medium text-sm p-3 tooltip tooltip-top"
-                    data-tip="Asset has reach the end of its lifecycle">Expired</span>
-                @elseif($asset->computed_status === "disposed")
-                  <span class = "badge badge-error text-white font-medium text-sm">Disposed</span>
-                @elseif($asset->computed_status === "under_service")
-                  <span class = "badge badge-info text-white font-medium text-sm">Under Service</span>
-                @elseif($asset->computed_status === "active")
-                  <span class = "badge badge-success text-white font-medium text-sm">Active</span>
-                @endif
+                <span class="badge {{ $asset->getStatusColor() }} text-white font-medium text-sm p-3">
+                  {{ Str::headline($asset->computed_status) }}
+                </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-3 justify-center">
                 @can("view assets")

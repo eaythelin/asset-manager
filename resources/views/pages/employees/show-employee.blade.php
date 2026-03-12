@@ -6,17 +6,27 @@
     <x-back-link route="employees.index">Return to Employees</x-back-link>
   </div>
 
-  <div class = "bg-white p-4 rounded-2xl shadow-xl mb-4">
-    <div class = "flex flex-col sm:flex-row items-center sm:justify-between px-2 gap-5">
-      <div class="flex flex-col gap-2">
-        <p class="text-xl sm:text-2xl font-bold text-gray-800">{{ $employee->full_name }}</p>
-        <div class="flex items-center gap-2 text-sm">
-            <x-heroicon-s-briefcase class="text-gray-500 size-4"/>
-            <span class="text-gray-500">Department:</span>
-            <span class="font-semibold text-gray-700">{{ $employee->department->name }}</span>
+  <x-view-page-header-card>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-start gap-4">
+        <div class="hidden sm:flex items-center justify-center size-12 rounded-xl bg-indigo-50 text-indigo-600">
+          <x-heroicon-s-user class="size-6"/>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Department: </span>
+            <span class="text-xs py-0.5 px-2 bg-gray-100 text-gray-600 rounded-md font-mono">
+              {{ $employee->department->name }}
+            </span>
+          </div>
+          <h2 class="text-xl font-bold text-gray-900 leading-tight">
+            {{ $employee->full_name }}
+          </h2>
         </div>
       </div>
-      <div class="flex items-center gap-2">
+
+      <div class="flex flex-col items-end gap-2">
         @if($employee->assets->count() > 0)
           <span class="badge badge-success p-4 font-medium text-sm flex items-center gap-1">
             <x-heroicon-m-check class="size-5" />
@@ -28,9 +38,13 @@
             No Asset Assigned
           </span>
         @endif
+        <span class="text-xs text-gray-400 flex items-center gap-1">
+          <x-heroicon-c-clock class="size-3"/>
+          Updated {{ $employee->updated_at->diffForHumans() }}
+        </span>
       </div>
     </div>
-  </div>
+  </x-view-page-header-card>
 
   <div class="bg-white p-6 rounded-2xl shadow-xl">
     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Assigned Assets</h3>

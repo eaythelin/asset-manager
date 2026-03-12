@@ -58,8 +58,7 @@
         </div>
       </div>
 
-      <hr class="border-gray-300 m-5">
-      <x-page-section-header title="Assignment Details">
+      <x-page-section-header title="Assignment Details" :breakline="true">
         <x-heroicon-s-user-group class="size-6 text-green-700"/>
       </x-page-section-header>
       <div class = "flex flex-col sm:flex-row gap-6">
@@ -90,8 +89,7 @@
         </div>
       </div>
 
-      <hr class="border-gray-300 m-5">
-      <x-page-section-header title="Financial Details">
+      <x-page-section-header title="Financial Details" :breakline="true">
         <x-heroicon-s-currency-dollar class="size-6 text-yellow-400"/>
       </x-page-section-header> 
       <div class = "flex flex-col sm:flex-row gap-6" x-data="{ isDepreciable: {{ old('is_depreciable', $asset->is_depreciable ?? false) ? 'true' : 'false' }} }">
@@ -133,9 +131,8 @@
           </div>
         </div>
       </div>
-
-      <hr class="border-gray-300 m-5">
-      <x-page-section-header title="Misc. Details">
+      
+      <x-page-section-header title="Misc. Details" :breakline="true">
         <x-heroicon-s-clipboard-document-list class="size-6 text-gray-600"/>
       </x-page-section-header>
       <div class = "flex flex-col sm:flex-row gap-6">

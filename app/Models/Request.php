@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DisposalConditions;
 use App\Enums\RequestStatus;
 use App\Enums\RequestTypes;
 use App\Enums\ServiceTypes;
@@ -25,13 +26,15 @@ class Request extends Model
         'request_code',
         'type',
         'status',
-        'service_type'
+        'service_type',
+        'condition'
     ];
 
     protected $casts = [
         'type' => RequestTypes::class,
         'service_type' => ServiceTypes::class,
         'status' => RequestStatus::class,
+        'condition' => DisposalConditions::class,
         'date_requested' => 'date'
     ];
 

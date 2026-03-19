@@ -16,10 +16,20 @@ return new class extends Migration
             $table->foreignId('workorder_id')->constrained('workorders')->onDelete('cascade');
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
             $table->string('service_type');
+            $table->string('maintenance_type')->nullable();
             $table->decimal('cost', 15, 2)->default(0);
-            $table->string("done_by")->nullable();
-            $table->boolean("is_vehicle")->default(false);
-            $table->json('details')->nullable();
+
+            //subcontractor
+            $table->string('subcontractor_name')->nullable();
+            $table->text('subcontractor_details')->nullable();
+
+            //in house
+            $table->foreignId('assigned_to')->nullable()->constrained('employees')->onDelete('set null');
+            $table->integer('estimated_ hours')->nullable();
+
+            $table->text('instructions')->nullable();
+            $table->text('accomplishment_report')->nullable();
+            
             $table->timestamps();
         });
     }

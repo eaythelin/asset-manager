@@ -41,7 +41,8 @@
 
         <template x-if="selectedRequestType === 'requisition'">
             {{-- x-init will run the code whenever this template appears --}}
-            <div x-init="
+            <div x-data="{ isNewAsset: {{ old('is_new_asset', $requestModel->is_new_asset ?? false) ? 'true' : 'false' }} }"
+                x-init="
                     $nextTick(() => {
                     const categorySelect = document.getElementById('category');
                     const subcategorySelect = document.getElementById('subcategory');
@@ -62,12 +63,23 @@
 
                 <div class = "flex flex-col sm:flex-row gap-6">
                     <div class = "flex flex-col flex-1 gap-4">
-                        <div class = "form-row">
+                        <div class="form-row">
+                            <x-page-label for="is_new_asset">Is New Asset
+                                <span class="text-xs text-gray-500 align-super tooltip tooltip-info" data-tip="Toggle on to request a new asset, toggle off to request from an existing asset">?</span>
+                            </x-page-label>
+                            <input x-model="isNewAsset" type="checkbox" class="checkbox border-2 border-gray-400" name="is_new_asset" id="is_new_asset">
+                        </div>
+
+                        <div x-show="!isNewAsset">
+                            <x-request-asset-select :assets="$assets" :selected="$requestModel->asset_id"/>
+                        </div>
+
+                        <div class = "form-row" x-show="isNewAsset">
                             <x-page-label for="asset_name" :required="true">Asset Name</x-page-label>
                             <x-page-input name="asset_name" id="asset_name" value="{{ old('asset_name',$requestModel->asset_name) }}"/>
                         </div>
 
-                        <div class="form-row">
+                        <div class="form-row" x-show="isNewAsset">
                             <x-page-label for="category" :required="true">Category</x-page-label>
                             <x-page-select name="category" id="category">
                                 <option value="" disabled selected {{ old('category') ? '' : 'selected' }}>--Select Category--</option>
@@ -77,7 +89,7 @@
                             </x-page-select>
                         </div>
 
-                        <div class = "form-row">
+                        <div class = "form-row" x-show="isNewAsset">
                             <x-page-label for="subcategory">Subcategory</x-page-label>
                             <x-page-select name="subcategory" id="subcategory" data-current-subcategory="{{ $requestModel->sub_category_id ?? '' }}" disabled>
                                 <option value="" disabled>--Select Subcategory--</option>
@@ -86,6 +98,7 @@
                     </div>
 
                     <div class = "flex flex-col flex-1 gap-4">
+                        <x-request-disposal-input :requestModel="$requestModel"/>
                         <div class="form-row">
                             <x-page-label for="description">Description</x-page-label>
                             <x-page-textarea name="description" id="description">{{ old('description', $requestModel?->description) }}</x-page-textarea>
@@ -121,6 +134,8 @@
                     </div>
 
                     <div class = "flex flex-col flex-1 gap-4">
+                        <x-request-disposal-input :requestModel="$requestModel"/>
+                        
                         <div class="form-row">
                             <x-page-label for="description">Description</x-page-label>
                             <x-page-textarea name="description" id="description">{{ old('description', $requestModel?->description) }}</x-page-textarea>
@@ -155,6 +170,7 @@
                     </div>
 
                     <div class = "flex flex-col flex-1 gap-4">
+                        <x-request-disposal-input :requestModel="$requestModel"/>
                         <div class="form-row">
                             <x-page-label for="description">Description</x-page-label>
                             <x-page-textarea name="description" id="description">{{ old('description', $requestModel?->description) }}</x-page-textarea>
@@ -173,19 +189,38 @@
                 @if($requestModel->files->count() > 0)
                     <p class="text-sm font-medium text-gray-600 mb-2 ml-3">Existing Attachments</p>
                     @foreach($requestModel->files as $file)
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg mb-3 bg-gray-50 px-10 mx-10">
-                            <div class="flex items-center gap-2">
-                                <x-heroicon-s-paper-clip class="size-4 text-gray-500"/>
-                                <span class="text-sm text-gray-700">{{ $file->original_name }}</span>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 border border-gray-200 rounded-xl mb-3 bg-white hover:bg-gray-50 transition-all shadow-sm gap-3 sm:gap-0 mx-3">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <div class="p-2 bg-gray-100 rounded-lg shrink-0">
+                                    <x-heroicon-s-paper-clip class="size-5 text-gray-500"/>
+                                </div>
+                                <div class="flex flex-col truncate">
+                                    <span class="text-sm font-medium text-gray-900 truncate">
+                                        {{ $file->original_name }}
+                                    </span>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                        {{ pathinfo($file->original_name, PATHINFO_EXTENSION) }}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                @if(in_array(pathinfo($file->original_name, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'pdf']))
-                                    <a href="{{ route('requests.attachments', $file->id) }}" target="_blank" class="text-sm text-blue-600 hover:underline">View</a>
-                                @endif
-                                <a href="{{ route('requests.attachments', $file->id) }}" download="{{ $file->original_name }}" class="text-sm text-green-600 hover:underline">Download</a>
-                                <label class="flex items-center gap-1 text-sm text-red-500 cursor-pointer">
-                                    <input type="checkbox" name="delete_files[]" value="{{ $file->id }}" class="accent-red-500">
-                                    Delete
+                            <div class="flex items-center justify-between sm:justify-end gap-2 border-t sm:border-t-0 pt-2 sm:pt-0">
+                                <div class="flex items-center gap-1">
+                                    @if(in_array(pathinfo($file->original_name, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'pdf']))
+                                        <a href="{{ route('requests.attachments', $file->id) }}" target="_blank" 
+                                        class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg">
+                                            <x-heroicon-s-eye class="size-5"/>
+                                        </a>
+                                    @endif
+                                    <a href="{{ route('requests.attachments', $file->id) }}" download="{{ $file->original_name }}" 
+                                    class="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg">
+                                        <x-heroicon-s-arrow-down-tray class="size-5"/>
+                                    </a>
+                                </div>
+                                <div class="hidden sm:block h-6 w-px bg-gray-200 mx-1"></div>
+                                <label class="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 sm:bg-transparent hover:bg-red-50 cursor-pointer transition-all border border-gray-100 sm:border-transparent hover:border-red-200">
+                                    <input type="checkbox" name="delete_files[]" value="{{ $file->id }}" 
+                                        class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                    <span class="text-xs font-semibold text-gray-500 group-hover:text-red-600">Delete</span>
                                 </label>
                             </div>
                         </div>

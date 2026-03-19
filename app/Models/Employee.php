@@ -40,6 +40,10 @@ class Employee extends Model
         return $this->hasMany(Asset::class, 'custodian_id');
     }
 
+    public function serviceWorkorder(){
+        return $this->hasMany(ServiceWorkorder::class,'assigned_to');
+    }
+
     //query!
     public function scopeSearch($query, $search){
         if (!$search) return $query;

@@ -30,10 +30,7 @@
             <x-page-label for="serial_name">Serial Name</x-page-label>
             <x-page-input name="serial_name" id="serial_name" value="{{ old('serial_name') }}"/>
           </div>
-        </div>
 
-        {{-- Right Column --}}
-        <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="category" :required="true">Category</x-page-label>
             <x-page-select name="category" id="category">
@@ -43,12 +40,20 @@
               @endforeach
             </x-page-select>
           </div>
+        </div>
 
+        {{-- Right Column --}}
+        <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="subcategory">Subcategory</x-page-label>
             <x-page-select name="subcategory" id="subcategory" disabled>
               <option value="" disabled selected>--Select Subcategory--</option>
             </x-page-select>
+          </div>
+
+          <div class="form-row">
+            <x-page-label for="quantity" :required="true">Quantity</x-page-label>
+            <x-page-input name="quantity" id="quantity" type="number" value="{{ old('quantity', 1) }}"/>
           </div>
 
           <div class = "form-row">

@@ -14,4 +14,8 @@ class WorkordersController extends Controller
         $workorders = $query->paginate(5);
         return view('pages.workorders.index-workorders', compact('workorders', 'columns'));
     }
+
+    public function getEditWorkorder($id){
+        return view('pages.workorders.edit-workorder');
+    }
 }

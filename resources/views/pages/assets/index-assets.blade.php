@@ -31,12 +31,13 @@
       </div>
       @endcan
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[0,6,7]">
+    <x-tables :columnNames="$columns" :centeredColumns="[0,7,8]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($assets as $asset)
             <tr>
               <th class = "p-3 text-center">{{ $asset->asset_code }}</th>
               <x-td>{{ $asset->name}}</x-td>
+              <x-td>{{ $asset->quantity}}</x-td>
               <x-td>{{ $asset->serial_name}}</x-td>
               <x-td>{{ $asset->department->name}}</x-td>
               <x-td>{{ $asset->custodian?->first_name}} {{ $asset->custodian?->last_name}}</x-td>

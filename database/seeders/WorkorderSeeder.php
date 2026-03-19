@@ -25,7 +25,8 @@ class WorkorderSeeder extends Seeder
             'requested_by' => 2,
             'asset_id' => 3,
             'type' => RequestTypes::DISPOSAL,
-            'status' => RequestStatus::APPROVED
+            'status' => RequestStatus::APPROVED,
+            "quantity" => 7,
         ]);
 
         $workorder = Workorder::create([
@@ -38,7 +39,8 @@ class WorkorderSeeder extends Seeder
 
         DisposalWorkorder::create([
             "workorder_id" => $workorder->id,
-            "asset_id" => $theRequest->asset_id
+            "asset_id" => $theRequest->asset_id,
+            "quantity" => $theRequest->quantity
         ]);
     }
 }

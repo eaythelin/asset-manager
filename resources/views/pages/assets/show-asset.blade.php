@@ -80,18 +80,10 @@
             <p class="text-lg font-semibold">General Details</p>
           </div>
           <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Category</p>
-              <p class="font-semibold text-gray-700">{{ $asset->category->name }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Subcategory</p>
-              <p class="font-semibold text-gray-700">{{ $asset->subCategory?->name ?? 'N/A'}}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Description</p>
-              <p class="font-semibold text-gray-700">{{ $asset->description ?? 'N/A' }}</p>
-            </div>
+            <x-detail-item label="Category" :value="$asset->category->name"/>
+            <x-detail-item label="Subcategory" :value="$asset->subCategory?->name"/>
+            <x-detail-item label="Quantity" :value="$asset->quantity"/>
+            <x-detail-item label="Description" :value="$asset->description"/>
           </div>
         </div>
         
@@ -101,14 +93,8 @@
             <p class="text-lg font-semibold">Assignment Details</p>
           </div>
           <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Department</p>
-              <p class="font-semibold text-gray-700">{{ $asset->department->name }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Custodian</p>
-              <p class="font-semibold text-gray-700">{{ $asset->custodian->full_name ?? 'No Custodian Assigned'}}</p>
-            </div>
+            <x-detail-item label="Department" :value="$asset->department->name"/>
+            <x-detail-item label="Custodian" :value="$asset->custodian->full_name"/>
           </div>
         </div>
       </div>
@@ -121,18 +107,9 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Acquisition Date</p>
-              <p class="font-semibold text-gray-700">{{ $asset->acquisition_date?->format('F j, Y') ?? 'N/A'}}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Useful Life in Years</p>
-              <p class="font-semibold text-gray-700">{{ $asset->useful_life_in_years ?? 'N/A'}}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">End of Life Date</p>
-              <p class="font-semibold text-gray-700">{{ $asset->end_of_life_date?->format('F j, Y') ?? 'N/A'}}</p>
-            </div>
+            <x-detail-item label="Acquisition Date" :value="$asset->acquisition_date?->format('F j, Y')"/>
+            <x-detail-item label="Useful Life in Years" :value="$asset->useful_life_in_years "/>
+            <x-detail-item label="End of Life Date" :value="$asset->end_of_life_date?->format('F j, Y')"/>
           </div>
           <div class="space-y-3">
             <div>
@@ -160,10 +137,7 @@
           <p class="text-lg font-semibold">Misc. Details</p>
         </div>
         <div class="space-y-3">
-          <div>
-            <p class="text-sm text-gray-500">Supplier</p>
-            <p class="font-semibold text-gray-700">{{ $asset->supplier->name ?? 'N/A'}}</p>
-          </div>
+          <x-detail-item label="Supplier" :value="$asset->supplier->name"/>
         </div>
       </div>
     </div>

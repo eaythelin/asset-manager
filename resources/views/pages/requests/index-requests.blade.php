@@ -33,14 +33,14 @@
                 <x-td>{{ $request->requestedBy->name }}</x-td>
               @endif
 
-              @if($request->type->value === "requisition")
+              @if($request->is_new_asset)
                 <x-td>{{ $request->asset_name }}</x-td>
               @else
                 <x-td>{{ $request->asset?->name }}</x-td>
               @endif
 
               <x-td>{{ $request->type->label() }}</x-td>
-              @if($request->type->value === "requisition")
+              @if($request->is_new_asset)
                 <x-td>{{ $request->category->name }}</x-td>
               @else
                 <x-td>{{ $request->asset->category?->name }}</x-td>

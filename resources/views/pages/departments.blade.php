@@ -4,13 +4,10 @@
   <x-heroicon-s-briefcase class="text-blue-800 size-8 md:size-10"/>
 </x-pages-header>
 
-{{-- show success toast! --}}
 <x-toast-success />
-{{-- show session errors! --}}
 <x-session-error />
 
 <div class = "md:m-4">
-  {{-- show the errors! --}}
   <x-validation-error />
   
   <div class = "bg-white p-4 rounded-2xl shadow-xl">

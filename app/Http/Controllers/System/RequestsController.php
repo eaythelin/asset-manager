@@ -31,6 +31,11 @@ class RequestsController extends Controller
 
         $query = RequestModel::with('category', 'subCategory', 'requestedBy', 'approvedBy', 'asset');
 
+        if($request->has('search')){
+            $search = $request->input('search');
+            $query->search($search);
+        }
+
         if(auth()->user()->getRoleNames()->contains('Department Head')){
             $userID = auth()->user()->id;
             $query->where('requested_by', $userID);
@@ -89,11 +94,21 @@ class RequestsController extends Controller
     public function storeRequest(RequestValidation $request){
         $validated = $request->validated();
 
+        $validated['is_new_asset'] = $request->has('is_new_asset');
+        
+        if($validated['type'] == RequestTypes::DISPOSAL->value || $validated['type'] == RequestTypes::SERVICE->value){
+            $asset = Asset::findOrFail($validated['asset_id']);
+            if($validated["quantity"] > $asset->quantity){
+                return redirect()->back()->with("error", "Request quantity exceeds available quantity!");
+            }
+        }
+
         try{
             DB::transaction(function () use ($request, $validated){
                 $requestModel = RequestModel::create([
                     'request_code' => $validated['request_code'],
                     'type' => $validated['type'],
+                    'quantity'=> $validated['quantity'],
                     'description' => $validated['description'],
                     'requested_by' => auth()->id(),
                     'date_requested' => now(),
@@ -102,6 +117,7 @@ class RequestsController extends Controller
                     'asset_name' => $validated['asset_name'] ?? null,
                     'category_id' => $validated['category'] ?? null,
                     'sub_category_id' => $validated['subcategory'] ?? null,
+                    'is_new_asset' => $validated['is_new_asset'],
                     
                     // Service/Disposal fields (nullable)
                     'asset_id' => $validated['asset_id'] ?? null,
@@ -166,7 +182,8 @@ class RequestsController extends Controller
 
                     RequisitionWorkorder::create([
                         "workorder_id" => $workorder->id,
-                        "asset_name" => $requestModel->asset_name,
+                        "asset_name" => $requestModel->is_new_asset ? $requestModel->asset_name : null,
+                        "asset_id" => $requestModel->is_new_asset ? null : $requestModel->asset_id,
                     ]);
                 }elseif($requestModel->type === RequestTypes::SERVICE){
                     $count = Workorder::withTrashed()->where('type', WorkorderType::SERVICE)->count();
@@ -199,7 +216,8 @@ class RequestsController extends Controller
 
                     DisposalWorkorder::create([
                         "workorder_id" => $workorder->id,
-                        "asset_id" => $requestModel->asset_id 
+                        "asset_id" => $requestModel->asset_id,
+                        "quantity" => $requestModel->quantity
                     ]);
                 }
             });
@@ -207,7 +225,7 @@ class RequestsController extends Controller
             return redirect()->route('requests.index')->with('success', 'Request Successfully Approved!');
             
         } catch (\Exception $e) {
-            return redirect()->route("requests.index")->with('error', 'Something went wrong!');
+            return redirect()->route("requests.index")->with('error', $e->getMessage());
         }
     }
 
@@ -234,6 +252,15 @@ class RequestsController extends Controller
 
     public function updateRequest(RequestValidation $request, $id){
         $validated = $request->validated();
+        $validated['is_new_asset'] = $request->has('is_new_asset');
+        
+        if($validated['type'] == RequestTypes::DISPOSAL->value || $validated['type'] == RequestTypes::SERVICE->value){
+            $asset = Asset::findOrFail($validated['asset_id']);
+            if($validated["quantity"] > $asset->quantity){
+                return redirect()->back()->with("error", "Request quantity exceeds available quantity!");
+            }
+        }
+
         $requestModel = RequestModel::findOrFail($id);
         if($request->hasFile('attachments')){
             $existingCount = $requestModel->files()->count();
@@ -251,7 +278,9 @@ class RequestsController extends Controller
                 $requestModel->update([
                     'request_code' => $validated['request_code'],
                     'type' => $validated['type'],
+                    'quantity'=> $validated['quantity'],
                     'description' => $validated['description'],
+                    'is_new_asset' => $validated['is_new_asset'],
                     
                     // Requisition fields (nullable)
                     'asset_name' => $validated['asset_name'] ?? null,
@@ -261,7 +290,7 @@ class RequestsController extends Controller
                     // Service/Disposal fields (nullable)
                     'asset_id' => $validated['asset_id'] ?? null,
                     'service_type' => $validated['service_type'] ?? null,
-                    'condition' => $validated['condition'] ?? null
+                    'condition' => $validated['condition'] ?? null,
                 ]);
 
                 if($request->has('delete_files')){

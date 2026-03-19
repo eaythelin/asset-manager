@@ -44,7 +44,7 @@ class AssetsController extends Controller
         $desc = $role === "System Supervisor" ? "View and manage assets" : "View assets information";
 
         $assets = $query->paginate(5);
-        $columns = ["Asset Code", "Asset Name", "Serial Name","Department", "Custodian", "Category", "Status", "Actions"];
+        $columns = ["Asset Code", "Asset Name","Quantity","Serial Name","Department", "Custodian", "Category", "Status", "Actions"];
 
         return view('pages.assets.index-assets', ['desc' => $desc,
                                                               'assets' => $assets,
@@ -114,6 +114,7 @@ class AssetsController extends Controller
             "name" => $validated['asset_name'],
             "serial_name" => $validated['serial_name'],
             "category_id" => $validated['category'],
+            "quantity" => $validated["quantity"],
             "sub_category_id" => $validated['subcategory'] ?? null,
             "description" => $validated['description'],
             "image_path" => $imagePath,
@@ -155,6 +156,7 @@ class AssetsController extends Controller
             "name" => $validated['asset_name'],
             "serial_name" => $validated['serial_name'],
             "category_id" => $validated['category'],
+            "quantity" => $validated["quantity"],
             "sub_category_id" => $validated['subcategory'] ?? null,
             "description" => $validated['description'],
             "image_path" => $validated['image_path'] ?? $asset->image_path,
@@ -176,25 +178,28 @@ class AssetsController extends Controller
     }
 
     public function disposeAsset(Request $request,$id){
+        $asset = Asset::findOrFail($id);
         $validated = $request->validate([
             //checks if the enum value exists
             "disposal_method" => ["required", new Enum(DisposalMethods::class)],
+            "quantity"=> ["required", "integer","min:1"],
             "reason" => ["nullable", "string", "max:255"]
         ]);
 
+        if($asset->status === AssetStatus::DISPOSED){
+            return redirect()->route("assets.index")->with('error', 'This asset is already disposed!');
+        }
+
+        if($validated["quantity"] > $asset->quantity){
+            return redirect()->route("assets.index")->with("error", "Disposal quantity exceeds available quantity!");
+        }
+
         //this make is so the DB updates in one go and if anything fails then everything fails!!
         try{
-            DB::transaction(function() use($validated, $id){
-                $asset = Asset::findOrFail($id);
-
+            DB::transaction(function() use($validated, $asset){
                 $count = Workorder::withTrashed()->where('type', WorkorderType::DISPOSAL)->count();
                 $nextCode = 'WO-DIS-'.($count + 1);
 
-                if($asset->status === AssetStatus::DISPOSED){
-                    return redirect()->route("assets.index")->with('error', 'This asset is already disposed!');
-                }
-
-                //first create workorder!
                 $workorder = Workorder::create([
                     "workorder_code" => $nextCode,
                     "completed_by" => auth()->user()->id,
@@ -205,18 +210,24 @@ class AssetsController extends Controller
                     "status" => WorkorderStatus::COMPLETED
                 ]);
 
-                //create disposal workorder
                 DisposalWorkorder::create([
                     "workorder_id" => $workorder->id,
                     "asset_id" => $asset->id,
                     "disposal_method" => $validated['disposal_method'],
                     "disposal_date" => now(),
+                    "quantity"=> $validated["quantity"],
                     "reason" => $validated['reason'] ?? null
                 ]);
 
-                $asset->status = AssetStatus::DISPOSED;
-                $asset->save();
-                $asset->delete();
+                $remaining = $asset->quantity - $validated['quantity'];
+                if($remaining <= 0){
+                    $asset->status = AssetStatus::DISPOSED;
+                    $asset->save();
+                    $asset->delete();
+                }else{
+                    $asset->quantity = $remaining;
+                    $asset->save();
+                }
             });
         }catch(\Exception $e){
             return redirect()->route("assets.index")->with('error', 'Something went wrong!');

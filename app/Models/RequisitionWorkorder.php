@@ -14,7 +14,8 @@ class RequisitionWorkorder extends Model
         'estimated_cost',
         'supplier_id',
         'description',
-        'asset_name'
+        'asset_name',
+        'asset_id'
     ];
 
     public function workorder(){
@@ -23,5 +24,9 @@ class RequisitionWorkorder extends Model
 
     public function supplier(){
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function asset(){
+        return $this->belongsTo(Asset::class);
     }
 }

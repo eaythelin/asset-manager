@@ -24,6 +24,7 @@ class AssetSeeder extends Seeder
             "sub_category_id" => 2,
             "supplier_id" => 1,
             "custodian_id" => 1,
+            "quantity" => 1,
         ]);
 
         Asset::create([
@@ -37,6 +38,7 @@ class AssetSeeder extends Seeder
             "sub_category_id" => 1,
             "supplier_id" => 1,
             "custodian_id" => 2,
+            "quantity" => 5,
         ]);
 
         Asset::create([
@@ -49,6 +51,7 @@ class AssetSeeder extends Seeder
             "sub_category_id" => 4,
             "supplier_id" => 1,
             "custodian_id" => 2,
+            "quantity" => 10,
         ]);
 
         Asset::create([
@@ -61,6 +64,7 @@ class AssetSeeder extends Seeder
             "sub_category_id" => 4,
             "supplier_id" => 1,
             "custodian_id" => 2,
+            "quantity" => 30,
         ]);
     }
 }

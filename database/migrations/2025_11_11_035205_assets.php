@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('is_depreciable')->default(false);
             $table->string('image_path')->nullable();
+            $table->integer('quantity')->default(1);
             //foreign keys
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');

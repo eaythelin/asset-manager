@@ -27,7 +27,9 @@ class Request extends Model
         'type',
         'status',
         'service_type',
-        'condition'
+        'condition',
+        'quantity',
+        'is_new_asset'
     ];
 
     protected $casts = [
@@ -64,5 +66,28 @@ class Request extends Model
 
     public function files(){
         return $this->hasMany(RequestFile::class);
+    }
+
+    public function scopeSearch($query, $search){
+        if (!$search) return $query;
+
+        return $query->where(function($q) use ($search) {
+            $q->where('request_code', 'LIKE', "%{$search}%")
+            ->orWhere('type', 'LIKE', "%{$search}%")
+            ->orWhereRaw("DATE_FORMAT(date_requested, '%M %d, %Y') LIKE ?", ["%{$search}%"])
+            ->orWhere(function($query) use ($search){
+                $query->whereNotNull('asset_name')
+                        ->where('asset_name', 'LIKE', "%{$search}%")
+                        ->orWhereHas('asset', function($q) use($search){
+                            $q->where('name', 'LIKE', "%{$search}%");
+                        });
+            })
+            ->orWhereHas('category', function($q2) use ($search) {
+                $q2->where('name', 'LIKE', "%{$search}%");
+            })
+            ->orWhereHas('requestedBy', function($q2) use ($search) {
+                $q2->where('name', 'LIKE', "%{$search}%");
+            }); 
+        });
     }
 }

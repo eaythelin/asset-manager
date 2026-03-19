@@ -3,6 +3,7 @@
 <x-pages-header title="Subcategories" description="View and manage asset subcategories">
   <x-heroicon-s-folder-open class="text-blue-800 size-8 md:size-10"/>
 </x-pages-header>
+
 <x-toast-success />
 <x-session-error />
 

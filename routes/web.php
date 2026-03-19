@@ -69,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('check.permission:create requests')
         ->name('requests.subcategories.get');
       Route::get('/attachments/{id}', [RequestsController::class,'serveAttachments'])
-        ->middleware('check.permission:create requests')
+        ->middleware('check.permission:view requests')
         ->name('requests.attachments');
 
       Route::put('/{id}/approve', [RequestsController::class, 'approveRequest'])
@@ -83,6 +83,10 @@ Route::middleware(['auth'])->group(function () {
     //Workorders
     Route::group(["prefix" => "/workorders", "middleware" => "check.permission:view workorders"], function(){
       Route::get('/', [WorkordersController::class, 'getWorkOrders'])->name('workorders.index');
+
+      Route::group(["prefix" => "/edit", "middleware" => "check.permission:manage workorders"], function(){
+        Route::get("/{id}", [WorkordersController::class, 'getEditWorkorder'])->name('workorders.edit');
+      });
     });
 
     //employees

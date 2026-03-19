@@ -7,6 +7,7 @@
   </div>
 
   <x-validation-error />
+  <x-session-error />
 
   <form method="POST" action="{{ route('requests.store') }}" enctype="multipart/form-data">
     @csrf
@@ -38,19 +39,31 @@
       </div>
 
       <template x-if="selectedRequestType === 'requisition'">
-        <div>
+        <div x-data="{ isNewAsset: {{ old('is_new_asset', $requestModel->is_new_asset ?? false) ? 'true' : 'false' }} }">
           <x-page-section-header title="Requisition Details" :breakline="true">
             <x-heroicon-s-archive-box  class="size-6 text-green-700"/>
           </x-page-section-header>
 
           <div class = "flex flex-col sm:flex-row gap-6">
             <div class = "flex flex-col flex-1 gap-4">
-              <div class = "form-row">
+
+              <div class="form-row">
+                <x-page-label for="is_new_asset">Is New Asset
+                  <span class="text-xs text-gray-500 align-super tooltip tooltip-info" data-tip="Toggle on to request a new asset, toggle off to request from an existing asset">?</span>
+                </x-page-label>
+                <input x-model="isNewAsset" type="checkbox" class="checkbox border-2 border-gray-400" name="is_new_asset" id="is_new_asset">
+              </div>
+
+              <div x-show="!isNewAsset">
+                <x-request-asset-select :assets="$assets"/>
+              </div>
+          
+              <div class = "form-row" x-show="isNewAsset">
                 <x-page-label for="asset_name" :required="true">Asset Name</x-page-label>
                 <x-page-input name="asset_name" id="asset_name" value="{{ old('asset_name') }}"/>
               </div>
 
-              <div class = "form-row">
+              <div class = "form-row" x-show="isNewAsset">
                 <x-page-label for="category" :required="true">Category</x-page-label>
                 <x-page-select name="category" id="category">
                   <option value="" disabled selected {{ old('category') ? '' : 'selected' }}>--Select Category--</option>
@@ -60,7 +73,7 @@
                 </x-page-select>
               </div>
 
-              <div class = "form-row">
+              <div class = "form-row" x-show="isNewAsset">
                 <x-page-label for="subcategory">Subcategory</x-page-label>
                 <x-page-select name="subcategory" id="subcategory" disabled>
                   <option value="" disabled selected>--Select Subcategory--</option>
@@ -70,6 +83,8 @@
 
             {{-- Right Column!! --}}
             <div class = "flex flex-col flex-1 gap-4">
+              <x-request-disposal-input />
+              
               <div class="form-row">
                 <x-page-label for="description">Description</x-page-label>
                 <x-page-textarea name="description" id="description">{{ old('description') }}</x-page-textarea>
@@ -100,6 +115,7 @@
             </div>
 
             <div class = "flex flex-col flex-1 gap-4">
+              <x-request-disposal-input />
               <div class="form-row">
                 <x-page-label for="description">Description</x-page-label>
                 <x-page-textarea name="description" id="description">{{ old('description') }}</x-page-textarea>
@@ -131,6 +147,7 @@
             </div>
 
             <div class = "flex flex-col flex-1 gap-4">
+              <x-request-disposal-input />
               <div class="form-row">
                 <x-page-label for="description">Description</x-page-label>
                 <x-page-textarea name="description" id="description">{{ old('description') }}</x-page-textarea>

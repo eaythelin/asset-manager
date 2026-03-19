@@ -63,12 +63,14 @@
                   </x-buttons>
                   @endif
                   @if(!in_array($workorder->status->value, ['completed', 'cancelled']))
-                    <x-buttons
-                      class="editBtn tooltip tooltip-top"
-                      data-tip="Edit"
-                      aria-label="Edit Workorder">
-                      <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
-                    </x-buttons>
+                    <a class="w-full sm:w-auto flex justify-center" href="{{ route('workorders.edit', $workorder->id) }}">
+                      <x-buttons
+                        class="editBtn tooltip tooltip-top"
+                        data-tip="Edit"
+                        aria-label="Edit Workorder">
+                        <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
+                      </x-buttons>
+                    </a>
                     <x-buttons
                       class="cancelBtn bg-red-700 tooltip tooltip-top"
                       data-tip="Cancel"

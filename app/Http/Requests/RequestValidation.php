@@ -32,6 +32,7 @@ class RequestValidation extends FormRequest
                 ? ["required", Rule::unique('requests','request_code')->ignore($id)]
                 : ["required", "unique:requests"],
             "type" => ["required", new Enum(RequestTypes::class)],
+            "quantity"=> ["required", "integer","min:1"],
             "description" => ["nullable", "string", "max:500"],
             //filez
             "attachments" => ["nullable", "array", "max:5"],
@@ -40,9 +41,12 @@ class RequestValidation extends FormRequest
 
         return match($this->type){
             RequestTypes::REQUISITION->value => array_merge($baseRules, [
-                "asset_name" => ["required", "max:100", "string"],
-                "category" => ["required", "exists:categories,id"],
+                "is_new_asset" => ["nullable"],
+                "asset_name" => ["required_if:is_new_asset,on", "nullable", "max:100", "string"],
+                "asset_id" => ["required_unless:is_new_asset,on", "nullable","exists:assets,id"],
+                "category" => ["required_if:is_new_asset,on", "nullable","exists:categories,id"],
                 "subcategory" => ["nullable", "exists:sub_categories,id"],
+
             ]),
             RequestTypes::SERVICE->value => array_merge($baseRules,[
                 "asset_id" => ["required", "exists:assets,id"],

@@ -24,7 +24,8 @@ class RequestSeeder extends Seeder
             'asset_id' => 1,
             'type' => RequestTypes::SERVICE,
             'service_type' => ServiceTypes::REPAIR,
-            'status' => RequestStatus::PENDING
+            'status' => RequestStatus::PENDING,
+            "quantity" => 1,
         ]);
 
         Request::create([
@@ -36,7 +37,8 @@ class RequestSeeder extends Seeder
             'category_id' => 1,
             'sub_category_id' => 3,
             'type' => RequestTypes::REQUISITION,
-            'status' => RequestStatus::PENDING
+            'status' => RequestStatus::PENDING,
+            "is_new_asset" => true
         ]);
 
         Request::create([
@@ -46,7 +48,8 @@ class RequestSeeder extends Seeder
             'requested_by' => 2,
             'asset_id' => 2,
             'type' => RequestTypes::DISPOSAL,
-            'status' => RequestStatus::PENDING
+            'status' => RequestStatus::PENDING,
+            "quantity" => 3
         ]);
     }
 }

@@ -15,7 +15,8 @@ class DisposalWorkorder extends Model
         "asset_id",
         "disposal_method",
         "disposal_date",
-        "reason"
+        "reason",
+        'quantity'
     ];
 
     protected $casts = [

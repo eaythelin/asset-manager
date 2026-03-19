@@ -1,13 +1,11 @@
 @extends('layouts.pageslayout')
 @section('content')
-<!-- Header -->
+
 <x-pages-header title="Dashboard" description="Monitor fixed assets and system activity">
   <x-heroicon-s-home class="text-blue-800 size-8 md:size-10" />
 </x-pages-header>
 
 <x-toast-success />
-
-<!--show unauthorized error-->
 <x-session-error />
 
 <!--Cards-->

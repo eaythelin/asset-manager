@@ -18,6 +18,8 @@ return new class extends Migration
             $table->dateTime('date_requested');
             $table->dateTime('date_approved')->nullable();
             $table->string('asset_name')->nullable();
+            $table->integer('quantity')->default(1);
+            $table->boolean('is_new_asset')->default(false);
             //relations
             $table->foreignId('requested_by')->constrained('users', 'id')->onDelete('restrict');
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('restrict');

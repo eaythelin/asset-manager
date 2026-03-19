@@ -35,7 +35,8 @@ class Asset extends Model
         'useful_life_in_years',
         'salvage_value',
         'end_of_life_date',
-        'status'
+        'status',
+        'quantity'
     ];
 
     public function custodian(){
@@ -68,6 +69,10 @@ class Asset extends Model
 
     public function serviceWorkorders(){
         return $this->hasMany(ServiceWorkorder::class);
+    }
+
+    public function requisitionWorkorder(){
+        return $this->belongsTo(RequisitionWorkorder::class);
     }
 
     public function getBookValueAttribute(){

@@ -9,6 +9,8 @@
           <option value="{{ $method->value }}">{{ $method->label() }}</option>
         @endforeach
       </select>
+      <x-label for="quantity" :required="true">Quantity</x-label>
+      <x-modal-input-box id="quantity" name="quantity" value=1 type="number"/>
       <x-label for="reason">Reason</x-label>
       <x-modal-text-area-box name="reason" id="reason"/>
       <x-buttons class="mt-2" type="submit">Submit</x-buttons>

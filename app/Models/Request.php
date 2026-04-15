@@ -29,7 +29,8 @@ class Request extends Model
         'service_type',
         'condition',
         'quantity',
-        'is_new_asset'
+        'is_new_asset',
+        'department_id'
     ];
 
     protected $casts = [
@@ -57,7 +58,7 @@ class Request extends Model
     }
 
     public function asset(){
-        return $this->belongsTo(Asset::class);
+        return $this->belongsTo(Asset::class)->withTrashed();
     }
 
     public function workorder(){
@@ -66,6 +67,10 @@ class Request extends Model
 
     public function files(){
         return $this->hasMany(RequestFile::class);
+    }
+
+    public function department(){
+        return $this->belongsTo(Department::class);
     }
 
     public function scopeSearch($query, $search){

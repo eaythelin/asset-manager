@@ -24,6 +24,10 @@ class Department extends Model
         return $this->hasMany(Asset::class);
     }
 
+    public function request(){
+        return $this->hasMany(Department::class);
+    }
+
     public function scopeSearch($query, $search){
         if (!$search) return $query;
 

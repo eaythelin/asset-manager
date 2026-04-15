@@ -5,6 +5,7 @@ use App\Http\Controllers\System\AssetsController;
 use App\Http\Controllers\System\CategoriesController;
 use App\Http\Controllers\System\DepartmentsController;
 use App\Http\Controllers\System\EmployeesController;
+use App\Http\Controllers\System\ReportsController;
 use App\Http\Controllers\System\RequestsController;
 use App\Http\Controllers\System\SubCategoriesController;
 use App\Http\Controllers\System\SuppliersController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\System\UsersController;
 use App\Http\Controllers\System\DashboardController;
 use App\Http\Controllers\System\WorkordersController;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\Routing\RequestContext;
 
 Route::middleware(['auth'])->group(function () {
 
@@ -83,10 +83,24 @@ Route::middleware(['auth'])->group(function () {
     //Workorders
     Route::group(["prefix" => "/workorders", "middleware" => "check.permission:view workorders"], function(){
       Route::get('/', [WorkordersController::class, 'getWorkOrders'])->name('workorders.index');
+      Route::get('/view/{id}', [WorkordersController::class, 'getWOPage'])->name('workorders.view');
 
       Route::group(["prefix" => "/edit", "middleware" => "check.permission:manage workorders"], function(){
         Route::get("/{id}", [WorkordersController::class, 'getEditWorkorder'])->name('workorders.edit');
+        Route::put("/{id}/update", [WorkordersController::class,"updateWorkorder"])->name("workorders.update");
       });
+
+      Route::put("/start/{id}", [WorkordersController::class,"startWO"])
+        ->middleware("check.permission:manage workorders")
+        ->name("workorders.start");
+      
+      Route::put("/complete/{id}", [WorkordersController::class,"completeWO"])
+        ->middleware("check.permission:manage workorders")
+        ->name("workorders.complete");
+      
+      Route::put("/cancel/{id}", [WorkordersController::class,"cancelWO"])
+        ->middleware("check.permission:manage workorders")
+        ->name("workorders.cancel");
     });
 
     //employees
@@ -97,6 +111,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/', [EmployeesController::class, 'storeEmployees'])->name('employees.store');
         Route::put('/{id}', [EmployeesController::class, 'updateEmployee'])->name('employees.update');
         Route::delete('/{id}',[EmployeesController::class, 'deleteEmployee'])->name('employees.delete');
+      });
+    });
+
+    Route::group(["prefix" => "/reports", "middleware" => "check.permission:view reports"], function(){
+      Route::get('/', [ReportsController::class, "getReports"])->name('reports.index');
+
+      Route::middleware('check.permission:manage reports')->group(function(){
+        Route::post('/generate', [ReportsController::class, "generateReport"])->name('reports.generate');
+        Route::get('/download/{id}', [ReportsController::class, "downloadReport"])->name('report.download');
+        Route::delete('/delete/{id}', [ReportsController::class, "deleteReport"])->name('report.delete');
       });
     });
 

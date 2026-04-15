@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->onDelete('set null');
             $table->foreignId('handled_by')->nullable()->constrained('users', 'id')->onDelete('restrict');
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
             //enums
             $table->string('type');
             $table->string('service_type')->nullable(); //if its a service

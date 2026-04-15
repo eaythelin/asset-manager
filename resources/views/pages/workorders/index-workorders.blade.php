@@ -22,8 +22,8 @@
           @foreach($workorders as $workorder)
             <tr>
               <th class = "p-3 text-center">{{ $workorder->workorder_code }}</th>
-              <x-td class="text-center">{{ $workorder->request->request_code}}</x-td>
-              <x-td>{{ $workorder->type->label()}}</x-td>
+              <x-td class="text-center">{{ $workorder->request?->request_code}}</x-td>
+              <x-td>{{ $workorder->workorder_type->label()}}</x-td>
               <x-td class="text-center">
                 <span class="badge {{ $workorder->priority_level->badgeClass() }} text-white font-medium text-sm">
                   {{ $workorder->priority_level->label() }}
@@ -38,27 +38,29 @@
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
                 @can("manage workorders")
-                  @if(in_array($workorder->status->value, ['completed', 'cancelled']))
+                  <a class="w-full sm:w-auto flex justify-center" href="{{ route('workorders.view', $workorder->id) }}">
                     <x-buttons
                       class="viewBtn tooltip tooltip-top"
                       data-tip="View"
                       aria-label="View Workorder">
                       <x-heroicon-s-eye class="size-4 sm:size-5" />
                     </x-buttons>
-                  @endif
+                  </a>
                   @if($workorder->status->value === "pending")
-                    <x-buttons
+                    <x-buttons onclick="startWorkorder.showModal()"
                       class="startBtn bg-green-700 tooltip tooltip-top"
                       data-tip="Start"
-                      aria-label="Start Workorder">
+                      aria-label="Start Workorder"
+                      data-route="{{ route('workorders.start', $workorder->id ) }}">
                        <x-heroicon-s-play class="size-4 sm:size-5"/>
                     </x-buttons>
                   @endif
                   @if(in_array($workorder->status->value, ['in_progress', 'overdue']))
-                    <x-buttons
+                    <x-buttons onclick="completeWorkorder.showModal()"
                       class="completeBtn bg-green-700 tooltip tooltip-top"
                       data-tip="Complete"
-                      aria-label="Complete Workorder">
+                      aria-label="Complete Workorder"
+                      data-route="{{ route('workorders.complete', $workorder->id ) }}">
                     <x-heroicon-s-check class="size-4 sm:size-5"/>
                   </x-buttons>
                   @endif
@@ -71,10 +73,11 @@
                         <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
                       </x-buttons>
                     </a>
-                    <x-buttons
+                    <x-buttons onclick="cancelWorkorder.showModal()"
                       class="cancelBtn bg-red-700 tooltip tooltip-top"
                       data-tip="Cancel"
-                      aria-label="Cancel Workorder">
+                      aria-label="Cancel Workorder"
+                      data-route="{{ route('workorders.cancel', $workorder->id ) }}">
                       <x-heroicon-s-x-mark class="size-4 sm:size-5"/>
                     </x-buttons>
                   @endif
@@ -90,4 +93,14 @@
   </div>
 </div>
 
+@include('modals.workorder-modals.start-workrorder-modal')
+@include('modals.workorder-modals.complete-workorder-modal')
+@include('modals.workorder-modals.cancel-workorder-modal')
+
+@endsection
+
+@section('scripts')
+  @vite('resources/js/workorder/startWorkorder.js')
+  @vite('resources/js/workorder/completeWorkorder.js')
+  @vite('resources/js/workorder/cancelWorkorder.js')
 @endsection

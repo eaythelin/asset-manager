@@ -20,7 +20,8 @@ class DisposalWorkorder extends Model
     ];
 
     protected $casts = [
-        "disposal_method" => DisposalMethods::class
+        "disposal_method" => DisposalMethods::class,
+        "disposal_date" => "date"
     ];
 
     public function workorder(){
@@ -28,6 +29,6 @@ class DisposalWorkorder extends Model
     }
 
     public function asset(){
-        return $this->belongsTo(Asset::class);
+        return $this->belongsTo(Asset::class)->withTrashed();
     }
 }

@@ -125,26 +125,17 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="acquisition_date" required="isDepreciable">Acquisition Date</x-page-label>
-            <input 
-              class="input max-w-xs border-2 border-gray-400" 
-              type="date" name="acquisition_date" 
-              id="acquisition_date" 
-              value="{{ old('acquisition_date', $asset->acquisition_date?->format('Y-m-d')) }}">
+            <x-page-date-input name="acquisition_date" id="acquisition_date" value="{{ old('acquisition_date', $asset->acquisition_date?->format('Y-m-d')) }}"/>
           </div>
 
           <div class = "form-row">
             <x-page-label for="useful_life_in_years" required="isDepreciable">Useful Life in Years</x-page-label>
-            <x-page-input name="useful_life_in_years" id="useful_life_in_years" value="{{ old('useful_life_in_years', $asset->useful_life_in_years) }}"/>
+            <x-page-input type="number" name="useful_life_in_years" id="useful_life_in_years" value="{{ old('useful_life_in_years', $asset->useful_life_in_years) }}"/>
           </div>
 
           <div class = "form-row">
             <x-page-label for="end_of_life_date" required="isDepreciable">End of Life Date</x-page-label>
-            <input 
-              class="input max-w-xs border-2 border-gray-400" 
-              type="date" 
-              name="end_of_life_date" 
-              id="end_of_life_date" 
-              value="{{ old('end_of_life_date', $asset->end_of_life_date?->format('Y-m-d')) }}"readonly>
+            <x-page-date-input name="end_of_life_date" id="end_of_life_date" value="{{ old('end_of_life_date', $asset->end_of_life_date?->format('Y-m-d')) }}" readonly/>
           </div>
         </div>
       </div>
@@ -170,19 +161,15 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="image_path">Asset Image</x-page-label>
-            <div class="md:w-full md:px-9 md:ml-3">
+            <div class="w-full xl:flex-1 xl:max-w-xs">
               <input type="file" class="filepond-asset" name="image_path" id="image_path">
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flex justify-end mt-2">
-        <x-buttons type="submit" class="w-full md:w-auto">
-          <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
-          Save Changes
-        </x-buttons>
-      </div>
+      <x-page-edit-submit-button />
+      
     </div>
   </form>
 </div>

@@ -1,4 +1,4 @@
-<label for="{{ $for }}" class = "font-medium">{{ $slot }}
+<label for="{{ $for }}" {{ $attributes->merge(["class" => "font-medium"]) }}>{{ $slot }}
     @if($required) 
         <span class = "text-red-600 tooltip tooltip-right" data-tip="Required">*</span>
     @else

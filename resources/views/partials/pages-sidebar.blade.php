@@ -41,29 +41,9 @@
         </x-navlinks></li>
         @endcan
         @can("view reports")
-          <li>
-            <details>
-              <x-dropdown-navs title="Reports">
-                <x-heroicon-c-chart-bar-square class="size-5 mr-2" />
-              </x-dropdown-navs>
-              <ul>
-                <li>
-                  <x-navlinks routeName="placeholder" title="Asset Reports" >
-                    <x-heroicon-s-table-cells class="size-5 mr-2" />
-                  </x-navlinks>
-                  <x-navlinks routeName="placeholder" title="Depreciation Reports">
-                    <x-heroicon-s-calculator class="size-5 mr-2" />
-                  </x-navlinks>
-                  <x-navlinks routeName="placeholder" title="Request History Reports">
-                    <x-heroicon-c-document-chart-bar class="size-5 mr-2" />
-                  </x-navlinks>
-                  <x-navlinks routeName="placeholder" title="Asset Service Reports">
-                    <x-heroicon-s-wrench class="size-5 mr-2" />
-                  </x-navlinks>
-                </li>
-              </ul>
-            </details>
-          </li>
+        <li><x-navlinks routeName="reports.index" title="Reports">
+          <x-heroicon-c-chart-bar-square class="size-5 mr-2"/>
+        </x-navlinks></li>
         @endcan
       </ul>
     </li>

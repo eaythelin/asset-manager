@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             //enums
             $table->string('priority_level')->default('low');
-            $table->string('type');
+            $table->string('workorder_type');
             $table->string('status')->default('pending');
 
             $table->softDeletes();

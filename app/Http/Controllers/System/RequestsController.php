@@ -77,9 +77,10 @@ class RequestsController extends Controller
     public function getCreateRequest(){
         $count = RequestModel::withTrashed()->count();
         $nextCode = 'REQ-'.($count + 1);
-
         $requestTypes = RequestTypes::cases();
-        $assets = Asset::orderBy('asset_code')->get();
+        $assets = Asset::where('department_id', auth()->user()->employee->department_id)
+            ->orderBy('asset_code')
+            ->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $serviceTypes = ServiceTypes::cases();
         $disposalConditions = DisposalConditions::cases();
@@ -112,6 +113,7 @@ class RequestsController extends Controller
                     'description' => $validated['description'],
                     'requested_by' => auth()->id(),
                     'date_requested' => now(),
+                    'department_id' => $validated['department_id'],
                     
                     // Requisition fields (nullable)
                     'asset_name' => $validated['asset_name'] ?? null,
@@ -172,11 +174,11 @@ class RequestsController extends Controller
                 ]);
                 
                 if($requestModel->type === RequestTypes::REQUISITION){
-                    $count = Workorder::withTrashed()->where('type', WorkorderType::REQUISITION)->count();
+                    $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::REQUISITION)->count();
                     $nextCode = 'WO-REQ-'.($count + 1);
                     $workorder = Workorder::create([
                         "workorder_code" => $nextCode,
-                        "type" => WorkorderType::REQUISITION,
+                        "workorder_type" => WorkorderType::REQUISITION,
                         "request_id" => $requestModel->id
                     ]);
 
@@ -186,12 +188,12 @@ class RequestsController extends Controller
                         "asset_id" => $requestModel->is_new_asset ? null : $requestModel->asset_id,
                     ]);
                 }elseif($requestModel->type === RequestTypes::SERVICE){
-                    $count = Workorder::withTrashed()->where('type', WorkorderType::SERVICE)->count();
+                    $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::SERVICE)->count();
                     $nextCode = 'WO-SER-'.($count + 1);
 
                     $workorder = Workorder::create([
                         "workorder_code" => $nextCode,
-                        "type" => WorkorderType::SERVICE,
+                        "workorder_type" => WorkorderType::SERVICE,
                         "request_id" => $requestModel->id
                     ]);
 
@@ -206,11 +208,11 @@ class RequestsController extends Controller
                     ]);
                     
                 }elseif($requestModel->type === RequestTypes::DISPOSAL){
-                    $count = Workorder::withTrashed()->where('type', WorkorderType::DISPOSAL)->count();
+                    $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::DISPOSAL)->count();
                     $nextCode = 'WO-DIS-'.($count + 1);
                     $workorder = Workorder::create([
                         "workorder_code" => $nextCode,
-                        "type" => WorkorderType::DISPOSAL,
+                        "workorder_type" => WorkorderType::DISPOSAL,
                         "request_id" => $requestModel->id
                     ]);
 
@@ -225,8 +227,8 @@ class RequestsController extends Controller
             return redirect()->route('requests.index')->with('success', 'Request Successfully Approved!');
             
         } catch (\Exception $e) {
-            return redirect()->route("requests.index")->with('error', $e->getMessage());
-        }
+            return redirect()->route("requests.index")->with('error', 'Something went wrong!');
+        }   
     }
 
     public function declineRequest($id){
@@ -243,7 +245,9 @@ class RequestsController extends Controller
     public function getEditRequest($id){
         $requestModel = RequestModel::with(['category','subCategory','asset','files'])->findOrFail($id);
         $requestTypes = RequestTypes::cases();
-        $assets = Asset::orderBy('asset_code')->get();
+        $assets = Asset::where('department_id', auth()->user()->employee->department_id)
+            ->orderBy('asset_code')
+            ->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $serviceTypes = ServiceTypes::cases();
         $disposalConditions = DisposalConditions::cases();
@@ -320,7 +324,7 @@ class RequestsController extends Controller
                     }
                 }
             });
-            return redirect()->route('requests.index')->with('success', 'Request Successfully Edited!');
+            return redirect()->route('requests.index')->with('success', 'Request edited successfully!');
         }catch(\Exception $e){
             return redirect()->route("requests.index")->with('error', 'Something went wrong!');
         }

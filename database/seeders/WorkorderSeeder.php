@@ -27,12 +27,13 @@ class WorkorderSeeder extends Seeder
             'type' => RequestTypes::DISPOSAL,
             'status' => RequestStatus::APPROVED,
             "quantity" => 7,
+            'department_id' => 2
         ]);
 
         $workorder = Workorder::create([
             "workorder_code" => "WO-DIS-1",
             "request_id" => $theRequest->id,
-            "type" => WorkorderType::DISPOSAL,
+            "workorder_type" => WorkorderType::DISPOSAL,
             "start_date" => now(),
             "end_date" => now()->addDays(7)
         ]);

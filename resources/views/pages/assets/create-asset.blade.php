@@ -122,17 +122,17 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="acquisition_date" required="isDepreciable">Acquisition Date</x-page-label>
-            <input class="input max-w-xs border-2 border-gray-400" type="date" name="acquisition_date" id="acquisition_date" value="{{ old('acquisition_date') }}">
+            <x-page-date-input name="acquisition_date" id="acquisition_date" value="{{ old('acquisition_date') }}"/>
           </div>
 
           <div class = "form-row">
             <x-page-label for="useful_life_in_years" required="isDepreciable">Useful Life in Years</x-page-label>
-            <x-page-input name="useful_life_in_years" id="useful_life_in_years" value="{{ old('useful_life_in_years') }}"/>
+            <x-page-input name="useful_life_in_years" id="useful_life_in_years" value="{{ old('useful_life_in_years') }}" type="number"/>
           </div>
 
           <div class = "form-row">
             <x-page-label for="end_of_life_date" required="isDepreciable">End of Life Date</x-page-label>
-            <input class="input max-w-xs border-2 border-gray-400" type="date" name="end_of_life_date" id="end_of_life_date" value="{{ old('end_of_life_date') }}"readonly>
+            <x-page-date-input name="end_of_life_date" id="end_of_life_date" value="{{ old('end_of_life_date') }}" readonly/>
           </div>
         </div>
       </div>
@@ -163,13 +163,9 @@
           </div>
         </div>
       </div>
+
+      <x-page-create-submit-button>Create Asset</x-page-create-submit-button>
       
-      <div class = "flex justify-end mt-2">
-        <x-buttons type="submit" class="w-full md:w-auto">
-          <x-heroicon-s-plus class="size-5"/>
-          Create Asset
-        </x-buttons>
-      </div>
     </div>
   </form>
 </div>

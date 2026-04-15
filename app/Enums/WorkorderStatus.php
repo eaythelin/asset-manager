@@ -29,7 +29,7 @@ enum WorkorderStatus:string
             self::IN_PROGRESS => "badge-info",
             self::COMPLETED => "badge-success",
             self::OVERDUE => "badge-error",
-            self::CANCELLED => "badge-ghost"
+            self::CANCELLED => "badge-neutral"
         };
     }
 }

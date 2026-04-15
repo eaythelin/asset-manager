@@ -59,12 +59,20 @@ class User extends Authenticatable
         return $this->belongsTo(Employee::class);
     }
 
-    public function requestedRequests(){
+    public function requests(){
         return $this->hasMany(Request::class, 'requested_by');
     }
 
     public function approvedRequests(){
         return $this->hasMany(Request::class, 'approved_by');
+    }
+
+    public function completedWorkorders(){
+        return $this->hasMany(Workorder::class, 'completed_by');
+    }
+
+    public function reportsGenerated(){
+        return $this->hasMany(User::class, 'generated_by');
     }
 
     public function scopeSearch($query, $search){

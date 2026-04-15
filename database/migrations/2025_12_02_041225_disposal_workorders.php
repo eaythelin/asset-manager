@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
             $table->string('disposal_method')->nullable();
             $table->dateTime('disposal_date')->nullable();
-            $table->integer('quantity')->default(1);
+            $table->integer('quantity')->nullable();
             $table->text('reason')->nullable();
             $table->timestamps();
         });

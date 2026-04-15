@@ -35,7 +35,10 @@ export default defineConfig({
                 'resources/js/requests/approveRequest.js',
                 'resources/js/requests/declineRequest.js',
                 'resources/js/requests/edit-requests/getReqEditSubcategories.js',
-                'resources/js/requests/reqFilepond.js'
+                'resources/js/requests/reqFilepond.js',
+                'resources/js/workorder/startWorkorder.js',
+                'resources/js/workorder/completeWorkorder.js',
+                'resources/js/workorder/cancelWorkorder.js'
             ],
             refresh: true,
         }),

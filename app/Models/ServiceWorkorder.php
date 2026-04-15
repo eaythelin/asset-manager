@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ServiceTypes;
+use App\Enums\MaintenanceType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

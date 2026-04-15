@@ -18,6 +18,10 @@ class RequisitionWorkorder extends Model
         'asset_id'
     ];
 
+    protected $casts = [
+        'acquisition_date'=> 'date'
+    ];
+
     public function workorder(){
         return $this->belongsTo(Workorder::class);
     }

@@ -9,19 +9,37 @@
 <x-session-error />
 
 <!--Cards-->
-<div class ="grid grid-cols-2 md:grid-cols-4 gap-4 md:mx-6 p-3 bg-white rounded-2xl shadow-xl">
+<div class ="grid grid-cols-2 {{ $cardGridNumber }} gap-4 md:mx-6 p-3 bg-white rounded-2xl shadow-xl">
   <x-dashboard-cards bgColor="bg-green-500" title="Active Assets" :number="$activeAssets">
     <x-heroicon-s-clipboard-document-check class="size-8 md:size-10"/>
   </x-dashboard-cards>
   <x-dashboard-cards bgColor="bg-red-500" title="Disposed Assets" :number="$disposedAssets">
     <x-heroicon-s-trash class="size-8 md:size-10"/>
   </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-gray-800" title="Assets Under Service" :number="0">
+  <x-dashboard-cards bgColor="bg-gray-800" title="Assets Under Service" :number="$serviceAssets">
     <x-heroicon-s-wrench-screwdriver class="size-8 md:size-10"/>
   </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-orange-500" title="Expired Assets" :number="0">
+  <x-dashboard-cards bgColor="bg-orange-500" title="Expired Assets" :number="$expiredAssets">
     <x-heroicon-s-exclamation-triangle class="size-8 md:size-10" />
   </x-dashboard-cards>
+  @if($role === "System Supervisor")
+    <x-dashboard-cards bgColor="bg-blue-500" title="Pending Workorders" :number="$pendingWO">
+      <x-heroicon-s-clock class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-yellow-500" title="In Progress Workorders" :number="$inProgWO">
+      <x-heroicon-s-arrow-path class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-orange-500" title="Overdue Workorders" :number="$overdueWO">
+      <x-heroicon-s-exclamation-triangle class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-green-500" title="Completed Workorders" :number="$completedWO">
+      <x-heroicon-s-check-circle class="size-8 md:size-10" />
+    </x-dashboard-cards>
+  @else
+    <x-dashboard-cards class="col-span-2 md:col-span-1" bgColor="bg-blue-500" title="Pending Request" :number="$requestCount">
+      <x-heroicon-s-clipboard-document-list class="size-8 md:size-10" />
+    </x-dashboard-cards>
+  @endif  
 </div>
 
 <!--The Assets per department are hidden if role = Department Head-->

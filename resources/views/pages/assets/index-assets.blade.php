@@ -14,23 +14,40 @@
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
 
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
       <x-search-bar route="assets.index" placeholder="Search assets..."/>
-      
-      @can('manage assets')
-      <div class = "flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-        <x-buttons class="w-full sm:w-auto bg-green-700">
-          <x-heroicon-o-document-arrow-down class="size-5"/>
-          Import from Excel
-        </x-buttons>
-        <a href="{{ route('assets.create') }}" class="w-full sm:w-auto">
-          <x-buttons class="w-full">
-            <x-heroicon-s-plus class="size-5"/>
-            Create Asset
-          </x-buttons>
-        </a>
-      </div>
-      @endcan
+
+      <form method="GET" action="{{ route('assets.index') }}">
+        <input type="hidden" name="search" value="{{ request('search') }}">
+        <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+          <input 
+            type="checkbox" 
+            name="show_deleted" 
+            class="checkbox checkbox-sm"
+            {{ request('show_deleted') ? 'checked' : '' }}
+            onchange="this.form.submit()"
+          />
+          <span class="text-sm font-medium">Show Disposed</span>
+        </label>
+      </form>
     </div>
+
+    @can('manage assets')
+    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+      <x-buttons class="w-full sm:w-auto bg-green-700">
+        <x-heroicon-o-document-arrow-down class="size-5"/>
+        Import from Excel
+      </x-buttons>
+      <a href="{{ route('assets.create') }}" class="w-full sm:w-auto">
+        <x-buttons class="w-full">
+          <x-heroicon-s-plus class="size-5"/>
+          Create Asset
+        </x-buttons>
+      </a>
+    </div>
+    @endcan
+
+  </div>
     <x-tables :columnNames="$columns" :centeredColumns="[0,7,8]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($assets as $asset)
@@ -43,8 +60,8 @@
               <x-td>{{ $asset->custodian?->first_name}} {{ $asset->custodian?->last_name}}</x-td>
               <x-td>{{ $asset->category->name}}</x-td>
               <x-td class="text-center">
-                <span class="badge {{ $asset->getStatusColor() }} text-white font-medium text-sm p-3">
-                  {{ Str::headline($asset->computed_status) }}
+                <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3">
+                  {{ $asset->status->label() }}
                 </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-3 justify-center">
@@ -55,7 +72,7 @@
                     </x-buttons>
                   </a>
                 @endcan
-                @can("manage assets")
+                @if(auth()->user()->can('manage assets') && $asset->status->value !== "disposed")
                   <a href="{{ route('assets.edit', $asset->id) }}" class="w-full sm:w-auto flex justify-center">
                     <x-buttons
                       class="editBtn tooltip tooltip-top"
@@ -71,7 +88,7 @@
                     data-route="{{ route('assets.dispose', $asset->id) }}">
                     <x-heroicon-s-archive-box class="size-4 sm:size-5"/>
                   </x-buttons>
-                @endcan
+                @endif
               </td>
             </tr>
           @endforeach

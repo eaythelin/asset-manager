@@ -146,6 +146,12 @@ class UsersController extends Controller
 
         //NOTE:
         //add prevent force deletion of user if its tied to a record like requests or workorder!!!
+        $hasRequests = $user->requests()->exists();
+        $hasWorkorders = $user->completedWorkorders()->exists();
+
+        if($hasRequests || $hasWorkorders){
+            return redirect()->back()->with('error', 'Cannot delete user with existing records!');
+        }
 
         $user->forceDelete();
 

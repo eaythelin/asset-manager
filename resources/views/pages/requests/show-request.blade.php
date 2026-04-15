@@ -13,15 +13,15 @@
         </div>
 
         <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Request ID</span>
-              <span class="text-xs py-0.5 px-2 bg-gray-100 text-gray-600 r  ounded-md font-mono">
-                #{{ $requestModel->request_code }}
-              </span>
-            </div>
-            <h2 class="text-xl font-bold text-gray-900 leading-tight">
-              {{ $requestModel->type->label() }}
-            </h2>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Request Code</span>
+            <span class="text-xs py-0.5 px-2 bg-gray-100 text-gray-600 rounded-md font-mono">
+              #{{ $requestModel->request_code }}
+            </span>
+          </div>
+          <h2 class="text-xl font-bold text-gray-900 leading-tight">
+            {{ $requestModel->type->label() }}
+          </h2>
         </div>
       </div>
 

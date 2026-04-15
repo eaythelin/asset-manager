@@ -29,6 +29,10 @@ class AssetsController extends Controller
 
         $query = Asset::with(['category', 'custodian', 'department', 'subCategory', 'supplier']);
 
+        if(request('show_deleted')){
+            $query->onlyTrashed();
+        }
+
         if(request('search')){
             $search = $request->input('search');
             $query->search($search);
@@ -44,6 +48,7 @@ class AssetsController extends Controller
         $desc = $role === "System Supervisor" ? "View and manage assets" : "View assets information";
 
         $assets = $query->paginate(5);
+        $assets->each(fn($asset) => $asset->computed_status); //just checks if any asset is expired
         $columns = ["Asset Code", "Asset Name","Quantity","Serial Name","Department", "Custodian", "Category", "Status", "Actions"];
 
         return view('pages.assets.index-assets', ['desc' => $desc,
@@ -53,10 +58,22 @@ class AssetsController extends Controller
     }
 
     public function getAsset($id){
-        $asset = Asset::with(['category', 'custodian', 'department', 'subCategory', 'supplier'])->findOrFail($id);
+        $asset = Asset::withTrashed()
+            ->with(['category', 'custodian', 'department', 'subCategory', 'supplier', 'serviceWorkorders', 'disposalWorkorders', 'requisitionWorkorders'])
+            ->findOrFail($id);
         $disposalMethods = DisposalMethods::cases();
+        $history = $asset->serviceWorkorders
+            ->concat($asset->disposalWorkorders)
+            ->concat($asset->requisitionWorkorders)
+            ->sortByDesc('created_at');
 
-        return view('pages.assets.show-asset', compact('asset', 'disposalMethods'));
+        $hasWorkorders = $asset->serviceWorkorders()->exists() || 
+                 $asset->disposalWorkorders()->exists() || 
+                 $asset->requisitionWorkorders()->exists();
+        
+        $columns = ["Workorder Code", "Type", "Status", "Start Date", "End Date", "Quantity", "Handled By"];
+
+        return view('pages.assets.show-asset', compact('asset', 'disposalMethods','hasWorkorders','columns','history'));
     }
 
     public function getCreateAsset(){
@@ -197,7 +214,7 @@ class AssetsController extends Controller
         //this make is so the DB updates in one go and if anything fails then everything fails!!
         try{
             DB::transaction(function() use($validated, $asset){
-                $count = Workorder::withTrashed()->where('type', WorkorderType::DISPOSAL)->count();
+                $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::DISPOSAL)->count();
                 $nextCode = 'WO-DIS-'.($count + 1);
 
                 $workorder = Workorder::create([
@@ -206,8 +223,9 @@ class AssetsController extends Controller
                     "start_date" => now(),
                     "end_date" => now(),
                     "priority_level" => PriorityLevel::HIGH,
-                    "type" => WorkorderType::DISPOSAL,
-                    "status" => WorkorderStatus::COMPLETED
+                    "workorder_type" => WorkorderType::DISPOSAL,
+                    "status" => WorkorderStatus::COMPLETED,
+                    "is_direct" => true
                 ]);
 
                 DisposalWorkorder::create([

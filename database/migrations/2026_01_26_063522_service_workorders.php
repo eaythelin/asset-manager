@@ -25,7 +25,7 @@ return new class extends Migration
 
             //in house
             $table->foreignId('assigned_to')->nullable()->constrained('employees')->onDelete('set null');
-            $table->integer('estimated_ hours')->nullable();
+            $table->integer('estimated_hours')->nullable();
 
             $table->text('instructions')->nullable();
             $table->text('accomplishment_report')->nullable();

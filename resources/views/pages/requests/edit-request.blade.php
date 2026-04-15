@@ -18,6 +18,8 @@
             <x-heroicon-s-information-circle class="size-6 text-blue-700"/>
         </x-page-section-header>
 
+        <input type="hidden" name="department_id" id="department_id" value="{{ auth()->user()->employee->department->id }}">
+
         <div class = "flex flex-col sm:flex-row gap-6">
             <div class = "flex flex-col flex-1 gap-4">
                 <div class="form-row">
@@ -244,12 +246,9 @@
                         </div>
                     </div>
                 @endif
-                <div class = "flex justify-end mt-4">
-                    <x-buttons type="submit" class="w-full md:w-auto">
-                        <x-heroicon-s-plus class="size-5"/>
-                        Edit Request
-                    </x-buttons>
-                </div>
+
+                <x-page-edit-submit-button />
+                
             </div>
         </template>
     </div>

@@ -36,7 +36,7 @@ class Asset extends Model
         'salvage_value',
         'end_of_life_date',
         'status',
-        'quantity'
+        'quantity',
     ];
 
     public function custodian(){
@@ -63,16 +63,16 @@ class Asset extends Model
         return $this->hasMany(Request::class);
     }
 
-    public function disposalWorkorder(){
-        return $this->hasOne(DisposalWorkorder::class);
+    public function disposalWorkorders(){
+        return $this->hasMany(DisposalWorkorder::class);
     }
 
     public function serviceWorkorders(){
         return $this->hasMany(ServiceWorkorder::class);
     }
 
-    public function requisitionWorkorder(){
-        return $this->belongsTo(RequisitionWorkorder::class);
+    public function requisitionWorkorders(){
+        return $this->hasMany(RequisitionWorkorder::class);
     }
 
     public function getBookValueAttribute(){
@@ -97,13 +97,33 @@ class Asset extends Model
         return round($bookValue, 2);
     }
 
-    public function getComputedStatusAttribute(){
-        if($this->deleted_at){
-            return 'disposed';
+    public function getAccumulatedDepreciationAttribute(){
+        if(!$this->is_depreciable || !$this->acquisition_date || !$this->useful_life_in_years){
+            return null;
         }
 
+        if ($this->status === AssetStatus::DISPOSED) {
+            return round($this->cost - $this->salvage_value, 2);
+        }
+        
+        $totalMonths = $this->useful_life_in_years * 12;
+        $monthElapsed = floor(Carbon::parse($this->acquisition_date)->diffInMonths(now()));
+        $monthElapsed = min($monthElapsed, $totalMonths);
+        $monthlyDepreciation = ($this->cost - $this->salvage_value) / $totalMonths;
+
+        return round($monthlyDepreciation * $monthElapsed, 2);
+    }
+
+    public function getComputedStatusAttribute(){
         if($this->is_depreciable && $this->end_of_life_date){
             if(now()->greaterThan($this->end_of_life_date)){
+                $protected = ['disposed', 'under_service'];
+
+                if(!in_array($this->status->value, $protected) && $this->status->value !== AssetStatus::EXPIRED->value){
+                    $this->update(['status'=> AssetStatus::EXPIRED->value]);
+                    $this->refresh();
+                }
+                
                 return 'expired';
             }
         }

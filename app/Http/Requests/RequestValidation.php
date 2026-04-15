@@ -34,6 +34,7 @@ class RequestValidation extends FormRequest
             "type" => ["required", new Enum(RequestTypes::class)],
             "quantity"=> ["required", "integer","min:1"],
             "description" => ["nullable", "string", "max:500"],
+            "department_id" => ["required", "exists:departments,id"],
             //filez
             "attachments" => ["nullable", "array", "max:5"],
             "attachments.*" => ["file", "max:10240", "mimes:jpg,jpeg,png,pdf,doc,docx"]

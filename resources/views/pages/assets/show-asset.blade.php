@@ -7,7 +7,7 @@
     <x-back-link route="assets.index">Return to Assets</x-back-link>
     
     <div class="flex flex-wrap gap-2">
-      @can('manage assets')
+      @if(auth()->user()->can('manage assets') && $asset->status->value !== "disposed")
         <a href="{{ route('assets.edit', $asset->id) }}">
           <x-buttons class="btn-sm sm:btn-md">
             <x-heroicon-o-pencil-square class="size-4"/>
@@ -21,7 +21,7 @@
           <x-heroicon-o-trash class="size-4"/>
           Dispose
         </x-buttons>
-      @endcan
+      @endif
     </div>
   </div>
 
@@ -57,8 +57,8 @@
       </div>
 
       <div class="flex flex-col items-center sm:items-end gap-2">
-        <span class="badge {{ $asset->getStatusColor() }} text-white font-medium text-sm p-3">
-          {{ Str::headline($asset->computed_status) }}
+        <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3">
+          {{ $asset->status->label() }}
         </span>
         <span class="text-xs text-gray-400 flex items-center gap-1">
           <x-heroicon-c-clock class="size-3"/>
@@ -79,11 +79,15 @@
             <x-heroicon-s-information-circle class="size-6 text-blue-700"/>
             <p class="text-lg font-semibold">General Details</p>
           </div>
-          <div class="space-y-3">
-            <x-detail-item label="Category" :value="$asset->category->name"/>
-            <x-detail-item label="Subcategory" :value="$asset->subCategory?->name"/>
-            <x-detail-item label="Quantity" :value="$asset->quantity"/>
-            <x-detail-item label="Description" :value="$asset->description"/>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <x-detail-item label="Category" :value="$asset->category->name"/>
+              <x-detail-item label="Subcategory" :value="$asset->subCategory?->name"/>
+            </div>
+            <div class="space-y-3">
+              <x-detail-item label="Quantity" :value="$asset->quantity"/>
+              <x-detail-item label="Description" :value="$asset->description"/>
+            </div>
           </div>
         </div>
         
@@ -94,7 +98,7 @@
           </div>
           <div class="space-y-3">
             <x-detail-item label="Department" :value="$asset->department->name"/>
-            <x-detail-item label="Custodian" :value="$asset->custodian->full_name"/>
+            <x-detail-item label="Custodian" :value="$asset->custodian?->full_name"/>
           </div>
         </div>
       </div>
@@ -112,20 +116,12 @@
             <x-detail-item label="End of Life Date" :value="$asset->end_of_life_date?->format('F j, Y')"/>
           </div>
           <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Cost</p>
-              <p class="font-semibold text-gray-700">₱{{ number_format($asset->cost ?? 0, 2) }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-500">Salvage Value</p>
-              <p class="font-semibold text-gray-700">₱{{ number_format($asset->salvage_value ?? 0, 2) }}</p>
-            </div>
+            <x-detail-item label="Cost" :value="'₱' . number_format($asset->cost ?? 0, 2)" />
+            <x-detail-item label="Salvage Value" :value="'₱' . number_format($asset->salvage_value ?? 0, 2)" />
           </div>
           <div class="space-y-3">
-            <div>
-              <p class="text-sm text-gray-500">Current Book Value</p>
-              <p class="font-semibold text-gray-700">₱{{ number_format($asset->book_value ?? 0, 2) }}</p>
-            </div>
+            <x-detail-item label="Accumulated Depreciation" :value="'₱' . number_format($asset->accumulated_depreciation ?? 0, 2)" />
+            <x-detail-item label="Net Book Value" :value="'₱' . number_format($asset->book_value ?? 0, 2)" />
           </div>
         </div>
       </div>
@@ -137,7 +133,7 @@
           <p class="text-lg font-semibold">Misc. Details</p>
         </div>
         <div class="space-y-3">
-          <x-detail-item label="Supplier" :value="$asset->supplier->name"/>
+          <x-detail-item label="Supplier" :value="$asset->supplier?->name"/>
         </div>
       </div>
     </div>
@@ -150,12 +146,36 @@
           <x-heroicon-s-clock class="size-6 text-purple-700"/>
           <h3 class="text-lg font-semibold">Asset History</h3>
         </div>
-        {{-- Timeline placeholder --}}
-        <div class="text-center py-8">
-          <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
-          <p class="text-gray-500">No history recorded yet</p>
-          <p class="text-sm text-gray-400 mt-1">Asset activities will appear here</p>
-        </div>
+        @if($hasWorkorders)
+         <x-tables :columnNames="$columns" :centeredColumns="[0,2]">
+          <tbody class = "divide-y divide-gray-400">  
+            @foreach($history as $record)
+              <tr>
+                <th class = "p-3 text-center">{{ $record->workorder->workorder_code }}</th>
+                <x-td>{{ $record->workorder->workorder_type->label()}}</x-td>
+                <x-td class="text-center"> <span class="badge {{ $record->workorder->status->badgeClass() }} text-white font-medium text-sm"> {{ $record->workorder->status->label() }} </span> </x-td>
+                <x-td>{{ $record->workorder->start_date?->format('F j, Y') }}</x-td>
+                <x-td>{{ $record->workorder->end_date?->format('F j, Y') }}</x-td>
+                <x-td>
+                  @if($record->workorder->workorder_type->value === 'disposal')
+                    {{ $record->workorder?->disposalWorkorder?->quantity }}
+                  @else
+                    {{ $record->workorder->request?->quantity }}
+                  @endif
+                </x-td> 
+                <x-td>{{ $record->workorder->completedBy?->name }}</x-td>
+              </tr>
+            @endforeach
+          </tbody>
+         </x-tables>
+        @else
+          {{-- Timeline placeholder --}}
+          <div class="text-center py-8">
+            <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
+            <p class="text-gray-500">No history recorded yet</p>
+            <p class="text-sm text-gray-400 mt-1">Asset activities will appear here</p>
+          </div>
+        @endif
       </div>
     </div>
   </div>

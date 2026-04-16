@@ -199,6 +199,12 @@ class ReportsController extends Controller
                 });
 
                 $validated['is_new_asset'] = $request->has('is_new_asset');
+
+                if($validated['is_new_asset']){
+                    $query->where('asset_name', '!=', '');
+                }else{
+                    $query->whereNotNull('asset_id');
+                }
             }
         }
     }

@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use phpDocumentor\Reflection\Types\Nullable;
 
 return new class extends Migration
 {
@@ -18,7 +17,7 @@ return new class extends Migration
             $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
             $table->date('acquisition_date')->nullable();
             $table->string('asset_name')->nullable();
-            $table->decimal('estimated_cost', 15, 2)->default(0);
+            $table->decimal('estimated_cost', 15, 2)->nullable();
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
             $table->text('description')->nullable();
             $table->timestamps();

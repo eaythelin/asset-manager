@@ -19,7 +19,6 @@
       <div class="font-medium text-xs md:text-sm">{{ auth()->user() -> name}}</div>
       <!--Get the role of user-->
       <div class="text-xs md:text-sm opacity-60">{{ auth()->user() -> getRoleNames() -> first() }}</div>
-      
     </div>
   </div>
 </div>

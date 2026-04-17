@@ -65,9 +65,9 @@ class ReportValidation extends FormRequest
                         'maintenance_type' => ['nullable', new Enum(MaintenanceType::class)]
                     ],
                     WorkorderType::REQUISITION->value => [
-                        'is_new_asset' => ['nullable'],
-                        'req_date_from' => ['nullable', 'date'],
-                        'req_date_to' => ['nullable', 'date', 'after_or_equal:req_date_from'],
+                        'asset_filter' => ['nullable', 'in:all,new,old'],
+                        'comp_date_from' => ['nullable', 'date'],
+                        'comp_date_to' => ['nullable', 'date', 'after_or_equal:req_date_from'],
                         'supplier_id' => ['nullable', 'exists:suppliers,id']
                     ]
                     ,default => []

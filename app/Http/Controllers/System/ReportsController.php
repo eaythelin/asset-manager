@@ -82,10 +82,10 @@ class ReportsController extends Controller
 
                 $filename = 'RPT-'.time().'.pdf';
                 $pdf->save(storage_path('app/public/reports/' . $filename));
-                $count = Report::latest()->first()->id;
+                $count = (Report::count() ?? 0) + 1;
 
                 Report::create([
-                    'report_code' => 'RPT-'.($count + 1),
+                    'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
                     'file_path' => $filename      
@@ -98,10 +98,10 @@ class ReportsController extends Controller
 
                 $filename = 'RPT-'.time().'.pdf';
                 $pdf->save(storage_path('app/public/reports/' . $filename));
-                $count = Report::latest()->first()->id;
+                $count = (Report::count() ?? 0) + 1;
 
                 Report::create([
-                    'report_code' => 'RPT-'.($count + 1),
+                    'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
                     'file_path' => $filename      
@@ -138,10 +138,10 @@ class ReportsController extends Controller
 
                 $filename = 'RPT-'.time().'.pdf';
                 $pdf->save(storage_path('app/public/reports/' . $filename));
-                $count = Report::latest()->first()->id;
+                $count = (Report::count() ?? 0) + 1;
 
                 Report::create([
-                    'report_code' => 'RPT-'.($count + 1),
+                    'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
                     'file_path' => $filename      
@@ -158,7 +158,7 @@ class ReportsController extends Controller
 
                 if($validated['service_date_from'] ?? null && $validated['service_date_to'] ?? null){
                     $query->whereHas('workorder', function($q) use ($validated){
-                        $q->whereBetween('start_date', [$validated['service_date_from'], $validated['service_date_to']]);
+                        $q->whereBetween('end_date', [$validated['service_date_from'], $validated['service_date_to']]);
                     });
                 }
 
@@ -181,10 +181,10 @@ class ReportsController extends Controller
 
                 $filename = 'RPT-'.time().'.pdf';
                 $pdf->save(storage_path('app/public/reports/' . $filename));
-                $count = Report::latest()->first()->id;
+                $count = (Report::count() ?? 0) + 1;
 
                 Report::create([
-                    'report_code' => 'RPT-'.($count + 1),
+                    'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
                     'file_path' => $filename      
@@ -193,18 +193,47 @@ class ReportsController extends Controller
             }elseif($woType === 'requisition'){
                 $query = RequisitionWorkorder::with(['asset' => function($q){
                     $q->withTrashed()->with('department');
-                }], 'workorder')
+                }], 'workorder','supplier')
                 ->whereHas('workorder', function($q){
                     $q->where('status', WorkorderStatus::COMPLETED);
                 });
 
-                $validated['is_new_asset'] = $request->has('is_new_asset');
-
-                if($validated['is_new_asset']){
-                    $query->where('asset_name', '!=', '');
-                }else{
-                    $query->whereNotNull('asset_id');
+                if($validated['asset_filter'] === 'new'){
+                    $query->whereNotNull('asset_name')->where('asset_name', '!=', '');
+                }elseif($validated['asset_filter'] === 'old'){
+                    $query->whereNull('asset_name');
                 }
+
+                if($validated['comp_date_from'] ?? null && $validated['comp_date_to'] ?? null){
+                    $query->whereHas('workorder', function($q) use ($validated){
+                        $q->whereBetween('end_date', [$validated['comp_date_from'], $validated['comp_date_to']]);
+                    });
+                }
+
+                if($validated['supplier_id'] ?? null){
+                    $query->where('supplier_id', $validated['supplier_id']);
+                }
+
+                if($validated['department_id'] ?? null){
+                    $query->whereHas('asset', function($q) use ($validated){
+                        $q->where('department_id', $validated['department_id']);
+                    });
+                }
+
+                $data = $query->get();
+                $pdf = Pdf::loadView('reports.requisition-report', compact('data'))->setPaper('a4', 'landscape');
+
+                $filename = 'RPT-'.time().'.pdf';
+                $pdf->save(storage_path('app/public/reports/' . $filename));
+                $count = (Report::count() ?? 0) + 1;
+
+                Report::create([
+                    'report_code' => 'RPT-'.($count),
+                    'report_type' => $validated['report_type'],
+                    'generated_by' => auth()->user()->id,
+                    'file_path' => $filename      
+                ]);
+                return $pdf->stream('requisition-report.pdf');
             }
         }
     }

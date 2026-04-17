@@ -68,7 +68,7 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div class="size-48 shrink-0 mx-auto">
+              <div class="size-32 shrink-0 mx-auto">
                 @if($requestModel->asset->image_path)
                   <img src="{{ Storage::url($requestModel->asset->image_path) }}" alt="{{ $requestModel->asset->name }}" class="w-full h-full object-cover rounded-lg shadow-xl">
                 @else

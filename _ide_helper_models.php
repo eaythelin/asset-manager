@@ -14,33 +14,6 @@
 namespace App\Models{
 /**
  * @property int $id
- * @property int $workorder_id
- * @property string $acquisition_date
- * @property numeric $estimated_cost
- * @property int|null $supplier_id
- * @property string|null $description
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Supplier|null $supplier
- * @property-read \App\Models\Workorder $workorder
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereAcquisitionDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereEstimatedCost($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereSupplierId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|AcquisitionWorkorder whereWorkorderId($value)
- */
-	class AcquisitionWorkorder extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * @property int $id
  * @property string $asset_code
  * @property string $name
  * @property string|null $serial_name
@@ -48,6 +21,7 @@ namespace App\Models{
  * @property string|null $description
  * @property int $is_depreciable
  * @property string|null $image_path
+ * @property int $quantity
  * @property int|null $category_id
  * @property int|null $department_id
  * @property int|null $sub_category_id
@@ -64,11 +38,15 @@ namespace App\Models{
  * @property-read \App\Models\Category|null $category
  * @property-read \App\Models\Employee|null $custodian
  * @property-read \App\Models\Department|null $department
- * @property-read \App\Models\DisposalWorkorder|null $disposalWorkorder
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DisposalWorkorder> $disposalWorkorders
+ * @property-read int|null $disposal_workorders_count
+ * @property-read mixed $accumulated_depreciation
  * @property-read mixed $book_value
  * @property-read mixed $computed_status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Request> $requests
  * @property-read int|null $requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequisitionWorkorder> $requisitionWorkorders
+ * @property-read int|null $requisition_workorders_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServiceWorkorder> $serviceWorkorders
  * @property-read int|null $service_workorders_count
  * @property-read \App\Models\SubCategory|null $subCategory
@@ -92,6 +70,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereImagePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereIsDepreciable($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereSalvageValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereSerialName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereStatus($value)
@@ -142,6 +121,8 @@ namespace App\Models{
  * @property-read int|null $assets_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Employee> $employees
  * @property-read int|null $employees_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Department> $request
+ * @property-read int|null $request_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department query()
@@ -160,13 +141,14 @@ namespace App\Models{
  * @property int $id
  * @property int $workorder_id
  * @property int|null $asset_id
- * @property \App\Enums\DisposalMethods $disposal_method
- * @property string $disposal_date
+ * @property \App\Enums\DisposalMethods|null $disposal_method
+ * @property \Illuminate\Support\Carbon|null $disposal_date
+ * @property int|null $quantity
  * @property string|null $reason
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Asset|null $asset
- * @property-read \App\Models\Workorder $workorder
+ * @property-read \App\Models\Workorder|null $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder query()
@@ -175,6 +157,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereDisposalDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereDisposalMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder whereWorkorderId($value)
@@ -194,6 +177,8 @@ namespace App\Models{
  * @property-read int|null $assets_count
  * @property-read \App\Models\Department $department
  * @property-read string $full_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServiceWorkorder> $serviceWorkorder
+ * @property-read int|null $service_workorder_count
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee newQuery()
@@ -212,18 +197,46 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $report_code
+ * @property \App\Enums\ReportType $report_type
+ * @property int $generated_by
+ * @property string|null $file_path
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $generatedBy
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereGeneratedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereReportCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereReportType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereUpdatedAt($value)
+ */
+	class Report extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $request_code
  * @property string|null $description
  * @property \Illuminate\Support\Carbon $date_requested
  * @property string|null $date_approved
  * @property string|null $asset_name
+ * @property int $quantity
+ * @property int $is_new_asset
  * @property int $requested_by
  * @property int|null $category_id
  * @property int|null $sub_category_id
- * @property int|null $approved_by
+ * @property int|null $handled_by
  * @property int|null $asset_id
+ * @property int|null $department_id
  * @property \App\Enums\RequestTypes $type
  * @property \App\Enums\ServiceTypes|null $service_type
+ * @property \App\Enums\DisposalConditions|null $condition
  * @property \App\Enums\RequestStatus $status
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -231,23 +244,31 @@ namespace App\Models{
  * @property-read \App\Models\User|null $approvedBy
  * @property-read \App\Models\Asset|null $asset
  * @property-read \App\Models\Category|null $category
- * @property-read \App\Models\User $requestedBy
+ * @property-read \App\Models\Department|null $department
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequestFile> $files
+ * @property-read int|null $files_count
+ * @property-read \App\Models\User|null $requestedBy
  * @property-read \App\Models\SubCategory|null $subCategory
  * @property-read \App\Models\Workorder|null $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereApprovedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Request search($search)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereAssetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereAssetName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereCondition($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereDateApproved($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereDateRequested($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereHandledBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereIsNewAsset($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereRequestCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereRequestedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereServiceType($value)
@@ -264,28 +285,93 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $request_id
+ * @property string $file_path
+ * @property string|null $file_type
+ * @property string|null $original_name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Request|null $request
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereFileType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereOriginalName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile whereUpdatedAt($value)
+ */
+	class RequestFile extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $workorder_id
  * @property int|null $asset_id
- * @property \App\Enums\ServiceTypes $service_type
- * @property numeric $cost
- * @property string $done_by
- * @property int $is_vehicle
- * @property string $details
+ * @property \Illuminate\Support\Carbon|null $acquisition_date
+ * @property string|null $asset_name
+ * @property numeric $estimated_cost
+ * @property int|null $supplier_id
+ * @property string|null $description
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Asset|null $asset
- * @property-read \App\Models\Workorder $workorder
+ * @property-read \App\Models\Supplier|null $supplier
+ * @property-read \App\Models\Workorder|null $workorder
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereAcquisitionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereAssetName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereEstimatedCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder whereWorkorderId($value)
+ */
+	class RequisitionWorkorder extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $workorder_id
+ * @property int|null $asset_id
+ * @property \App\Enums\ServiceTypes $service_type
+ * @property \App\Enums\MaintenanceType|null $maintenance_type
+ * @property numeric $cost
+ * @property string|null $subcontractor_name
+ * @property string|null $subcontractor_details
+ * @property int|null $assigned_to
+ * @property int|null $estimated_hours
+ * @property string|null $instructions
+ * @property string|null $accomplishment_report
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Asset|null $asset
+ * @property-read \App\Models\Employee|null $assignedTo
+ * @property-read \App\Models\Workorder|null $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereAccomplishmentReport($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereAssignedTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereDoneBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereEstimatedHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereIsVehicle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereInstructions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereMaintenanceType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereServiceType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereSubcontractorDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereSubcontractorName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder whereWorkorderId($value)
  */
@@ -329,8 +415,6 @@ namespace App\Models{
  * @property string|null $address
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\AcquisitionWorkorder> $acquistionWorkOrders
- * @property-read int|null $acquistion_work_orders_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Asset> $assets
  * @property-read int|null $assets_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()
@@ -364,13 +448,17 @@ namespace App\Models{
  * @property int $employee_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Request> $approvedRequests
  * @property-read int|null $approved_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Workorder> $completedWorkorders
+ * @property-read int|null $completed_workorders_count
  * @property-read \App\Models\Employee $employee
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Request> $requestedRequests
- * @property-read int|null $requested_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $reportsGenerated
+ * @property-read int|null $reports_generated_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Request> $requests
+ * @property-read int|null $requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -409,31 +497,36 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $start_date
  * @property \Illuminate\Support\Carbon|null $end_date
  * @property \App\Enums\PriorityLevel $priority_level
- * @property \App\Enums\WorkorderType $type
+ * @property \App\Enums\WorkorderType $workorder_type
  * @property \App\Enums\WorkorderStatus $status
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\AcquisitionWorkorder|null $acquisitionWorkorder
+ * @property int $is_direct
+ * @property-read \App\Models\User|null $completedBy
  * @property-read \App\Models\DisposalWorkorder|null $disposalWorkOrder
+ * @property-read mixed $check_status
  * @property-read \App\Models\Request|null $request
+ * @property-read \App\Models\RequisitionWorkorder|null $requisitionWorkorder
  * @property-read \App\Models\ServiceWorkorder|null $serviceWorkorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder search($search)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereCompletedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereIsDirect($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder wherePriorityLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereWorkorderCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereWorkorderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder withoutTrashed()
  */

@@ -36,7 +36,7 @@
         </div>
 
         <div x-show="selectedWOType === 'service'" class="flex flex-col gap-2">
-          <label class="font-medium">'Service Date Range</label>
+          <label class="font-medium">Completion Date Range</label>
           <x-label for="service_date_from" class="text-sm">Date From</x-label>
           <input class = "input w-full rounded-xl" type="date" name="service_date_from" id="service_date_from">
           <x-label for="service_date_to" class="text-sm">Date To</x-label>
@@ -60,16 +60,21 @@
         </div>
 
         <div x-show="selectedWOType === 'requisition'" class="flex flex-col gap-2">
-          <label for="is_new_asset" class= "font-medium">Is New Asset
-            <span class="text-xs text-gray-500 align-super tooltip tooltip-info tooltip-right" data-tip="Toggle on to filter only new asset acquisitions records">?</span>
-          </label>
-          <input type="checkbox" name="is_new_asset" id="is_new_asset" class="checkbox border-2 border-gray-400">
+          <x-label for="N/A" :required="true">Asset Filters</x-label>
+          <div class="flex gap-3">
+            <input type="radio" name="asset_filter" id="filter_all" value="all" class="radio radio-primary" checked>
+            <label for="filter_all">All</label>
+            <input type="radio" name="asset_filter" id="filter_new" value="new" class="radio radio-primary"> 
+            <label for="filter_new">New Assets</label>
+            <input type="radio" name="asset_filter" id="filter_old" value="old" class="radio radio-primary">
+            <label for="filter_old">Existing Assets</label>
+          </div>
 
-          <label class="font-medium">Acquisition Date Range</label>
-          <x-label for="req_date_from" class="text-sm">Date From</x-label>
-          <input class = "input w-full rounded-xl" type="date" name="req_date_from" id="req_date_from">
-          <x-label for="req_date_to" class="text-sm">Date To</x-label>
-          <input class = "input w-full rounded-xl" type="date" name="req_date_to" id="req_date_to">
+          <label class="font-medium">Completion Date Range</label>
+          <x-label for="comp_date_from" class="text-sm">Date From</x-label>
+          <input class = "input w-full rounded-xl" type="date" name="comp_date_from" id="comp_date_from">
+          <x-label for="comp_date_to" class="text-sm">Date To</x-label>
+          <input class = "input w-full rounded-xl" type="date" name="comp_date_to" id="comp_date_to">
 
           <x-label for="supplier_id">Supplier</x-label>
           <select name="custodian_id" id="custodian_id" class="select w-full rounded-xl">

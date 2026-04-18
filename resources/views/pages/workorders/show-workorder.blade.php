@@ -198,7 +198,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="space-y-3">
                 <x-detail-item label="Quantity" :value="$workorder->request?->quantity"/>
-                <x-detail-item label="Supplier" :value="$workorder->requisitionWorkorder?->supplier->name"/>
+                <x-detail-item label="Supplier" :value="$workorder->requisitionWorkorder?->supplier?->name"/>
               </div>
 
               <div class="space-y-3">

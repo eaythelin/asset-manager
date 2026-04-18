@@ -78,40 +78,52 @@ class Asset extends Model
     public function getBookValueAttribute(){
         //this is Straight Line Depreciation
         if(!$this->is_depreciable){
-            return null;
+            return $this->cost;
         }
+
+        $startDate = $this->acquisition_date;
+        $endDate = now();
 
         if($this->status === AssetStatus::DISPOSED){
-            return $this->salvage_value;
+            $latestDisposal = $this->disposalWorkorders()->latest('disposal_date')->first();
+
+            if($latestDisposal){
+                $endDate = $latestDisposal->disposal_date;
+            }
         }
-
-        $monthElapsed = floor(Carbon::parse($this->acquisition_date)->diffInMonths(now())); //this keeps returning a decimal i dont know why >:(
-        $totalMonths = $this->useful_life_in_years * 12;
-        //so asset monthlapsed wont go over useful life months
-        $monthElapsed = min($monthElapsed, $totalMonths);
-
+        
+        $totalMonths = $totalMonths = $this->useful_life_in_years * 12;
+        $monthElapsed = $startDate->diffInMonths($endDate);
+        $monthsToDepreciate = min($monthElapsed, $totalMonths);
         $monthlyDepreciation = ($this->cost - $this->salvage_value) / $totalMonths;
         $accumulatedDepreciation = $monthlyDepreciation * $monthElapsed;
 
-        $bookValue = max($this->cost - $accumulatedDepreciation, $this->salvage_value);
-        return round($bookValue, 2);
+        $currentValue = max($this->cost - $accumulatedDepreciation, $this->salvage_value);
+        return $currentValue;
     }
 
     public function getAccumulatedDepreciationAttribute(){
         if(!$this->is_depreciable || !$this->acquisition_date || !$this->useful_life_in_years){
-            return null;
+            return 0;
         }
 
-        if ($this->status === AssetStatus::DISPOSED) {
-            return round($this->cost - $this->salvage_value, 2);
+        $startDate = $this->acquisition_date;
+        $endDate = now();
+
+        if($this->status === AssetStatus::DISPOSED){
+            $latestDisposal = $this->disposalWorkorders()->latest('disposal_date')->first();
+
+            if($latestDisposal){
+                $endDate = $latestDisposal->disposal_date;
+            }
         }
         
-        $totalMonths = $this->useful_life_in_years * 12;
-        $monthElapsed = floor(Carbon::parse($this->acquisition_date)->diffInMonths(now()));
-        $monthElapsed = min($monthElapsed, $totalMonths);
+        $totalMonths = $totalMonths = $this->useful_life_in_years * 12;
+        $monthElapsed = $startDate->diffInMonths($endDate);
+        $monthsToDepreciate = min($monthElapsed, $totalMonths);
         $monthlyDepreciation = ($this->cost - $this->salvage_value) / $totalMonths;
 
-        return round($monthlyDepreciation * $monthElapsed, 2);
+        return round($monthlyDepreciation * $monthsToDepreciate, 2);
     }
 
     public function getComputedStatusAttribute(){
@@ -131,17 +143,32 @@ class Asset extends Model
         return $this->status->value;
     }
 
-    // Inside app/Models/Asset.php
+    protected static function booted(){
+        static::deleted(function($asset){
+            $asset->serviceWorkorders->each(function($service) {
+                if ($service->workorder) {
+                    $service->workorder()
+                        ->whereNotIn('status', ['completed', 'cancelled'])
+                        ->update(['status' => 'cancelled']);
+                }
+            });
 
-    public function getStatusColor(): string
-    {
-        return match($this->computed_status) {
-            'active'        => 'badge-success',
-            'expired'       => 'badge-warning',
-            'disposed'      => 'badge-error',
-            'under_service' => 'badge-info',
-            default         => 'bg-gray-500',
-        };
+            $asset->disposalWorkorders->each(function($disposal) {
+                if ($disposal->workorder) {
+                    $disposal->workorder()
+                        ->whereNotIn('status', ['completed', 'cancelled'])
+                        ->update(['status' => 'cancelled']);
+                }
+            });
+
+            $asset->requisitionWorkorders->each(function($requisition) {
+                if ($requisition->workorder) {
+                    $requisition->workorder()
+                        ->whereNotIn('status', ['completed', 'cancelled'])
+                        ->update(['status' => 'cancelled']);
+                }
+            });
+        });
     }
 
     public function scopeSearch($query, $search){
@@ -161,7 +188,7 @@ class Asset extends Model
             })
             ->orWhereHas('category', function($q2) use ($search) {
                 $q2->where('name', 'LIKE', "%{$search}%");
-            });;
+            });
         });
     }
 }

@@ -174,7 +174,7 @@ class RequestsController extends Controller
                 ]);
                 
                 if($requestModel->type === RequestTypes::REQUISITION){
-                    $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::REQUISITION)->count();
+                    $count = Workorder::where('workorder_type', WorkorderType::REQUISITION)->count();
                     $nextCode = 'WO-REQ-'.($count + 1);
                     $workorder = Workorder::create([
                         "workorder_code" => $nextCode,
@@ -188,7 +188,7 @@ class RequestsController extends Controller
                         "asset_id" => $requestModel->is_new_asset ? null : $requestModel->asset_id,
                     ]);
                 }elseif($requestModel->type === RequestTypes::SERVICE){
-                    $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::SERVICE)->count();
+                    $count = Workorder::where('workorder_type', WorkorderType::SERVICE)->count();
                     $nextCode = 'WO-SER-'.($count + 1);
 
                     $workorder = Workorder::create([
@@ -208,7 +208,7 @@ class RequestsController extends Controller
                     ]);
                     
                 }elseif($requestModel->type === RequestTypes::DISPOSAL){
-                    $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::DISPOSAL)->count();
+                    $count = Workorder::where('workorder_type', WorkorderType::DISPOSAL)->count();
                     $nextCode = 'WO-DIS-'.($count + 1);
                     $workorder = Workorder::create([
                         "workorder_code" => $nextCode,

@@ -13,7 +13,7 @@
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
 
-      <x-search-bar route="category.index" placeholder="Search reports..."/>
+      <x-search-bar route="reports.index" placeholder="Search reports..."/>
       
       @can('manage reports')
         <x-buttons class="w-full sm:w-auto" onclick="generateReport.showModal()">

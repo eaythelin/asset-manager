@@ -214,7 +214,7 @@ class AssetsController extends Controller
         //this make is so the DB updates in one go and if anything fails then everything fails!!
         try{
             DB::transaction(function() use($validated, $asset){
-                $count = Workorder::withTrashed()->where('workorder_type', WorkorderType::DISPOSAL)->count();
+                $count = Workorder::where('workorder_type', WorkorderType::DISPOSAL)->count();
                 $nextCode = 'WO-DIS-'.($count + 1);
 
                 $workorder = Workorder::create([

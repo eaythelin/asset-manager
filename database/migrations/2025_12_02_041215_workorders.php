@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('workorder_type');
             $table->string('status')->default('pending');
 
-            $table->softDeletes();
             $table->timestamps();
         });
     }

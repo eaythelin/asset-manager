@@ -34,10 +34,16 @@
 
     @can('manage assets')
     <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-      <x-buttons class="w-full sm:w-auto bg-green-700">
-        <x-heroicon-o-document-arrow-down class="size-5"/>
-        Import from Excel
-      </x-buttons>
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn flex flex-row gap-2 bg-green-700 text-white rounded-lg font-bold hover:bg-green-600/30 hover:text-green-800 active:bg-green-600 active:text-white">
+          <x-heroicon-o-document-arrow-down class="size-5"/>
+          Import from Excel
+        </div>
+        <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+          <li><a class="text-sm">Download Template</a></li>
+          <li><a class="text-sm">Import</a></li>
+        </ul>
+      </div>
       <a href="{{ route('assets.create') }}" class="w-full sm:w-auto">
         <x-buttons class="w-full">
           <x-heroicon-s-plus class="size-5"/>

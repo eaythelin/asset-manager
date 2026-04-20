@@ -26,7 +26,9 @@ Route::middleware(['auth'])->group(function () {
     //Assets
     Route::group(["prefix" => "/assets", "middleware" => "check.permission:view assets"], function(){
       Route::get('/', [AssetsController::class, 'getAssets'])->name('assets.index');
-      Route::get('/template', [AssetsController::class, 'downloadTemplate'])->name('assets.template');
+      Route::get('/template', [AssetsController::class, 'downloadTemplate'])
+      ->middleware('check.permission:manage assets')
+      ->name('assets.template');
 
       //static routes before dynamic routes!
       Route::group(["prefix" => "/create", "middleware" => "check.permission:manage assets"], function(){
@@ -89,17 +91,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put("/{id}/update", [WorkordersController::class,"updateWorkorder"])->name("workorders.update");
       });
 
-      Route::put("/start/{id}", [WorkordersController::class,"startWO"])
-        ->middleware("check.permission:manage workorders")
-        ->name("workorders.start");
-      
-      Route::put("/complete/{id}", [WorkordersController::class,"completeWO"])
-        ->middleware("check.permission:manage workorders")
-        ->name("workorders.complete");
-      
-      Route::put("/cancel/{id}", [WorkordersController::class,"cancelWO"])
-        ->middleware("check.permission:manage workorders")
-        ->name("workorders.cancel");
+      Route::middleware('check.permission:manage workorders')->group(function(){
+        Route::put("/start/{id}", [WorkordersController::class,"startWO"])->name("workorders.start");
+        Route::put("/complete/{id}", [WorkordersController::class,"completeWO"])->name("workorders.complete");
+        Route::put("/cancel/{id}", [WorkordersController::class,"cancelWO"])->name("workorders.cancel");
+      });
     });
 
     //employees
@@ -184,6 +180,5 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/placeholder', [PlaceholderController::class, 'getPlaceholder'])->name('placeholder');
 });
-
 
 require __DIR__.'/auth.php';

@@ -26,6 +26,8 @@ Route::middleware(['auth'])->group(function () {
     //Assets
     Route::group(["prefix" => "/assets", "middleware" => "check.permission:view assets"], function(){
       Route::get('/', [AssetsController::class, 'getAssets'])->name('assets.index');
+      Route::get('/template', [AssetsController::class, 'downloadTemplate'])->name('assets.template');
+
       //static routes before dynamic routes!
       Route::group(["prefix" => "/create", "middleware" => "check.permission:manage assets"], function(){
         Route::get('/', [AssetsController::class, 'getCreateAsset'])->name('assets.create');
@@ -36,17 +38,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [AssetsController::class, 'getEditAsset'])->name('assets.edit');
         Route::put('/{id}/update', [AssetsController::class, 'updateAsset'])->name('assets.update');
       });
-
+      
       //individual page
       Route::get('/{id}', [AssetsController::class, 'getAsset'])->name('assets.show');
-
-      Route::get('/subcategories/{categoryID}', [AssetsController::class, 'getSubcategories'])
-        ->middleware('check.permission:manage assets')
-        ->name('assets.subcategories.get');
       
-      Route::delete('/{id}/dispose', [AssetsController::class, 'disposeAsset'])
-        ->middleware('check.permission:manage assets')
-        ->name('assets.dispose');
+      Route::middleware("check.permission:manage assets")->group(function(){
+        Route::get('/subcategories/{categoryID}', [AssetsController::class, 'getSubcategories'])->name('assets.subcategories.get');
+        Route::delete('/{id}/dispose', [AssetsController::class, 'disposeAsset'])->name('assets.dispose');
+      });
     });
 
     //Requests

@@ -20,6 +20,8 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AssetTemplateExport;
 
 class AssetsController extends Controller
 {
@@ -252,5 +254,9 @@ class AssetsController extends Controller
         }
 
         return redirect()->route("assets.index")->with('success', 'Asset disposed successfully!');
+    }
+
+    public function downloadTemplate(){
+        return Excel::download(new AssetTemplateExport, 'asset_import_template.xlsx');
     }
 }

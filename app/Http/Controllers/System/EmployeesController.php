@@ -26,6 +26,10 @@ class EmployeesController extends Controller
             $query->search($search);
         }
 
+        if(request('show_archived')){
+            $query->onlyTrashed();
+        }
+
         $role = auth()->user()->getRoleNames()->first();
 
         $desc = $role === "System Supervisor" ? "View, add, and manage employees and their assets" : "View employees and their assigned assets";
@@ -38,7 +42,7 @@ class EmployeesController extends Controller
     }
 
     public function getEmployee($id){
-        $employee = Employee::with('department', 'assets')->findOrFail($id);
+        $employee = Employee::withTrashed()->with('department', 'assets')->findOrFail($id);
 
         $columns = ["Asset Code", "Asset Name", "Serial Name", "Department", "Category", "Subcategory", "Status"];
         
@@ -74,8 +78,19 @@ class EmployeesController extends Controller
 
     public function deleteEmployee($id){
         $employee = Employee::findOrFail($id);
-        $employee->delete();
 
-        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully!');
+        if($employee->assets()->exists()){
+            return redirect()->back()->with('error', 'Employee has assigned assets. Please unassign them first.');
+        }
+
+        $employee->delete();
+        return redirect()->route('employees.index')->with('success', 'Employee archived successfully!');
+    }
+
+    public function restoreEmployee($id){
+        $employee = Employee::withTrashed()->findOrFail($id);
+        $employee->restore();
+
+        return redirect()->back()->with('success', 'Employee restored successfully!');
     }
 }

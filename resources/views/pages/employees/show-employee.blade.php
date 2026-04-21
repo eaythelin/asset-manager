@@ -61,16 +61,9 @@
             <x-td>{{ $asset->category->name }}</x-td>
             <x-td>{{ $asset->subCategory?->name }}</x-td>
             <x-td class="text-center">
-              @if($asset->computed_status === "expired")
-                <span class = "badge badge-warning text-white font-medium text-sm p-3 tooltip tooltip-top"
-                  data-tip="Asset has reach the end of its lifecycle">Expired</span>
-              @elseif($asset->computed_status === "disposed")
-                <span class = "badge badge-error text-white font-medium text-sm">Disposed</span>
-              @elseif($asset->computed_status === "under_service")
-                <span class = "badge badge-info text-white font-medium text-sm">Under Service</span>
-              @elseif($asset->computed_status === "active")
-                <span class = "badge badge-success text-white font-medium text-sm">Active</span>
-              @endif
+              <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3">
+                {{ $asset->status->label() }}
+              </span>
             </x-td>
           </tr>
           @endforeach

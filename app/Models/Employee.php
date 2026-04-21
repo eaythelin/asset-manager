@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $first_name
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'first_name',
         'last_name',
@@ -42,6 +43,12 @@ class Employee extends Model
 
     public function serviceWorkorder(){
         return $this->hasMany(ServiceWorkorder::class,'assigned_to');
+    }
+
+    protected static function booted(){
+        static::deleting(function($employee){
+            $employee->user()->delete();
+        });
     }
 
     //query!

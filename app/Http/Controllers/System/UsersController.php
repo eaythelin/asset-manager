@@ -124,6 +124,7 @@ class UsersController extends Controller
         $user = User::withTrashed()->findOrFail($id);
         $user->update(['is_active' => true]);
         $user->restore();
+        $user->employee()->restore();
 
         return back()->with('success', 'User restored!');
     }

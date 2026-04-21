@@ -105,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
       Route::middleware('check.permission:manage employees')->group(function(){
         Route::post('/', [EmployeesController::class, 'storeEmployees'])->name('employees.store');
         Route::put('/{id}', [EmployeesController::class, 'updateEmployee'])->name('employees.update');
+        Route::put('/{id}/restore', [EmployeesController::class, 'restoreEmployee'])->name('employees.restore');
         Route::delete('/{id}',[EmployeesController::class, 'deleteEmployee'])->name('employees.delete');
       });
     });

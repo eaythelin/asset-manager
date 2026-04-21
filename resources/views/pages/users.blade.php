@@ -38,7 +38,7 @@
           Create User
         </x-buttons>
       @endcan
-</div>
+    </div>
     <x-tables :columnNames="$columns" :centeredColumns="[5]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($users as $user)

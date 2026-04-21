@@ -12,8 +12,23 @@
   <x-validation-error />
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
-      
-      <x-search-bar route="employees.index" placeholder="Search employees..."/>
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+        <x-search-bar route="employees.index" placeholder="Search employees..."/>
+
+        <form method="GET" action="{{ route('employees.index') }}">
+          <input type="hidden" name="search" value="{{ request('search') }}">
+          <label class="flex mt-3 items-center gap-2 cursor-pointer">
+            <input 
+              type="checkbox" 
+              name="show_archived" 
+              class="checkbox checkbox-sm"
+              {{ request('show_archived') ? 'checked' : '' }}
+              onchange="this.form.submit()"
+            />
+            <span class="text-sm font-medium">Show archived</span>
+          </label>
+        </form>
+      </div>
 
       @can('manage employees')
         <x-buttons class="w-full sm:w-auto" onclick="createEmployee.showModal()">
@@ -44,26 +59,40 @@
                     </x-buttons>
                   </a>
                 @endcan
-                @can('manage employees')
-                  <x-buttons onclick="editEmployee.showModal()"
-                    class="editButton tooltip tooltip-top"
-                    data-tip="Edit"
-                    aria-label="Edit Employee"
-                    data-first-name="{{ $employee -> first_name}}"
-                    data-last-name="{{ $employee -> last_name }}"
-                    data-department="{{ $employee-> department -> id}}"
-                    data-route="{{ route('employees.update', $employee->id ) }}">
-                    <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
-                  </x-buttons>
-                  <x-buttons onclick="deleteEmployee.showModal()"
-                    class="deleteButton bg-red-700 tooltip tooltip-top"
-                    data-tip="Delete"
-                    aria-label="Delete Employee"
-                    data-route="{{ route('employees.delete', $employee->id ) }}"
-                    data-has-user="{{ $employee -> user_count ? 1 : 0}}">
-                    <x-heroicon-s-trash class="size-4 sm:size-5"/>
-                  </x-buttons>
-                @endcan
+                @if($employee->trashed())
+                  @can('manage employees')
+                    <form action="{{ route('employees.restore', $employee->id) }}" method="POST">
+                      @csrf
+                      @method('PUT')
+                      <x-buttons 
+                        class="restoreButton">
+                        <x-heroicon-o-arrow-uturn-left class="size-4 sm:size-5"/>
+                        Restore Employee
+                      </x-buttons>
+                    </form>
+                  @endcan
+                @else
+                  @can('manage employees')
+                    <x-buttons onclick="editEmployee.showModal()"
+                      class="editButton tooltip tooltip-top"
+                      data-tip="Edit"
+                      aria-label="Edit Employee"
+                      data-first-name="{{ $employee -> first_name}}"
+                      data-last-name="{{ $employee -> last_name }}"
+                      data-department="{{ $employee-> department -> id}}"
+                      data-route="{{ route('employees.update', $employee->id ) }}">
+                      <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
+                    </x-buttons>
+                    <x-buttons onclick="archiveEmployee.showModal()"
+                        class="archiveButton bg-yellow-600 tooltip tooltip-top"
+                        data-tip="Archive"
+                        aria-label="Archive Employee"
+                        data-route="{{ route('employees.delete', $employee->id) }}"
+                        data-has-user="{{ $employee->user_count ? 1 : 0 }}">
+                        <x-heroicon-s-archive-box class="size-4 sm:size-5"/>
+                    </x-buttons>
+                  @endcan
+                @endif
               </td>
             </tr>
           @endforeach
@@ -77,7 +106,7 @@
 
 @include('modals.employee-modals.create-employee-modal')
 @include('modals.employee-modals.edit-employee-modal')
-@include('modals.employee-modals.delete-employee-modal')
+@include('modals.employee-modals.archive-employee-modal')
 
 @endsection
 

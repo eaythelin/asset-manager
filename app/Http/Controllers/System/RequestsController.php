@@ -75,7 +75,7 @@ class RequestsController extends Controller
     }
 
     public function getCreateRequest(){
-        $count = RequestModel::withTrashed()->count();
+        $count = RequestModel::count();
         $nextCode = 'REQ-'.($count + 1);
         $requestTypes = RequestTypes::cases();
         $assets = Asset::where('department_id', auth()->user()->employee->department_id)
@@ -158,7 +158,6 @@ class RequestsController extends Controller
         $requestModel = RequestModel::findOrFail($id);
         $requestModel->status = RequestStatus::CANCELLED;
         $requestModel->save();
-        $requestModel->delete();
 
         return redirect()->route('requests.index')->with('success', 'Request cancelled!');
     }

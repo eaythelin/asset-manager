@@ -33,7 +33,6 @@ return new class extends Migration
             $table->string('condition')->nullable();//if its disposal
             $table->string('status')->default('draft');
             
-            $table->softDeletes();
             $table->timestamps();
         });
     }

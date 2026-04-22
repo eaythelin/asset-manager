@@ -38,7 +38,10 @@ export default defineConfig({
                 'resources/js/requests/reqFilepond.js',
                 'resources/js/workorder/startWorkorder.js',
                 'resources/js/workorder/completeWorkorder.js',
-                'resources/js/workorder/cancelWorkorder.js'
+                'resources/js/workorder/cancelWorkorder.js',
+                'resources/js/assets/importFilepond.js',
+                'resources/js/reports/deleteReport.js'
+
             ],
             refresh: true,
         }),

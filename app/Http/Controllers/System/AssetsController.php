@@ -158,6 +158,8 @@ class AssetsController extends Controller
         $asset = Asset::findOrFail($id);
         $validated = $request->validated();
 
+        dd($validated);
+
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
 
@@ -258,5 +260,9 @@ class AssetsController extends Controller
 
     public function downloadTemplate(){
         return Excel::download(new AssetTemplateExport, 'asset_import_template.xlsx');
+    }
+
+    public function importAssets(){
+        dd('potato');
     }
 }

@@ -30,6 +30,10 @@ Route::middleware(['auth'])->group(function () {
       ->middleware('check.permission:manage assets')
       ->name('assets.template');
 
+      Route::post('/import', [AssetsController::class, 'importAssets'])
+      ->middleware('check.permission:manage assets')
+      ->name('assets.import');
+
       //static routes before dynamic routes!
       Route::group(["prefix" => "/create", "middleware" => "check.permission:manage assets"], function(){
         Route::get('/', [AssetsController::class, 'getCreateAsset'])->name('assets.create');

@@ -37,7 +37,7 @@ class RequestValidation extends FormRequest
             "department_id" => ["required", "exists:departments,id"],
             //filez
             "attachments" => ["nullable", "array", "max:5"],
-            "attachments.*" => ["file", "max:10240", "mimes:jpg,jpeg,png,pdf,doc,docx"]
+            "attachments.*" => ["file", "max:10240", "mimes:jpg,jpeg,png,pdf,doc,docx,webp"]
         ];
 
         return match($this->type){

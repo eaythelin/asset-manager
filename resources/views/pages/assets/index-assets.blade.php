@@ -43,7 +43,7 @@
           <li><a class="text-sm" href="{{ route('assets.template') }}">
               Download Template</a>
           </li>
-          <li><a class="text-sm">Import</a></li>
+          <li><a class="text-sm" href="#" onclick="importAsset.showModal()">Import</a></li>
         </ul>
       </div>
       <a href="{{ route('assets.create') }}" class="w-full sm:w-auto">
@@ -109,8 +109,10 @@
 </div>
 
 @include('modals.assets-modals.dispose-asset-modal')
+@include('modals.assets-modals.import-asset-modal')
 @endsection
 
 @section('scripts')
   @vite('resources/js/assets/dispose-asset/disposeAsset.js')
+  @vite('resources/js/assets/importFilepond.js')
 @endsection

@@ -35,7 +35,7 @@ class AssetValidation extends FormRequest
             "quantity"=> ["required","integer", "min:1"],
             "subcategory" => ["nullable", "exists:sub_categories,id"],
             "description" => ["nullable", "string", "max:255"],
-            "image_path" => ["nullable", "image", "mimes:jpeg,png,jpg,gif", "max:2048"], //max 2MB
+            "image_path" => ["nullable", "image", "mimes:jpeg,png,jpg,webp", "max:5120"], //max 5MB
 
             //assignment fields
             "department" => ["required", "exists:departments,id"],

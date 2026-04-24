@@ -10,6 +10,7 @@
 
 <div class = "md:m-4">
   <x-validation-error />
+  <x-import-error-validation />
   
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">

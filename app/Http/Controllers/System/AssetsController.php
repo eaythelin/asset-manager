@@ -22,6 +22,8 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AssetTemplateExport;
+use App\Imports\AssetImport;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class AssetsController extends Controller
 {
@@ -129,7 +131,6 @@ class AssetsController extends Controller
         }
         
         Asset::create([
-            "asset_code" => $validated['asset_code'],
             "name" => $validated['asset_name'],
             "serial_name" => $validated['serial_name'],
             "category_id" => $validated['category'],
@@ -157,8 +158,6 @@ class AssetsController extends Controller
     public function updateAsset(AssetValidation $request, $id){
         $asset = Asset::findOrFail($id);
         $validated = $request->validated();
-
-        dd($validated);
 
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
@@ -262,7 +261,24 @@ class AssetsController extends Controller
         return Excel::download(new AssetTemplateExport, 'asset_import_template.xlsx');
     }
 
-    public function importAssets(){
-        dd('potato');
+    public function importAssets(Request $request){
+        $request->validate([
+            'file_import' => ['required', 'file', 'mimes:xlsx,xls,csv']
+        ]);
+
+        try {
+            Excel::import(new AssetImport, $request->file('file_import'));
+            return redirect()->back()->with('success', 'Assets imported successfully!');
+        } catch(ValidationException $e) {
+            $failures = $e->failures();
+
+            $errors = [];
+
+            foreach($failures as $failure){
+                $errors[] = "Row {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+
+            return redirect()->back()->with('import_errors', $errors);
+        }
     }
 }

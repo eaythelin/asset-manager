@@ -41,7 +41,6 @@ export default defineConfig({
                 'resources/js/workorder/cancelWorkorder.js',
                 'resources/js/assets/importFilepond.js',
                 'resources/js/reports/deleteReport.js'
-
             ],
             refresh: true,
         }),

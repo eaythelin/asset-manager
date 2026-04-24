@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('assets', function(Blueprint $table){
             $table->id();
-            $table->string('asset_code')->unique();
+            $table->string('asset_code')->default('');
             $table->string('name');
             $table->string('serial_name')->nullable();
             $table->string('status')->default('active'); //enum values handles in the model

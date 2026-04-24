@@ -43,7 +43,7 @@ class AssetValidation extends FormRequest
 
             //financial fields!!
             "is_depreciable" => ["nullable"],
-            "cost" => ["required_if:is_depreciable,on", "nullable", "numeric", "min:0"],
+            "cost" => ["required_if:is_depreciable,on","nullable","numeric", "min:0"],
             "salvage_value" => ["required_if:is_depreciable,on", "nullable", "numeric", "min:0"],
             "acquisition_date" => ["required_if:is_depreciable,on", "nullable", "date"],
             "useful_life_in_years" => ["required_if:is_depreciable,on", "nullable", "integer", "min:1"],

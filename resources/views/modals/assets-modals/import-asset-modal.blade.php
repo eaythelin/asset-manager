@@ -1,5 +1,5 @@
 <x-modal name="importAsset" title="Import Assets">
-  <form method = "POST" action = "{{ route('assets.import') }}">
+  <form method = "POST" action = "{{ route('assets.import') }}" enctype="multipart/form-data">
       <div class = "flex flex-col gap-3 px-2 sm:px-4">
         @csrf
         <x-label for="file_import" :required="true">Import File</x-label>

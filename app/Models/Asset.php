@@ -169,6 +169,12 @@ class Asset extends Model
                 }
             });
         });
+
+        static::created(function($asset){
+            $asset->update([
+                'asset_code' => 'AST-'. $asset->id
+            ]);
+        });
     }
 
     public function scopeSearch($query, $search){

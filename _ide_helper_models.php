@@ -148,7 +148,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Asset|null $asset
- * @property-read \App\Models\Workorder|null $workorder
+ * @property-read \App\Models\Workorder $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DisposalWorkorder query()
@@ -173,6 +173,7 @@ namespace App\Models{
  * @property int $department_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Asset> $assets
  * @property-read int|null $assets_count
  * @property-read \App\Models\Department $department
@@ -182,14 +183,18 @@ namespace App\Models{
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee search($search)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereFirstName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Employee withoutTrashed()
  */
 	class Employee extends \Eloquent {}
 }
@@ -207,6 +212,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Report search($search)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereFilePath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report whereGeneratedBy($value)
@@ -238,7 +244,7 @@ namespace App\Models{
  * @property \App\Enums\ServiceTypes|null $service_type
  * @property \App\Enums\DisposalConditions|null $condition
  * @property \App\Enums\RequestStatus $status
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $approvedBy
@@ -252,7 +258,6 @@ namespace App\Models{
  * @property-read \App\Models\Workorder|null $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Request onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request search($search)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereAssetId($value)
@@ -276,8 +281,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereSubCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Request whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Request withTrashed(bool $withTrashed = true)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Request withoutTrashed()
  */
 	class Request extends \Eloquent {}
 }
@@ -291,7 +294,7 @@ namespace App\Models{
  * @property string|null $original_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Request|null $request
+ * @property-read \App\Models\Request $request
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequestFile query()
@@ -320,7 +323,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Asset|null $asset
  * @property-read \App\Models\Supplier|null $supplier
- * @property-read \App\Models\Workorder|null $workorder
+ * @property-read \App\Models\Workorder $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RequisitionWorkorder query()
@@ -356,7 +359,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Asset|null $asset
  * @property-read \App\Models\Employee|null $assignedTo
- * @property-read \App\Models\Workorder|null $workorder
+ * @property-read \App\Models\Workorder $workorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ServiceWorkorder query()
@@ -450,7 +453,7 @@ namespace App\Models{
  * @property-read int|null $approved_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Workorder> $completedWorkorders
  * @property-read int|null $completed_workorders_count
- * @property-read \App\Models\Employee $employee
+ * @property-read \App\Models\Employee|null $employee
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
@@ -499,7 +502,7 @@ namespace App\Models{
  * @property \App\Enums\PriorityLevel $priority_level
  * @property \App\Enums\WorkorderType $workorder_type
  * @property \App\Enums\WorkorderStatus $status
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property int $is_direct
@@ -511,7 +514,6 @@ namespace App\Models{
  * @property-read \App\Models\ServiceWorkorder|null $serviceWorkorder
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder search($search)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereCompletedBy($value)
@@ -527,8 +529,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereWorkorderCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereWorkorderType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder withTrashed(bool $withTrashed = true)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder withoutTrashed()
  */
 	class Workorder extends \Eloquent {}
 }

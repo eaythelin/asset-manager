@@ -22,6 +22,15 @@
           Dispose
         </x-buttons>
       @endif
+
+      @can('manage assets')
+        <a href="#">
+          <x-buttons class="btn-sm sm:btn-md">
+            <x-heroicon-o-qr-code class="size-4"/>
+            Download QR
+          </x-buttons>
+        </a>
+      @endcan
     </div>
   </div>
 

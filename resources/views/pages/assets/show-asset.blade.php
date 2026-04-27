@@ -24,12 +24,13 @@
       @endif
 
       @can('manage assets')
-        <a href="#">
-          <x-buttons class="btn-sm sm:btn-md">
-            <x-heroicon-o-qr-code class="size-4"/>
-            Download QR
-          </x-buttons>
-        </a>
+        <div id="qr-container" style="display:none;">
+          {!! QrCode::size(300)->generate(route('assets.show', $asset->id)) !!}
+        </div>
+        <x-buttons class="btn-sm sm:btn-md" id="download-qr-btn" data-asset-name="{{ $asset->name }}">
+          <x-heroicon-o-qr-code class="size-4"/>
+          Download QR
+        </x-buttons>
       @endcan
     </div>
   </div>
@@ -195,4 +196,5 @@
 
 @section('scripts')
   @vite('resources/js/assets/dispose-asset/disposeAsset.js')
+  @vite('resources/js/assets/convertSVGtoPNG.js')
 @endsection

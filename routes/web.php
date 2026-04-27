@@ -26,13 +26,11 @@ Route::middleware(['auth'])->group(function () {
     //Assets
     Route::group(["prefix" => "/assets", "middleware" => "check.permission:view assets"], function(){
       Route::get('/', [AssetsController::class, 'getAssets'])->name('assets.index');
-      Route::get('/template', [AssetsController::class, 'downloadTemplate'])
-      ->middleware('check.permission:manage assets')
-      ->name('assets.template');
 
-      Route::post('/import', [AssetsController::class, 'importAssets'])
-      ->middleware('check.permission:manage assets')
-      ->name('assets.import');
+      Route::middleware("check.permission:manage assets")->group(function(){
+        Route::get('/template', [AssetsController::class, 'downloadTemplate'])->name('assets.template');
+        Route::post('/import', [AssetsController::class, 'importAssets'])->name('assets.import');
+      });
 
       //static routes before dynamic routes!
       Route::group(["prefix" => "/create", "middleware" => "check.permission:manage assets"], function(){

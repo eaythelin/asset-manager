@@ -19,14 +19,12 @@
       <input type="hidden" name="department_id" id="department_id" value="{{ auth()->user()->employee->department->id }}">
 
       <div class = "flex flex-col sm:flex-row gap-6">
-        {{-- Left Column!! --}}
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
             <x-page-label for="request_code" :required="true">Request Code</x-page-label>
             <x-page-input value="{{ $nextCode }}" name="request_code" id="request_code" readonly/>
           </div>
         </div>
-        {{-- Right Column!! --}}
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
             <x-page-label for="type" :required="true">Request Type</x-page-label>

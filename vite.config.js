@@ -40,7 +40,8 @@ export default defineConfig({
                 'resources/js/workorder/completeWorkorder.js',
                 'resources/js/workorder/cancelWorkorder.js',
                 'resources/js/assets/importFilepond.js',
-                'resources/js/reports/deleteReport.js'
+                'resources/js/reports/deleteReport.js',
+                'resources/js/assets/convertSVGtoPNG.js'
             ],
             refresh: true,
         }),

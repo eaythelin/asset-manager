@@ -24,6 +24,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AssetTemplateExport;
 use App\Imports\AssetImport;
 use Maatwebsite\Excel\Validators\ValidationException;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AssetsController extends Controller
 {

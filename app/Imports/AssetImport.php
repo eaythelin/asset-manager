@@ -73,7 +73,7 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
             "quantity"=> ["required","integer", "min:1"],
             "subcategory" => ["nullable", Rule::exists('sub_categories', 'name')],
             "description" => ["nullable", "string", "max:255"],
-            "department" => ["nullable", Rule::exists('departments', 'name')],
+            "department" => ["required", Rule::exists('departments', 'name')],
             "custodian" => ["nullable",
                 function($attribute, $value, $fail){
                     $exists = Employee::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [trim($value)])->exists();
@@ -91,7 +91,7 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
     }
 
     public function prepareForValidation($data){
-        if (isset($data['asset_name'])) {
+        if (!isset($data['asset_name'])) {
             return $data;
         }
         $data['category'] = isset($data['category']) ? trim($data['category']) : null;

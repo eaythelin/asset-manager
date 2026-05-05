@@ -4,14 +4,14 @@
       @csrf
       @method('PUT')
       <x-label :for="'edit_selectEmployee'" :required="true">Employee Link </x-label>
-      <select name = 'employee_id' id="edit_selectEmployee" class="select w-full rounded-xl">
+      <select name = 'employee' id="edit_selectEmployee" class="select w-full rounded-xl">
         <option value="" disabled selected>--Select Employee--</option>
         @foreach($employees as $id => $full_name)
           <option value="{{ $id }}">{{ $full_name }}</option>
         @endforeach
       </select>
       <x-label :for="'edit_selectRole'" :required="true">Role </x-label>
-      <select name = 'role_id' id="edit_selectRole" class="select w-full rounded-xl">
+      <select name = 'role' id="edit_selectRole" class="select w-full rounded-xl">
         <option value="" disabled selected>--Select Role--</option>
         @foreach($roles as $id => $role_name)
           <option value="{{ $id }}">{{ $role_name }}</option>

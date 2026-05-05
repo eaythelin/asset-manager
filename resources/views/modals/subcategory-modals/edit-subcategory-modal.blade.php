@@ -6,7 +6,7 @@
       <x-label for="edit_name" :required="true">Name </x-label>
       <x-modal-input-box id="edit_name" name="name" autocomplete="off"/>
       <x-label for="edit_selectCategory" :required="true">Category </x-label>
-      <select name = 'category_id' id="edit_selectCategory" class="select w-full rounded-xl">
+      <select name = 'category' id="edit_selectCategory" class="select w-full rounded-xl">
         <option value="" disabled selected>--Select Category--</option>
         @foreach($categories as $id => $name)
           <option value="{{ $id }}">{{ $name }}</option>

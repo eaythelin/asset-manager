@@ -53,10 +53,14 @@ class EmployeesController extends Controller
         $validated = $request->validate([
             "first_name"=> ["required", "max:100", "string"],
             "last_name"=> ["required", 'max:100', "string"],
-            "department_id"=> ["required", "exists:departments,id"]
+            "department"=> ["required", "exists:departments,id"]
         ]);
 
-        Employee::create($validated);
+        Employee::create([
+            "first_name" => $validated["first_name"],
+            "last_name" => $validated["last_name"],
+            "department_id" => $validated["department"]
+        ]);
 
         return redirect()->route('employees.index')->with('success', 'Employee successfully created!');
     }
@@ -65,13 +69,15 @@ class EmployeesController extends Controller
         $validated = $request->validate([
             "first_name"=> ["required", "max:100", "string"],
             "last_name"=> ["required", 'max:100', "string"],
-            "department_id"=> ["required", "exists:departments,id"]
+            "department"=> ["required", "exists:departments,id"]
         ]);
 
-        //'regex:/^[a-zA-Z\s\'-]+$/' regex maybe? in the future??
-
         $employee = Employee::findOrFail($id);
-        $employee->update($validated);
+        $employee->update([
+            "first_name" => $validated["first_name"],
+            "last_name" => $validated["last_name"],
+            "department_id" => $validated["department"]
+        ]);
 
         return redirect()->route('employees.index')->with('success', 'Employee edited successfully!');
     }

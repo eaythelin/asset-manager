@@ -7,7 +7,7 @@
       <x-label for="create_last_name" :required="true">Last Name </x-label>
       <x-modal-input-box id="create_last_name" name="last_name" />
       <x-label for="create_selectDepartment" :required="true">Department </x-label>
-      <select name = 'department_id' id="create_selectDepartment" x-model="selectedDept" class="select w-full rounded-xl">
+      <select name = 'department' id="create_selectDepartment" x-model="selectedDept" class="select w-full rounded-xl">
         <option value="" disabled selected>--Select Department--</option>
         @foreach($departments as $id => $department_name)
           <option value="{{ $id }}">{{ $department_name }}</option>

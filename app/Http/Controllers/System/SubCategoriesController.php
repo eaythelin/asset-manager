@@ -26,11 +26,15 @@ class SubCategoriesController extends Controller
     public function storeSubCategory(Request $request){
         $validated = $request->validate([
             'name' => ["required", "max:100", "string", "unique:sub_categories,name"],
-            'category_id' => ["required", "exists:categories,id"],
+            'category' => ["required", "exists:categories,id"],
             'description' => ["nullable", "max:255", "string"],
         ]);
 
-        SubCategory::create($validated);
+        SubCategory::create([
+            'name' => $validated['name'],
+            'category_id' => $validated['category'],
+            'description' => $validated['description']
+        ]);
 
         return back()->with('success', 'Subcategory successfully created!');
     }
@@ -38,12 +42,16 @@ class SubCategoriesController extends Controller
     public function updateSubCategory(Request $request, $id){
         $validated = $request->validate([
             'name' => ["required", "max:100", "string", Rule::unique('sub_categories', 'name')->ignore($id)],
-            'category_id' => ["required", "exists:categories,id"],
+            'category' => ["required", "exists:categories,id"],
             'description' => ["nullable", "max:255", "string"],
         ]);
 
         $subCategory = SubCategory::findOrFail($id);
-        $subCategory->update($validated);
+        $subCategory->update([
+            'name' => $validated['name'],
+            'category_id' => $validated['category'],
+            'description' => $validated['description']
+        ]);
 
         return back()->with('success', 'Subcategory successfully updated!');
     }

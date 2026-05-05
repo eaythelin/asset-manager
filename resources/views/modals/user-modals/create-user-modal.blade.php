@@ -3,14 +3,14 @@
     <div class = "flex flex-col gap-3 px-2 sm:px-4">
       @csrf
       <x-label :for="'create_selectEmployee'" :required="true">Employee Link </x-label>
-      <select name = 'employee_id' id="create_selectEmployee" x-model="selectedEmployee" class="select w-full rounded-xl">
+      <select name = 'employee' id="create_selectEmployee" x-model="selectedEmployee" class="select w-full rounded-xl">
         <option value="" disabled selected>--Select Employee--</option>
         @foreach($employees as $id => $full_name)
           <option value="{{ $id }}">{{ $full_name }}</option>
         @endforeach
       </select>
       <x-label :for="'create_selectRole'" :required="true">Role </x-label>
-      <select name = 'role_id' id="create_selectRole" x-model="selectedRole" class="select w-full rounded-xl">
+      <select name = 'role' id="create_selectRole" x-model="selectedRole" class="select w-full rounded-xl">
         <option value="" disabled selected>--Select Role--</option>
         @foreach($roles as $id => $role_name)
           <option value="{{ $id }}">{{ $role_name }}</option>

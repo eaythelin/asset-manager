@@ -49,12 +49,12 @@ class UsersController extends Controller
         $validated = $request->validate([
             'email' => ['required', 'email', 'max:255','unique:users,email'],
             'password' => ['required', 'min:8', 'string'],
-            'employee_id' => ['required', 'exists:employees,id'],
-            'role_id' => ['required', 'exists:roles,id']
+            'employee' => ['required', 'exists:employees,id'],
+            'role' => ['required', 'exists:roles,id']
         ]);
 
         //get employee info
-        $employee = Employee::findOrFail($validated['employee_id']);
+        $employee = Employee::findOrFail($validated['employee']);
 
         $username = $employee->first_name . ' ' . $employee->last_name;
 
@@ -62,11 +62,11 @@ class UsersController extends Controller
             'name' => $username,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'employee_id' => $validated['employee_id']
+            'employee_id' => $validated['employee']
         ]);
 
         //get role info
-        $role = Role::findOrFail($validated['role_id']);
+        $role = Role::findOrFail($validated['role']);
 
         $user->assignRole($role->name);
 
@@ -76,8 +76,8 @@ class UsersController extends Controller
     public function updateUser(Request $request, $id){
         $validated = $request->validate([
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($id)],
-            'employee_id' => ['required', Rule::unique('users', 'employee_id')->ignore($id)],
-            'role_id' => ['required', 'exists:roles,id'],
+            'employee' => ['required', Rule::unique('users', 'employee_id')->ignore($id)],
+            'role' => ['required', 'exists:roles,id'],
             'password' => ['nullable', 'min:8', 'string', 'confirmed']
         ]);
 
@@ -85,7 +85,7 @@ class UsersController extends Controller
 
         $user->update([
             'email' => $validated['email'],
-            'employee_id' => $validated['employee_id'],
+            'employee_id' => $validated['employee'],
         ]);
 
         //this runs only if the password field is filled
@@ -97,11 +97,11 @@ class UsersController extends Controller
 
         //Only update role if not editing their own account!!
         //prevent role change if editing yourself AND the role is different
-        if(auth()->id() === $user->id && $validated['role_id'] != $currentRoleID){
+        if(auth()->id() === $user->id && $validated['role'] != $currentRoleID){
             return redirect()->route('users.index')->with('error', 'You cannot change your own role!');
         }
 
-        $role = Role::findOrFail($validated['role_id']);
+        $role = Role::findOrFail($validated['role']);
         $user->syncRoles($role->name);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');

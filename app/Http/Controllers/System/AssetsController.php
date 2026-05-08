@@ -53,7 +53,6 @@ class AssetsController extends Controller
         $desc = $role === "System Supervisor" ? "View and manage assets" : "View assets information";
 
         $assets = $query->paginate(5);
-        $assets->each(fn($asset) => $asset->computed_status); //just checks if any asset is expired
         $columns = ["Asset Code", "Asset Name","Quantity","Serial Name","Department", "Custodian", "Category", "Status", "Actions"];
 
         return view('pages.assets.index-assets', ['desc' => $desc,

@@ -27,13 +27,6 @@ class DashboardController extends Controller
         //Get Departments
         $departments = Department::with("assets")->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
-
-        //checking for overdue and expired
-        Asset::where('status', '!=', 'disposed')
-            ->where('is_depreciable', true)
-            ->whereNotNull('end_of_life_date')
-            ->get()
-            ->each(fn($asset) => $asset->computed_status);
         
         Workorder::whereNotNull('end_date')
             ->get()

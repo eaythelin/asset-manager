@@ -7,4 +7,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('app:check-expired-assets')->everyFiveSeconds();
+Schedule::command('app:check-expired-assets')->daily();
+Schedule::command('app:check-overdue-workorder')->everyFiveSeconds();

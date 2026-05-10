@@ -32,10 +32,8 @@ class WorkordersController extends Controller
         }
 
         $columns = ["Workorder Code", "Request Code", "Type", "Priority", "Start Date", "End Date", "Status", "Actions"];
-
         $query->orderByRaw("FIELD(status, 'pending', 'in_progress', 'overdue', 'completed', 'cancelled')");
         $workorders = $query->paginate(5);
-        $workorders->each(fn($workorders) => $workorders->check_status);
         return view('pages.workorders.index-workorders', compact('workorders', 'columns'));
     }
 

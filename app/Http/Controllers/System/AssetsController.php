@@ -71,10 +71,10 @@ class AssetsController extends Controller
             ->concat($asset->requisitionWorkorders)
             ->sortByDesc('created_at');
 
-        $hasWorkorders = $asset->serviceWorkorders()->exists() || 
-                 $asset->disposalWorkorders()->exists() || 
+        $hasWorkorders = $asset->serviceWorkorders()->exists() ||
+                 $asset->disposalWorkorders()->exists() ||
                  $asset->requisitionWorkorders()->exists();
-        
+
         $columns = ["Workorder Code", "Type", "Status", "Start Date", "End Date", "Quantity", "Handled By"];
 
         return view('pages.assets.show-asset', compact('asset', 'disposalMethods','hasWorkorders','columns','history'));
@@ -84,7 +84,7 @@ class AssetsController extends Controller
         //gets the latest asset id and add 1, if it doesnt exist default to AST-1
         $count = Asset::withTrashed()->count();
         $nextCode = 'AST-'.($count + 1);
-        
+
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $departments = Department::orderBy('name')->pluck('name', 'id');
         $employees = Employee::select('id', 'first_name', 'last_name')
@@ -129,7 +129,7 @@ class AssetsController extends Controller
         if($request->hasFile('image_path')){
             $imagePath = $request->file('image_path')->store('assets/images', 'public');
         }
-        
+
         Asset::create([
             "name" => $validated['asset_name'],
             "serial_name" => $validated['serial_name'],
@@ -148,7 +148,7 @@ class AssetsController extends Controller
             "end_of_life_date" => $validated['end_of_life_date'],
             "cost" => $validated['cost'] ?? 0,
             "salvage_value" => $validated['salvage_value'] ?? 0,
-            
+
             "supplier_id" => $validated['supplier'] ?? null,
         ]);
 
@@ -190,7 +190,7 @@ class AssetsController extends Controller
             "end_of_life_date" => $validated['end_of_life_date'],
             "cost" => $validated['cost'] ?? 0,
             "salvage_value" => $validated['salvage_value'] ?? 0,
-            
+
             "supplier_id" => $validated['supplier'] ?? null,
         ]);
 

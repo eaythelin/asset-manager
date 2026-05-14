@@ -27,7 +27,7 @@ class DashboardController extends Controller
         //Get Departments
         $departments = Department::with("assets")->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
-        
+
         Workorder::whereNotNull('end_date')
             ->get()
             ->each(fn($workorder) => $workorder->check_status);
@@ -37,7 +37,7 @@ class DashboardController extends Controller
         $disposeAssetsQuery = Asset::withTrashed()->where('status', 'disposed');
         $serviceAssetQuery = Asset::where('status','under_service');
         $expiredAssetQuery = Asset::where('status','expired');
-        
+
         if(auth()->user()->getRoleNames()->contains('Department Head')){
             $activeAssetQuery->where('department_id', $userDepartment);
             $disposeAssetsQuery->where('department_id', $userDepartment);
@@ -52,7 +52,7 @@ class DashboardController extends Controller
         $pendingWO = Workorder::where('status', 'pending')->count();
         $inProgWO = Workorder::where('status', 'in_progress')->count();
         $overdueWO = Workorder::where('status','overdue')->count();
-        $completedWO = Workorder::where('status', 'completed')->count();
+        $completedWO = Workorder::where('status', 'completed')->where('is_direct','false')->count();
 
         $requestCount = RequestModel::where('status', 'pending');
         if(auth()->user()->getRoleNames()->contains('General Manager')){
@@ -66,7 +66,7 @@ class DashboardController extends Controller
         //Column names for Filter Subcategory by Category and Assets per Department
         $subcategoryFilterColumns = ["", "Subcategory", "Count"];
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
-        return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments", 
+        return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'pendingWO', 'cardGridNumber',
                                                             "serviceAssets", "expiredAssets", 'inProgWO', 'overdueWO', 'completedWO',

@@ -62,7 +62,7 @@ class ReportsController extends Controller
                     $query->where('category_id', $validated['category_id']);
             }
             if($validated['department_id'] ?? null){
-                $query->where('department_id', $validated['department_id']); 
+                $query->where('department_id', $validated['department_id']);
             }
 
             if($validated['status'] ?? null){
@@ -94,7 +94,7 @@ class ReportsController extends Controller
                     'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
-                    'file_path' => $filename      
+                    'file_path' => $filename
                 ]);
 
                 return $pdf->stream('asset-report.pdf');
@@ -110,11 +110,11 @@ class ReportsController extends Controller
                     'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
-                    'file_path' => $filename      
+                    'file_path' => $filename
                 ]);
 
                 return $pdf->stream('depreciation-report.pdf');
-            }  
+            }
         }elseif($validated['report_type'] === 'workorder'){
             $woType = $validated['workorder_type'];
             if($woType === 'disposal'){
@@ -139,6 +139,12 @@ class ReportsController extends Controller
                     });
                 }
 
+                if(!$request->boolean('include_direct')){
+                    $query->whereHas('workorder', function($q){
+                        $q->where('is_direct', false);
+                    });
+                }
+
                 $data = $query->get();
                 $pdf = Pdf::loadView('reports.disposal-report', compact('data'))->setPaper('a4', 'landscape');
 
@@ -150,7 +156,7 @@ class ReportsController extends Controller
                     'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
-                    'file_path' => $filename      
+                    'file_path' => $filename
                 ]);
 
                 return $pdf->stream('disposal-report.pdf');
@@ -193,7 +199,7 @@ class ReportsController extends Controller
                     'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
-                    'file_path' => $filename      
+                    'file_path' => $filename
                 ]);
                 return $pdf->stream('service-report.pdf');
             }elseif($woType === 'requisition'){
@@ -237,7 +243,7 @@ class ReportsController extends Controller
                     'report_code' => 'RPT-'.($count),
                     'report_type' => $validated['report_type'],
                     'generated_by' => auth()->user()->id,
-                    'file_path' => $filename      
+                    'file_path' => $filename
                 ]);
                 return $pdf->stream('requisition-report.pdf');
             }
@@ -261,7 +267,7 @@ class ReportsController extends Controller
     public function downloadReport($id){
         $report = Report::findOrFail($id);
         $path = storage_path('app/public/reports/' . $report->file_path);
-        
+
         return response()->download($path, $report->report_code . '.pdf');
     }
 }

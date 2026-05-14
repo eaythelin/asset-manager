@@ -20,6 +20,8 @@
         </select>
 
         <div x-show="selectedWOType === 'disposal'" class="flex flex-col gap-2">
+          <x-label for="include_direct">Include Direct Disposals</x-label>
+          <input type="checkbox" class="checkbox border-2 border-gray-400" name="include_direct" id="include_direct">
           <x-label for="disposal_method">Disposal Method</x-label>
           <select name="disposal_method" id="disposal_method" class="select w-full rounded-xl">
             <option value="" disabled selected>--Select Disposal Method--</option>
@@ -64,7 +66,7 @@
           <div class="flex gap-3">
             <input type="radio" name="asset_filter" id="filter_all" value="all" class="radio radio-primary" checked>
             <label for="filter_all">All</label>
-            <input type="radio" name="asset_filter" id="filter_new" value="new" class="radio radio-primary"> 
+            <input type="radio" name="asset_filter" id="filter_new" value="new" class="radio radio-primary">
             <label for="filter_new">New Assets</label>
             <input type="radio" name="asset_filter" id="filter_old" value="old" class="radio radio-primary">
             <label for="filter_old">Existing Assets</label>
@@ -101,7 +103,7 @@
           @endforeach
         </select>
       </div>
-      
+
       <div x-show="selectedType === 'asset' || selectedType === 'depreciation'" class="flex flex-col gap-2">
         <x-label for="status">Status</x-label>
         <select name="status" id="status" class="select w-full rounded-xl">
@@ -132,5 +134,5 @@
 
       <x-buttons class="mt-2" type="Submit">Submit</x-buttons>
     </div>
-  </form>   
+  </form>
 </x-modal>

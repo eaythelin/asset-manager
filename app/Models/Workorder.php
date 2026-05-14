@@ -8,6 +8,43 @@ use App\Enums\WorkorderType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $workorder_code
+ * @property int|null $request_id
+ * @property int|null $completed_by
+ * @property \Illuminate\Support\Carbon|null $start_date
+ * @property \Illuminate\Support\Carbon|null $end_date
+ * @property PriorityLevel $priority_level
+ * @property WorkorderType $workorder_type
+ * @property WorkorderStatus $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $is_direct
+ * @property-read \App\Models\User|null $completedBy
+ * @property-read \App\Models\DisposalWorkorder|null $disposalWorkOrder
+ * @property-read mixed $check_status
+ * @property-read \App\Models\Request|null $request
+ * @property-read \App\Models\RequisitionWorkorder|null $requisitionWorkorder
+ * @property-read \App\Models\ServiceWorkorder|null $serviceWorkorder
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereCompletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereIsDirect($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder wherePriorityLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereWorkorderCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Workorder whereWorkorderType($value)
+ * @mixin \Eloquent
+ */
 class Workorder extends Model
 {
     use HasFactory;

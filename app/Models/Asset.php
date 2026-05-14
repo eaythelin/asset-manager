@@ -8,6 +8,76 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
+/**
+ * @property int $id
+ * @property string $asset_code
+ * @property string $name
+ * @property string|null $serial_name
+ * @property AssetStatus $status
+ * @property string|null $description
+ * @property int $is_depreciable
+ * @property string|null $image_path
+ * @property int $quantity
+ * @property int|null $category_id
+ * @property int|null $department_id
+ * @property int|null $sub_category_id
+ * @property int|null $supplier_id
+ * @property int|null $custodian_id
+ * @property \Illuminate\Support\Carbon|null $acquisition_date
+ * @property numeric $cost
+ * @property numeric $salvage_value
+ * @property int|null $useful_life_in_years
+ * @property \Illuminate\Support\Carbon|null $end_of_life_date
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Category|null $category
+ * @property-read \App\Models\Employee|null $custodian
+ * @property-read \App\Models\Department|null $department
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DisposalWorkorder> $disposalWorkorders
+ * @property-read int|null $disposal_workorders_count
+ * @property-read mixed $accumulated_depreciation
+ * @property-read mixed $book_value
+ * @property-read mixed $computed_status
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Request> $requests
+ * @property-read int|null $requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RequisitionWorkorder> $requisitionWorkorders
+ * @property-read int|null $requisition_workorders_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServiceWorkorder> $serviceWorkorders
+ * @property-read int|null $service_workorders_count
+ * @property-read \App\Models\SubCategory|null $subCategory
+ * @property-read \App\Models\Supplier|null $supplier
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereAcquisitionDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereAssetCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereCustodianId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereDepartmentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereEndOfLifeDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereImagePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereIsDepreciable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereSalvageValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereSerialName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereSubCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereSupplierId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset whereUsefulLifeInYears($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Asset withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Asset extends Model
 {
     use HasFactory, SoftDeletes;

@@ -5,6 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property int $category_id
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Asset> $assets
+ * @property-read int|null $assets_count
+ * @property-read \App\Models\Category $category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Request> $requests
+ * @property-read int|null $requests_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory search($search)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SubCategory whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class SubCategory extends Model
 {
     use HasFactory;

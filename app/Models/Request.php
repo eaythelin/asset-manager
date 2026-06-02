@@ -69,41 +69,20 @@ class Request extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'description',
-        'date_requested',
-        'date_approved',
-        'asset_name',
-        'requested_by',
-        'category_id',
-        'sub_category_id',
-        'handled_by',
-        'asset_id',
-        'request_code',
-        'type',
-        'status',
-        'service_type',
-        'condition',
-        'quantity',
-        'is_new_asset',
-        'department_id'
+      'control_number',
+      'description',
+      'request_type',
+      'asset_id',
+      'requested_by',
+      'department_id',
+      'approved_by',
+      'approved_at'
     ];
 
     protected $casts = [
-        'type' => RequestTypes::class,
-        'service_type' => ServiceTypes::class,
+        'request_type' => RequestTypes::class,
         'status' => RequestStatus::class,
-        'condition' => DisposalConditions::class,
-        'date_requested' => 'date'
     ];
-
-    public function category(){
-        return $this->belongsTo(Category::class);
-    }
-
-    public function subCategory(){
-        return $this->belongsTo(SubCategory::class);
-    }
-
     public function requestedBy(){
         return $this->belongsTo(User::class, 'requested_by');
     }
@@ -116,14 +95,6 @@ class Request extends Model
         return $this->belongsTo(Asset::class)->withTrashed();
     }
 
-    public function workorder(){
-        return $this->hasOne(Workorder::class);
-    }
-
-    public function files(){
-        return $this->hasMany(RequestFile::class);
-    }
-
     public function department(){
         return $this->belongsTo(Department::class);
     }
@@ -132,22 +103,7 @@ class Request extends Model
         if (!$search) return $query;
 
         return $query->where(function($q) use ($search) {
-            $q->where('request_code', 'LIKE', "%{$search}%")
-            ->orWhere('type', 'LIKE', "%{$search}%")
-            ->orWhereRaw("DATE_FORMAT(date_requested, '%M %d, %Y') LIKE ?", ["%{$search}%"])
-            ->orWhere(function($query) use ($search){
-                $query->whereNotNull('asset_name')
-                        ->where('asset_name', 'LIKE', "%{$search}%")
-                        ->orWhereHas('asset', function($q) use($search){
-                            $q->where('name', 'LIKE', "%{$search}%");
-                        });
-            })
-            ->orWhereHas('category', function($q2) use ($search) {
-                $q2->where('name', 'LIKE', "%{$search}%");
-            })
-            ->orWhereHas('requestedBy', function($q2) use ($search) {
-                $q2->where('name', 'LIKE', "%{$search}%");
-            }); 
+          
         });
     }
 }

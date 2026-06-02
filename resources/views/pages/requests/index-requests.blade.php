@@ -9,12 +9,12 @@
 
 <div class = "md:m-4">
   <x-validation-error />
-  
+
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
 
       <x-search-bar route="requests.index" placeholder="Search requests..."/>
-      
+
       @can('create requests')
       <a href = "{{ route('requests.create') }}" class="w-full sm:w-auto">
         <x-buttons class="w-full sm:w-auto">
@@ -28,49 +28,31 @@
       <tbody class = "divide-y divide-gray-400">
           @foreach($requests as $request)
             <tr>
-              <th class = "p-3 text-center">{{ $request->request_code }}</th>
+              <th class = "p-3 text-center">{{ $request->control_number }}</th>
               @if(in_array(auth()->user()->getRoleNames()->first(), ['General Manager', 'System Supervisor']))
                 <x-td>{{ $request->requestedBy->name }}</x-td>
               @endif
-
-              @if($request->is_new_asset)
-                <x-td>{{ $request->asset_name }}</x-td>
-              @else
-                <x-td>{{ $request->asset?->name }}</x-td>
+              <x-td>{{ $request->asset->name }}</x-td>
+              <x-td>{{ $request->request_type->label() }}</x-td>
+              @if(!in_array(auth()->user()->getRoleNames()->first(), ['General Manager', 'System Supervisor']))
+                <x-td>{{ $request->description }}</x-td>
               @endif
-
-              <x-td>{{ $request->type->label() }}</x-td>
-              @if($request->is_new_asset)
-                <x-td>{{ $request->category->name }}</x-td>
-              @else
-                <x-td>{{ $request->asset->category?->name }}</x-td>
-              @endif
-
-              <x-td>{{ $request->date_requested->format('M d, Y') }}</x-td>
+              <x-td>{{ $request->created_at->format('M d, Y') }}</x-td>
               <x-td class="text-center">
                 <span class="badge {{ $request->status->badgeClass() }} text-white font-medium text-sm">
                   {{ $request->status->label() }}
                 </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
-                @if($request->status->value != "draft")
-                  <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.show', $request->id) }}">
-                    <x-buttons
-                      class="viewBtn tooltip tooltip-top"
-                      data-tip="View"
-                      aria-label="View Request">
-                      <x-heroicon-s-eye class="size-4 sm:size-5" />
-                    </x-buttons>
-                  </a>
-                @endif
-                @if(auth()->user()->can('create requests') && $request->status->value === "draft")
-                  <x-buttons onclick="submitRequest.showModal()"
-                    class="submitBtn tooltip tooltip-top"
-                    data-tip="Submit"
-                    aria-label="Submit Request"
-                    data-route="{{ route('requests.submit', $request->id )}}">
-                    <x-heroicon-s-paper-airplane class="size-4 sm:size-5"/>
+                <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.show', $request->id) }}">
+                  <x-buttons
+                    class="viewBtn tooltip tooltip-top"
+                    data-tip="View"
+                    aria-label="View Request">
+                    <x-heroicon-s-eye class="size-4 sm:size-5" />
                   </x-buttons>
+                </a>
+                @if(auth()->user()->can('create requests') && $request->status->value === "pending")
                   <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.edit', $request->id) }}">
                     <x-buttons
                       class="editBtn tooltip tooltip-top"
@@ -116,7 +98,6 @@
   </div>
 </div>
 
-@include('modals.requests-modals.submit-request-modal')
 @include('modals.requests-modals.cancel-request-modal')
 @include('modals.requests-modals.approve-request-modal')
 @include('modals.requests-modals.decline-request-modal')
@@ -124,7 +105,6 @@
 @endsection
 
 @section('scripts')
-  @vite('resources/js/requests/submitRequest.js')
   @vite('resources/js/requests/softDeleteRequest.js')
   @vite('resources/js/requests/approveRequest.js')
   @vite('resources/js/requests/declineRequest.js')

@@ -42,16 +42,10 @@ class Employee extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'department_id',
     ];
 
-    //accessor for full_name attribute, laravel converts getFullNameAttribute -> full_name
-    public function getFullNameAttribute():string {
-        return "{$this->first_name} {$this->last_name}";
-    }
-    
     //Employee can only have one Department
     public function department(){
         return $this->belongsTo(Department::class);
@@ -82,9 +76,7 @@ class Employee extends Model
         if (!$search) return $query;
 
         return $query->where(function($q) use ($search) {
-            $q->where('first_name', 'LIKE', "%{$search}%")
-            ->orWhere('last_name', 'LIKE', "%{$search}%")
-            ->orWhereRaw("CONCAT(first_name,' ',last_name) LIKE ?", ["%{$search}%"])
+            $q->where('name', 'LIKE', "%{$search}%")
             ->orWhereHas('department', function($q2) use ($search) {
                 $q2->where('name', 'LIKE', "%{$search}%");
             });

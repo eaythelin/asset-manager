@@ -14,7 +14,7 @@ class DepartmentsController extends Controller
         // get the search value if its provided!!
         $search = $request->input("search");
         $departments = Department::search($search)->paginate(5);
-        
+
         $columns = ["","Department Name", "Description", "Actions"];
         return view("pages.departments", compact('departments', "columns"));
     }
@@ -53,5 +53,18 @@ class DepartmentsController extends Controller
         $department->delete();
 
         return redirect()->route('department.index')->with('success', 'Department deleted successfully!');
+    }
+
+    public function quickStore(Request $request){
+        $validated = $request->validate([
+            "name"=>["required", "string","unique:departments,name", "max:100"]
+        ]);
+
+        $department = Department::create(['name' => $validated['name']]);
+
+        return response()->json([
+            'id' => $department->id,
+            'name' => $department->name,
+        ]);
     }
 }

@@ -42,14 +42,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [AssetsController::class, 'getEditAsset'])->name('assets.edit');
         Route::put('/{id}/update', [AssetsController::class, 'updateAsset'])->name('assets.update');
       });
-      
-      //individual page
-      Route::get('/{id}', [AssetsController::class, 'getAsset'])->name('assets.show');
-      
+
       Route::middleware("check.permission:manage assets")->group(function(){
         Route::get('/subcategories/{categoryID}', [AssetsController::class, 'getSubcategories'])->name('assets.subcategories.get');
         Route::delete('/{id}/dispose', [AssetsController::class, 'disposeAsset'])->name('assets.dispose');
+        Route::put('/{id}/change-status', [AssetsController::class,'changeStatus'])->name('assets.changeStatus');
       });
+
+      //individual page
+      Route::get('/{id}', [AssetsController::class, 'getAsset'])->name('assets.show');
     });
 
     //Requests
@@ -129,6 +130,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [DepartmentsController::class, 'getDepartments'])->name('department.index');
         Route::middleware("check.permission:manage departments")->group(function(){
           Route::post('/', [DepartmentsController::class, 'storeDepartments'])->name('departments.store');
+          Route::post('/quick-create', [DepartmentsController::class,'quickStore'])->name('departments.quickStore');
           Route::put('/{id}', [DepartmentsController::class, 'updateDepartment'])->name('departments.update');
           Route::delete('/{id}',[DepartmentsController::class, 'deleteDepartment'])->name('departments.delete');
         });
@@ -139,6 +141,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [CategoriesController::class, "getCategories"])->name('category.index');
         Route::middleware('check.permission:manage categories')->group(function(){
           Route::post('/', [CategoriesController::class, "storeCategory"])->name("category.store");
+          Route::post('/quick-store', [CategoriesController::class, "quickStore"])->name("category.quickStore");
           Route::put('/{id}', [CategoriesController::class, "updateCategory"])->name("category.update");
           Route::delete('/{id}', [CategoriesController::class, "deleteCategory"])->name("category.delete");
         });
@@ -149,6 +152,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [SubCategoriesController::class, "getSubCategories"])->name('subcategory.index');
         Route::middleware('check.permission:manage sub-categories')->group(function(){
           Route::post('/', [SubCategoriesController::class, "storeSubCategory"])->name("subcategory.store");
+          Route::post('/quick-store', [SubCategoriesController::class,'quickStore'])->name('subcategory.quickStore');
           Route::put('/{id}', [SubCategoriesController::class, "updateSubCategory"])->name("subcategory.update");
           Route::delete('/{id}', [SubCategoriesController::class, "deleteSubCategory"])->name("subcategory.delete");
         });
@@ -159,6 +163,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [SuppliersController::class, "getSuppliers"])->name('suppliers.index');
         Route::middleware('check.permission:manage suppliers')->group(function(){
           Route::post('/', [SuppliersController::class, "storeSupplier"])->name("suppliers.store");
+          Route::post('/quick-store', [SuppliersController::class,"quickStore"])->name("suppliers.quickStore");
           Route::put('/{id}', [SuppliersController::class, "updateSupplier"])->name("suppliers.update");
           Route::delete('/{id}', [SuppliersController::class, "deleteSupplier"])->name("suppliers.delete");
         });
@@ -182,6 +187,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logoutUser');
 
     Route::get('/placeholder', [PlaceholderController::class, 'getPlaceholder'])->name('placeholder');
+});
+
+Route::get('/debug-permissions', function() {
+    return auth()->user()->getAllPermissions()->pluck('name');
 });
 
 require __DIR__.'/auth.php';

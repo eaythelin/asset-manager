@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:check-expired-assets')->daily();
-Schedule::command('app:check-overdue-workorder')->everyFiveSeconds();
+Schedule::command('app:check-overdue-workorder')->daily();

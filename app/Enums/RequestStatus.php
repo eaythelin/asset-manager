@@ -5,20 +5,18 @@ namespace App\Enums;
 enum RequestStatus:string
 {
     case PENDING = "pending";
-    case DECLINE = "declined";
+    case REJECTED = "rejected";
     case APPROVED = "approved";
     case CANCELLED = "cancelled";
 
-    case DRAFT = "draft";
 
     public function label():string
     {
         return match($this) {
             self::PENDING => "Pending",
-            self::DECLINE => "Declined",
+            self::REJECTED => "Rejected",
             self::APPROVED => "Approved",
-            self::CANCELLED => "Cancelled",
-            self::DRAFT => "Draft"
+            self::CANCELLED => "Cancelled"
         };
     }
 
@@ -26,10 +24,9 @@ enum RequestStatus:string
     {
         return match($this){
             self::PENDING => "badge-warning",
-            self::DECLINE => "badge-error",
+            self::REJECTED => "badge-error",
             self::APPROVED => "badge-success",
-            self::CANCELLED => "badge-error",
-            self::DRAFT => "badge-accent"
+            self::CANCELLED => "badge-error"
         };
     }
 }

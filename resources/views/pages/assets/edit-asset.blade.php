@@ -1,6 +1,8 @@
 @extends("layouts.pageslayout")
 @section("content")
 
+<x-ajax-toast />
+
 <div class="md:mx-4">
   <div class = "mb-4">
     <x-back-link route="assets.index">Return to Assets</x-back-link>
@@ -34,21 +36,24 @@
 
           <div class="form-row">
             <x-page-label for="category" :required="true">Category</x-page-label>
-            <x-page-select name="category" id="category">
+            <select name="category" id="category" data-create-url="{{ route('category.quickStore') }}" class="max-w-xs w-full">
               <option value="" disabled>--Select Category--</option>
               @foreach($categories as $id=>$name)
                 <option value="{{ $id }}" {{ old('category', $asset->category_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
-            </x-page-select>
+            </select>
           </div>
         </div>
         {{-- Right Column --}}
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="subcategory">Subcategory</x-page-label>
-            <x-page-select name="subcategory" id="subcategory" data-current-subcategory="{{ $asset->sub_category_id ?? '' }}" disabled>
+            <select name="subcategory" id="subcategory"
+              class="max-w-xs w-full invisible"
+              data-create-url="{{ route('subcategory.quickStore') }}"
+              data-current-subcategory="{{ $asset->sub_category_id ?? '' }}">
               <option value="" disabled>--Select Subcategory--</option>
-            </x-page-select>
+            </select>
           </div>
 
           <div class="form-row">
@@ -59,7 +64,7 @@
           <div class = "form-row">
             <x-page-label for="description">Description</x-page-label>
             <x-page-textarea name="description" id="description">
-              {{ old('description', $asset->description) }} 
+              {{ old('description', $asset->description) }}
             </x-page-textarea>
           </div>
         </div>
@@ -73,12 +78,12 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
             <x-page-label for="department" :required="true">Department</x-page-label>
-            <x-page-select name="department" id="department">
+            <select name="department" id="department" data-create-url="{{ route('departments.quickStore') }}" class="max-w-xs w-full">
               <option value="" disabled>--Select Department--</option>
               @foreach($departments as $id=>$name)
                 <option value="{{ $id }}" {{ old('department', $asset->department_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
-            </x-page-select>
+            </select>
           </div>
         </div>
 
@@ -117,7 +122,7 @@
 
           <div class="form-row">
             <x-page-label for="salvage_value" required="isDepreciable">Salvage Value</x-page-label>
-            <x-page-input name="salvage_value" id="Salvage" value="{{ old('salvage_value', $asset->salvage_value) }}"/>
+            <x-page-input name="salvage_value" id="salvage_value" value="{{ old('salvage_value', $asset->salvage_value) }}"/>
           </div>
         </div>
 
@@ -148,12 +153,12 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
             <x-page-label for="supplier">Supplier</x-page-label>
-            <x-page-select name="supplier" id="supplier">
+            <select name="supplier" id="supplier" data-create-url="{{ route('suppliers.quickStore') }}" class="max-w-xs w-full">
               <option value="" disabled>--Select Supplier--</option>
               @foreach($suppliers as $id=>$name)
                 <option value="{{ $id }}" {{ old('supplier', $asset->supplier_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
-            </x-page-select>
+            </select>
           </div>
         </div>
 
@@ -169,7 +174,7 @@
       </div>
 
       <x-page-edit-submit-button />
-      
+
     </div>
   </form>
 </div>
@@ -179,4 +184,5 @@
   @vite('resources/js/assets/edit-asset/getEditSubcategory.js')
   @vite('resources/js/assets/endOfLifeCalc.js')
   @vite('resources/js/assets/filepond-asset.js')
+  @vite('resources/js/assets/assetTomSelect.js')
 @endsection

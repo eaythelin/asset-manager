@@ -14,20 +14,17 @@ class EmployeeSeeder extends Seeder
     public function run(): void
     {
         Employee::create([
-            "first_name"=> "Alice",
-            "last_name"=> "Wanda",
+            "name"=> "Alice Wanda",
             "department_id"=>3
         ]);
 
         Employee::create([
-            "first_name"=> "Monika",
-            "last_name"=> "Monique",
+            "name"=> "Monika Monique",
             "department_id"=>2
         ]);
 
         Employee::create([
-            "first_name"=> "Janna",
-            "last_name"=> "Guerrero",
+            "name"=> "Janna Guerrero",
             "department_id"=>1
         ]);
     }

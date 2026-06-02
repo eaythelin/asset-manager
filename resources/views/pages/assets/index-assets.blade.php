@@ -11,7 +11,7 @@
 <div class = "md:m-4">
   <x-validation-error />
   <x-import-error-validation />
-  
+
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
 
@@ -21,9 +21,9 @@
       <form method="GET" action="{{ route('assets.index') }}">
         <input type="hidden" name="search" value="{{ request('search') }}">
         <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap">
-          <input 
-            type="checkbox" 
-            name="show_deleted" 
+          <input
+            type="checkbox"
+            name="show_deleted"
             class="checkbox checkbox-sm"
             {{ request('show_deleted') ? 'checked' : '' }}
             onchange="this.form.submit()"
@@ -66,12 +66,32 @@
               <x-td>{{ $asset->quantity}}</x-td>
               <x-td>{{ $asset->serial_name}}</x-td>
               <x-td>{{ $asset->department->name}}</x-td>
-              <x-td>{{ $asset->custodian?->first_name}} {{ $asset->custodian?->last_name}}</x-td>
+              <x-td>{{ $asset->custodian?->name}}</x-td>
               <x-td>{{ $asset->category->name}}</x-td>
               <x-td class="text-center">
-                <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3">
-                  {{ $asset->status->label() }}
-                </span>
+                @can('manage assets')
+                  @if(!in_array($asset->status->value, ['disposed']))
+                    <button onclick="changeStatus.showModal()"
+                      class="changeBtn cursor-pointer tooltip tooltip-top"
+                      data-tip="Change Status"
+                      aria-label="Change Asset Status"
+                      data-status="{{ $asset->status->value }}"
+                      data-route="{{ route('assets.changeStatus', $asset->id) }}">
+                      <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap
+                        transition-all duration-200 hover:shadow-lg hover:brightness-110 hover:scale-105">
+                        {{ $asset->status->label() }}
+                      </span>
+                    </button>
+                  @else
+                    <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap">
+                      {{ $asset->status->label() }}
+                    </span>
+                  @endif
+                @else
+                  <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap">
+                    {{ $asset->status->label() }}
+                  </span>
+                @endcan
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-3 justify-center">
                 @can("view assets")
@@ -111,9 +131,11 @@
 
 @include('modals.assets-modals.dispose-asset-modal')
 @include('modals.assets-modals.import-asset-modal')
+@include('modals.assets-modals.change-status-modal')
 @endsection
 
 @section('scripts')
   @vite('resources/js/assets/dispose-asset/disposeAsset.js')
   @vite('resources/js/assets/importFilepond.js')
+  @vite('resources/js/assets/changeStatus.js')
 @endsection

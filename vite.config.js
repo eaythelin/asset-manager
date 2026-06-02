@@ -6,8 +6,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css', 
-                'resources/js/app.js', 
+                'resources/css/app.css',
+                'resources/js/app.js',
                 'resources/js/category/delete-category.js',
                 'resources/js/category/edit-category.js',
                 'resources/js/dashboard/categorypiechart.js',
@@ -29,19 +29,17 @@ export default defineConfig({
                 'resources/js/assets/endOfLifeCalc.js',
                 'resources/js/assets/filepond-asset.js',
                 'resources/js/assets/create-asset/getSubcategory.js',
-                'resources/js/requests/create-requests/getReqSubcategories.js',
-                'resources/js/requests/submitRequest.js',
                 'resources/js/requests/softDeleteRequest.js',
                 'resources/js/requests/approveRequest.js',
                 'resources/js/requests/declineRequest.js',
-                'resources/js/requests/edit-requests/getReqEditSubcategories.js',
-                'resources/js/requests/reqFilepond.js',
                 'resources/js/workorder/startWorkorder.js',
                 'resources/js/workorder/completeWorkorder.js',
                 'resources/js/workorder/cancelWorkorder.js',
                 'resources/js/assets/importFilepond.js',
                 'resources/js/reports/deleteReport.js',
-                'resources/js/assets/convertSVGtoPNG.js'
+                'resources/js/assets/convertSVGtoPNG.js',
+                'resources/js/assets/assetTomSelect.js',
+                'resources/js/assets/changeStatus.js'
             ],
             refresh: true,
         }),

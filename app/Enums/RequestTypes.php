@@ -4,16 +4,26 @@ namespace App\Enums;
 
 enum RequestTypes:string
 {
-    case REQUISITION = "requisition";
-    case SERVICE = "service";
-    case DISPOSAL = "disposal";
+    case MAINTENANCE = "maintenance";
+    case REPAIR = "repair";
+    case FABRICATION = "fabrication";
 
     public function label():string
     {
         return match($this) {
-            self::REQUISITION => "Requisition",
-            self::SERVICE => "Service",
-            self::DISPOSAL => "Disposal",
+            self::MAINTENANCE => "Maintenance",
+            self::REPAIR => "Repair",
+            self::FABRICATION => "Fabrication",
+        };
+    }
+
+    public function badgeColor():string
+    {
+        return match($this) {
+            self::MAINTENANCE => 'badge-info',
+            self::REPAIR => 'badge-info',
+            self::FABRICATION => 'badge-info',
+            default         => 'bg-gray-500',
         };
     }
 }

@@ -145,6 +145,10 @@ class Asset extends Model
         return $this->hasMany(RequisitionWorkorder::class);
     }
 
+    public function assetStatusLog(){
+        return $this->hasMany(AssetStatusLog::class);
+    }
+
     public function getBookValueAttribute(){
         //this is Straight Line Depreciation
         if(!$this->is_depreciable){
@@ -161,7 +165,7 @@ class Asset extends Model
                 $endDate = $latestDisposal->disposal_date;
             }
         }
-        
+
         $totalMonths = $totalMonths = $this->useful_life_in_years * 12;
         $monthElapsed = $startDate->diffInMonths($endDate);
         $monthsToDepreciate = min($monthElapsed, $totalMonths);
@@ -187,7 +191,7 @@ class Asset extends Model
                 $endDate = $latestDisposal->disposal_date;
             }
         }
-        
+
         $totalMonths = $totalMonths = $this->useful_life_in_years * 12;
         $monthElapsed = $startDate->diffInMonths($endDate);
         $monthsToDepreciate = min($monthElapsed, $totalMonths);
@@ -199,13 +203,24 @@ class Asset extends Model
     public function getComputedStatusAttribute(){
         if($this->is_depreciable && $this->end_of_life_date){
             if(now()->greaterThan($this->end_of_life_date)){
-                $protected = ['disposed', 'under_service'];
+                $protected = ['disposed', 'maintenance', 'repair', 'fabrication'];
 
                 if(!in_array($this->status->value, $protected) && $this->status->value !== AssetStatus::EXPIRED->value){
+                    $oldStatus = $this->status->value;
+
                     $this->update(['status'=> AssetStatus::EXPIRED->value]);
+
+                    AssetStatusLog::create([
+                        'asset_id' => $this->id,
+                        'changed_by' => null,
+                        'from_status' => $oldStatus,
+                        'to_status' => AssetStatus::EXPIRED->value,
+                        'notes' => 'Asset status changed to expired due to reaching expiration date'
+                    ]);
+
                     $this->refresh();
                 }
-                
+
                 return 'expired';
             }
         }

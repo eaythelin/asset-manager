@@ -18,9 +18,9 @@
         <form method="GET" action="{{ route('employees.index') }}">
           <input type="hidden" name="search" value="{{ request('search') }}">
           <label class="flex mt-3 items-center gap-2 cursor-pointer">
-            <input 
-              type="checkbox" 
-              name="show_archived" 
+            <input
+              type="checkbox"
+              name="show_archived"
               class="checkbox checkbox-sm"
               {{ request('show_archived') ? 'checked' : '' }}
               onchange="this.form.submit()"
@@ -42,7 +42,7 @@
           @foreach($employees as $employee)
             <tr>
               <th class = "p-3 text-center">{{ $employee-> id}}</th>
-              <x-td>{{ $employee->full_name}}</x-td>
+              <x-td>{{ $employee->name}}</x-td>
               <x-td>{{ $employee->department->name}}</x-td>
               <td class = "p-3 text-center">
                 @if($employee->assets->count() > 0)
@@ -64,7 +64,7 @@
                     <form action="{{ route('employees.restore', $employee->id) }}" method="POST">
                       @csrf
                       @method('PUT')
-                      <x-buttons 
+                      <x-buttons
                         class="restoreButton">
                         <x-heroicon-o-arrow-uturn-left class="size-4 sm:size-5"/>
                         Restore Employee
@@ -77,8 +77,7 @@
                       class="editButton tooltip tooltip-top"
                       data-tip="Edit"
                       aria-label="Edit Employee"
-                      data-first-name="{{ $employee -> first_name}}"
-                      data-last-name="{{ $employee -> last_name }}"
+                      data-name="{{ $employee -> name}}"
                       data-department="{{ $employee-> department -> id}}"
                       data-route="{{ route('employees.update', $employee->id ) }}">
                       <x-heroicon-o-pencil-square class="size-4 sm:size-5" />

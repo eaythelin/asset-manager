@@ -12,7 +12,7 @@ class SuppliersController extends Controller
         $search = $request->input('search');
         $suppliers = Supplier::search($search)->paginate(5);
         $columns = ["", "Name", "Contact Person", "Email", "Phone Number", "Address", "Actions"];
-        return view("pages.suppliers", compact('suppliers', 'columns')); 
+        return view("pages.suppliers", compact('suppliers', 'columns'));
     }
 
     public function storeSupplier(Request $request){
@@ -49,5 +49,18 @@ class SuppliersController extends Controller
         $supplier->delete();
 
         return redirect()->route('suppliers.index')->with("success", "Supplier deleted successfully!");
+    }
+
+    public function quickStore(Request $request){
+        $validated = $request->validate([
+            "name" => ["required", "string", "max:100"]
+        ]);
+
+        $supplier = Supplier::create(['name' => $validated['name']]);
+
+        return response()->json([
+            'id' => $supplier->id,
+            'name' => $validated['name']
+        ]);
     }
 }

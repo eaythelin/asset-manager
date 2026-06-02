@@ -30,17 +30,14 @@ class UsersController extends Controller
 
         $users = $query->paginate(5);
 
-        $employees = Employee::select('id', 'first_name', 'last_name')
-            ->whereDoesntHave('user', function($query){
-                $query->withTrashed();
-            })
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get()
-            ->pluck('full_name', 'id');
+        $employees = Employee::whereDoesntHave('user', function($query){
+          $query->withTrashed();
+        })
+        ->orderBy('name')
+        ->pluck('name', 'id');
 
         $roles = Role::orderBy('name')->pluck('name', 'id');
-        
+
         $columns = ["", "Name", "Email", "Status","Role", "Actions"];
         return view("pages.users", compact('employees', 'columns', 'users', 'roles'));
     }
@@ -55,8 +52,7 @@ class UsersController extends Controller
 
         //get employee info
         $employee = Employee::findOrFail($validated['employee']);
-
-        $username = $employee->first_name . ' ' . $employee->last_name;
+        $username = $employee->name;
 
         $user = User::create([
             'name' => $username,

@@ -15,3 +15,31 @@
 .form-row {
     @apply md:flex md:items-center md:gap-4;
 }
+
+.form-row.stacked {
+    @apply flex items-start gap-2;
+}
+
+.ts-wrapper {
+    @apply max-w-xs w-full;
+}
+
+.ts-wrapper .ts-control {
+    @apply select border-2 border-gray-400 rounded-lg w-full shadow-none min-h-0 py-0 text-sm;
+}
+
+.ts-wrapper.focus .ts-control {
+    @apply border-gray-400 outline-none shadow-none;
+}
+
+.ts-wrapper .ts-dropdown {
+    @apply border-2 border-gray-400 rounded-lg bg-base-100 shadow-md mt-1;
+}
+
+.ts-wrapper .ts-dropdown .option {
+    @apply px-3 py-2 hover:bg-base-200 cursor-pointer text-sm;
+}
+
+.ts-wrapper .ts-dropdown .create {
+    @apply px-3 py-2 text-primary cursor-pointer hover:bg-base-200;
+}

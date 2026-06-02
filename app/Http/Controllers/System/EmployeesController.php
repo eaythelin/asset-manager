@@ -11,7 +11,7 @@ class EmployeesController extends Controller
 {
     //
     public function getEmployees(Request $request){
-        
+
         // Get employees with their department info
 
         $query = Employee::with(['department'])->withCount('user');
@@ -45,20 +45,18 @@ class EmployeesController extends Controller
         $employee = Employee::withTrashed()->with('department', 'assets')->findOrFail($id);
 
         $columns = ["Asset Code", "Asset Name", "Serial Name", "Department", "Category", "Subcategory", "Status"];
-        
+
         return view('pages.employees.show-employee', compact('employee', 'columns'));
     }
 
     public function storeEmployees(Request $request){
         $validated = $request->validate([
-            "first_name"=> ["required", "max:100", "string"],
-            "last_name"=> ["required", 'max:100', "string"],
+            "name"=> ["required", "max:100", "string"],
             "department"=> ["required", "exists:departments,id"]
         ]);
 
         Employee::create([
-            "first_name" => $validated["first_name"],
-            "last_name" => $validated["last_name"],
+            "name" => $validated["name"],
             "department_id" => $validated["department"]
         ]);
 
@@ -67,17 +65,12 @@ class EmployeesController extends Controller
 
     public function updateEmployee(Request $request, $id){
         $validated = $request->validate([
-            "first_name"=> ["required", "max:100", "string"],
-            "last_name"=> ["required", 'max:100', "string"],
+            "name"=> ["required", "max:100", "string"],
             "department"=> ["required", "exists:departments,id"]
         ]);
 
         $employee = Employee::findOrFail($id);
-        $employee->update([
-            "first_name" => $validated["first_name"],
-            "last_name" => $validated["last_name"],
-            "department_id" => $validated["department"]
-        ]);
+        $employee->update($validated);
 
         return redirect()->route('employees.index')->with('success', 'Employee edited successfully!');
     }

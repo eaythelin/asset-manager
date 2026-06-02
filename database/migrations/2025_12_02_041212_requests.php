@@ -13,27 +13,20 @@ return new class extends Migration
     {
         Schema::create('requests', function(Blueprint $table){
             $table->id();
-            $table->string('request_code')->unique();
+            $table->string('control_number')->unique();
+
+            //basic info
             $table->text('description')->nullable();
-            $table->dateTime('date_requested');
-            $table->dateTime('date_approved')->nullable();
-            $table->string('asset_name')->nullable();
-            $table->integer('quantity')->default(1);
-            $table->boolean('is_new_asset')->default(false);
-            //relations
-            $table->foreignId('requested_by')->constrained('users', 'id')->onDelete('restrict');
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('restrict');
-            $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->onDelete('set null');
-            $table->foreignId('handled_by')->nullable()->constrained('users', 'id')->onDelete('restrict');
-            $table->foreignId('asset_id')->nullable()->constrained('assets')->onDelete('set null');
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
-            //enums
-            $table->string('type');
-            $table->string('service_type')->nullable(); //if its a service
-            $table->string('condition')->nullable();//if its disposal
-            $table->string('status')->default('draft');
-            
+            $table->string('request_type');
             $table->timestamps();
+
+            $table->foreignId('asset_id')->constrained('assets')->onDelete('restrict');
+            $table->foreignId('requested_by')->constrained('users')->onDelete('restrict');
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
+
+            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('restrict');
+            $table->timestamp('approved_at')->nullable();
+            $table->string('status')->default('pending');
         });
     }
 

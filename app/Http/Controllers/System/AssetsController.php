@@ -9,6 +9,7 @@ use App\Enums\WorkorderStatus;
 use App\Enums\WorkorderType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetValidation;
+use App\Models\AssetStatusLog;
 use App\Models\Department;
 use App\Models\DisposalWorkorder;
 use App\Models\Employee;
@@ -87,11 +88,7 @@ class AssetsController extends Controller
 
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $departments = Department::orderBy('name')->pluck('name', 'id');
-        $employees = Employee::select('id', 'first_name', 'last_name')
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get()
-            ->pluck('full_name', 'id');
+        $employees = Employee::orderBy('name')->pluck('name', 'id');
 
         $suppliers = Supplier::orderBy('name')->pluck('name', 'id');
 
@@ -280,5 +277,27 @@ class AssetsController extends Controller
 
             return redirect()->back()->with('import_errors', $errors);
         }
+    }
+
+    public function changeStatus(Request $request, $id){
+        $validated = $request->validate([
+          'status' => ['required', new Enum(AssetStatus::class)],
+          'notes' => ['nullable', 'string', 'max:255']
+        ]);
+
+        $asset = Asset::findorFail($id);
+        $oldStatus = $asset->status->value;
+
+        $asset->update(['status'=> $validated['status']]);
+
+        AssetStatusLog::create([
+          'asset_id' => $asset->id,
+          'changed_by' => auth()->user()->id,
+          'from_status' => $oldStatus,
+          'to_status' => $validated['status'],
+          'notes' => $validated['notes'],
+        ]);
+
+        return redirect()->back()->with('success','Asset status updated successfully!');
     }
 }

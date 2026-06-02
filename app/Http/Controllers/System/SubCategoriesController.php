@@ -16,7 +16,7 @@ class SubCategoriesController extends Controller
             $search = $request->input("search");
             $query->search($search);
         }
-        
+
         $subCategories = $query->paginate(5);
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $columns = ["", "Subcategory", "Category", "Description", "Actions"];
@@ -61,5 +61,22 @@ class SubCategoriesController extends Controller
         $subCategory->delete();
 
         return redirect()->route('subcategory.index')->with('success', 'Subcategory successfully deleted!');
+    }
+
+    public function quickStore(Request $request){
+        $validated = $request->validate([
+            'name' => ["required", "max:100", "string", "unique:sub_categories,name"],
+            'category_id' => ["required", "exists:categories,id"]
+        ]);
+
+        $subcategory = SubCategory::create([
+            "name" => $validated["name"],
+            "category_id" => $validated["category_id"]
+        ]);
+
+        return response()->json([
+            'id' => $subcategory->id,
+            'name' => $subcategory->name
+        ]);
     }
 }

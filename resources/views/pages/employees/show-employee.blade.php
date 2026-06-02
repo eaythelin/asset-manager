@@ -21,7 +21,7 @@
             </span>
           </div>
           <h2 class="text-xl font-bold text-gray-900 leading-tight">
-            {{ $employee->full_name }}
+            {{ $employee->name }}
           </h2>
         </div>
       </div>

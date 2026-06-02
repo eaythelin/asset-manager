@@ -49,4 +49,17 @@ class CategoriesController extends Controller
         $category->delete();
         return redirect()->route('category.index')->with('success', 'Category successfully deleted!');
     }
+
+    public function quickStore(Request $request){
+        $validated = $request->validate([
+            "name" => ["required", "string", "max:100", "unique:categories,name"],
+        ]);
+
+        $category = Category::create(['name' => $validated['name']]);
+
+        return response()->json([
+            'id' => $category->id,
+            'name' => $category->name
+        ]);
+    }
 }

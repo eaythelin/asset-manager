@@ -102,7 +102,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     // Each user must belong to one employee
     public function employee(){
         return $this->belongsTo(Employee::class);
@@ -122,6 +122,10 @@ class User extends Authenticatable
 
     public function reportsGenerated(){
         return $this->hasMany(User::class, 'generated_by');
+    }
+
+    public function assetStatusLog(){
+        return $this->hasMany(AssetStatusLog::class, 'changed_by');
     }
 
     public function scopeSearch($query, $search){

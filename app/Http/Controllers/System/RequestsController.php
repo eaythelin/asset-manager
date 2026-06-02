@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RequisitionWorkorder;
 use App\Models\RequestFile;
 use App\Models\ServiceWorkorder;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\Request as RequestModel;
@@ -29,45 +30,38 @@ class RequestsController extends Controller
 
         $role = Auth::user()->getRoleNames()->first();
 
-        $query = RequestModel::with('category', 'subCategory', 'requestedBy', 'approvedBy', 'asset');
+        $query = RequestModel::with('requestedBy', 'approvedBy', 'asset');
 
         if($request->has('search')){
             $search = $request->input('search');
             $query->search($search);
         }
 
-        if(auth()->user()->getRoleNames()->contains('Department Head')){
-            $userID = auth()->user()->id;
-            $query->where('requested_by', $userID);
-        }elseif(auth()->user()->getRoleNames()->contains('General Manager')){
-            $query->where('status', '!=', RequestStatus::DRAFT->value);
-        }else{
-            $query->where('status', '!=', RequestStatus::DRAFT->value);
+        if($role === 'Department Head'){
+            $query->where('requested_by', auth()->id());
+        } elseif($role === 'General Manager'){
+            $query->orderByRaw("FIELD(status, 'pending', 'approved', 'rejected', 'cancelled')");
         }
 
-        if(auth()->user()->getRoleNames()->contains('General Manager')){
-            $query->orderByRaw("FIELD(status, 'pending', 'approved', 'declined', 'cancelled')");
-        }
-
-        $query->latest('date_requested');
+        $query->latest('created_at');
 
         $requests = $query->paginate(5);
 
         $desc = match($role) {
-            'Department Head' => 'View and manage your requests',
+            'Department Head' => 'View and manage your maintenance requests',
             'General Manager' => 'View and approve/decline requests',
-            default => 'View pending requests',
+            default => 'View requests',
         };
 
         $columns = match($role) {
-            'Department Head' => ["Request Code", "Asset Name", "Type", "Category", "Date Requested", "Status", "Actions"],
-            'General Manager', 'System Supervisor' => ["Request Code", "Requested By", "Asset Name", "Type","Category", "Date Requested", "Status", "Actions"],
+            'Department Head' => ["Control No.", "Asset", "Type", "Description", "Date Requested", "Status", "Actions"],
+            'General Manager', 'System Supervisor' => ["Control No.", "Requested By", "Asset", "Type", "Date Requested", "Status", "Actions"],
             default => [],
         };
 
         $centeredColumns = match($role){
             'Department Head' => [0,5,6],
-            'General Manager', 'System Supervisor' => [0,6,7],
+            'General Manager', 'System Supervisor' => [0,5,6],
             default => [],
         };
 
@@ -75,75 +69,32 @@ class RequestsController extends Controller
     }
 
     public function getCreateRequest(){
-        $count = RequestModel::count();
-        $nextCode = 'REQ-'.($count + 1);
+        $year = now()->year;
+        $latest = RequestModel::whereYear('created_at', $year)->latest()->first();
+        $count = $latest ? (int) substr($latest->control_number, -4) + 1 : 1;
+        $controlNumber = $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+
         $requestTypes = RequestTypes::cases();
+        $departments = Department::orderBy('name')->pluck('name', 'id');
         $assets = Asset::where('department_id', auth()->user()->employee->department_id)
             ->orderBy('asset_code')
             ->get();
-        $categories = Category::orderBy('name')->pluck('name', 'id');
-        $serviceTypes = ServiceTypes::cases();
-        $disposalConditions = DisposalConditions::cases();
-
-        return view('pages.requests.create-request', compact('nextCode', 'requestTypes', 'assets', 'categories', 'serviceTypes', 'disposalConditions'));
-    }
-
-    public function getSubcategories(Category $categoryID){
-        return response()->json($categoryID->subCategories);
+        return view('pages.requests.create-request', compact('controlNumber', 'requestTypes', 'assets', 'departments'));
     }
 
     public function storeRequest(RequestValidation $request){
         $validated = $request->validated();
 
-        $validated['is_new_asset'] = $request->has('is_new_asset');
-        
-        if($validated['type'] == RequestTypes::DISPOSAL->value || $validated['type'] == RequestTypes::SERVICE->value){
-            $asset = Asset::findOrFail($validated['asset_id']);
-            if($validated["quantity"] > $asset->quantity){
-                return redirect()->back()->with("error", "Request quantity exceeds available quantity!");
-            }
-        }
+        RequestModel::create([
+            "control_number" => $validated["control_number"],
+            "description" => $validated["description"],
+            "request_type" => $validated["request_type"],
+            "asset_id" => $validated["asset"],
+            "requested_by" => $validated["requisitioner"],
+            "department_id" => $validated["department"],
+        ]);
 
-        try{
-            DB::transaction(function () use ($request, $validated){
-                $requestModel = RequestModel::create([
-                    'request_code' => $validated['request_code'],
-                    'type' => $validated['type'],
-                    'quantity'=> $validated['quantity'],
-                    'description' => $validated['description'],
-                    'requested_by' => auth()->id(),
-                    'date_requested' => now(),
-                    'department_id' => $validated['department_id'],
-                    
-                    // Requisition fields (nullable)
-                    'asset_name' => $validated['asset_name'] ?? null,
-                    'category_id' => $validated['category'] ?? null,
-                    'sub_category_id' => $validated['subcategory'] ?? null,
-                    'is_new_asset' => $validated['is_new_asset'],
-                    
-                    // Service/Disposal fields (nullable)
-                    'asset_id' => $validated['asset_id'] ?? null,
-                    'service_type' => $validated['service_type'] ?? null,
-                    'condition' => $validated['condition'] ?? null
-                ]);
-
-                if ($request->hasFile('attachments')) {
-                    foreach ($request->file('attachments') as $file) {
-                        $path = $file->store('request-attachments');
-                        
-                        RequestFile::create([
-                            'request_id' => $requestModel->id,
-                            'file_path' => $path,
-                            'file_type' => $file->getMimeType(),
-                            'original_name' => $file->getClientOriginalName()
-                        ]);
-                    }
-                }
-            });
-            return redirect()->route('requests.index')->with('success', 'Request Successfully Created!');
-        }catch (\Exception $e){
-            return redirect()->route("requests.index")->with('error', 'Something went wrong!');
-        }
+        return redirect()->route("requests.index")->with("success","Request successfully created!");
     }
 
     public function submitRequest($id){
@@ -171,7 +122,7 @@ class RequestsController extends Controller
                     "handled_by" => auth()->id(),
                     "date_approved" => now()
                 ]);
-                
+
                 if($requestModel->type === RequestTypes::REQUISITION){
                     $count = Workorder::where('workorder_type', WorkorderType::REQUISITION)->count();
                     $nextCode = 'WO-REQ-'.($count + 1);
@@ -205,7 +156,7 @@ class RequestsController extends Controller
                     Asset::findOrFail($requestModel->asset_id)->update([
                         'status' => AssetStatus::UNDER_SERVICE
                     ]);
-                    
+
                 }elseif($requestModel->type === RequestTypes::DISPOSAL){
                     $count = Workorder::where('workorder_type', WorkorderType::DISPOSAL)->count();
                     $nextCode = 'WO-DIS-'.($count + 1);
@@ -224,10 +175,10 @@ class RequestsController extends Controller
             });
 
             return redirect()->route('requests.index')->with('success', 'Request Successfully Approved!');
-            
+
         } catch (\Exception $e) {
             return redirect()->route("requests.index")->with('error', 'Something went wrong!');
-        }   
+        }
     }
 
     public function declineRequest($id){
@@ -256,7 +207,7 @@ class RequestsController extends Controller
     public function updateRequest(RequestValidation $request, $id){
         $validated = $request->validated();
         $validated['is_new_asset'] = $request->has('is_new_asset');
-        
+
         if($validated['type'] == RequestTypes::DISPOSAL->value || $validated['type'] == RequestTypes::SERVICE->value){
             $asset = Asset::findOrFail($validated['asset_id']);
             if($validated["quantity"] > $asset->quantity){
@@ -284,12 +235,12 @@ class RequestsController extends Controller
                     'quantity'=> $validated['quantity'],
                     'description' => $validated['description'],
                     'is_new_asset' => $validated['is_new_asset'],
-                    
+
                     // Requisition fields (nullable)
                     'asset_name' => $validated['asset_name'] ?? null,
                     'category_id' => $validated['category'] ?? null,
                     'sub_category_id' => $validated['subcategory'] ?? null,
-                    
+
                     // Service/Disposal fields (nullable)
                     'asset_id' => $validated['asset_id'] ?? null,
                     'service_type' => $validated['service_type'] ?? null,
@@ -312,7 +263,7 @@ class RequestsController extends Controller
                         return redirect()->route("requests.index")->with('error', 'Maximum of 5 attachment allowed!');
                     }
                     foreach($request->file('attachments') as $file){
-                        
+
                         $path = $file->store('request-attachments');
                         RequestFile::create([
                             'request_id' => $requestModel->id,

@@ -27,37 +27,15 @@ class RequestValidation extends FormRequest
     {
         $id = $this->route("id");
 
-        $baseRules = [
-            "request_code"=> $id
-                ? ["required", Rule::unique('requests','request_code')->ignore($id)]
-                : ["required", "unique:requests"],
-            "type" => ["required", new Enum(RequestTypes::class)],
-            "quantity"=> ["required", "integer","min:1"],
-            "description" => ["nullable", "string", "max:500"],
-            "department_id" => ["required", "exists:departments,id"],
-            //filez
-            "attachments" => ["nullable", "array", "max:5"],
-            "attachments.*" => ["file", "max:10240", "mimes:jpg,jpeg,png,pdf,doc,docx,webp"]
+        return [
+          "control_number" => $id
+            ? ["required", Rule::unique("requests", "control_number")->ignore($id)]
+            : ["required", "unique:requests"],
+          "asset" => ["required", "exists:assets,id"],
+          "requisitioner" => ["required", "exists:users,id"],
+          "department" => ["required", "exists:departments,id"],
+          "description" => ["required", "string", "max:255"],
+          "request_type" => ["required", new Enum(RequestTypes::class)]
         ];
-
-        return match($this->type){
-            RequestTypes::REQUISITION->value => array_merge($baseRules, [
-                "is_new_asset" => ["nullable"],
-                "asset_name" => ["required_if:is_new_asset,on", "nullable", "max:100", "string"],
-                "asset_id" => ["required_unless:is_new_asset,on", "nullable","exists:assets,id"],
-                "category" => ["required_if:is_new_asset,on", "nullable","exists:categories,id"],
-                "subcategory" => ["nullable", "exists:sub_categories,id"],
-
-            ]),
-            RequestTypes::SERVICE->value => array_merge($baseRules,[
-                "asset_id" => ["required", "exists:assets,id"],
-                "service_type" => ["required", new Enum(ServiceTypes::class)]
-            ]),
-            RequestTypes::DISPOSAL->value => array_merge($baseRules, [
-                "asset_id" => ["required", "exists:assets,id"],
-                "condition" => ["required", new Enum(DisposalConditions::class)]
-            ]),
-            default => $baseRules
-        };
     }
 }

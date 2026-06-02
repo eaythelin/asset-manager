@@ -33,12 +33,12 @@
 
           <div class = "form-row">
             <x-page-label for="category" :required="true">Category</x-page-label>
-            <x-page-select name="category" id="category">
-              <option value="" disabled selected {{ old('category') ? '' : 'selected' }}>--Select Category--</option>
+            <select name="category" id="category" data-create-url="{{ route('category.quickStore') }}" class="max-w-xs w-full">
+              <option value="">--Select Category--</option>
               @foreach($categories as $id=>$name)
                 <option value="{{ $id }}" {{ old('category') == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
-            </x-page-select>
+            </select>
           </div>
         </div>
 
@@ -46,9 +46,9 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="subcategory">Subcategory</x-page-label>
-            <x-page-select name="subcategory" id="subcategory" disabled>
+            <select name="subcategory" id="subcategory" disabled data-create-url="{{ route('subcategory.quickStore') }}" class="max-w-xs w-full invisible">
               <option value="" disabled selected>--Select Subcategory--</option>
-            </x-page-select>
+            </select>
           </div>
 
           <div class="form-row">
@@ -71,12 +71,12 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="department" :required="true">Department</x-page-label>
-            <x-page-select name="department" id="department">
-              <option value="" disabled selected {{ old('department') ? '' : 'selected' }}>--Select Department--</option>
+            <select name="department" id="department" data-create-url="{{ route('departments.quickStore') }}" class="max-w-xs w-full">
+              <option value="">--Select Department--</option>
               @foreach($departments as $id=>$name)
                 <option value="{{ $id }}" {{ old('department') == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
-            </x-page-select>
+            </select>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
 
       <x-page-section-header title="Financial Details" :breakline="true">
         <x-heroicon-s-currency-dollar class="size-6 text-yellow-400"/>
-      </x-page-section-header> 
+      </x-page-section-header>
       <div class = "flex flex-col sm:flex-row gap-6" x-data="{ isDepreciable: {{ old('is_depreciable', $asset->is_depreciable ?? false) ? 'true' : 'false' }} }">
         {{-- Left Column!! --}}
         <div class = "flex flex-col flex-1 gap-4">
@@ -136,7 +136,7 @@
           </div>
         </div>
       </div>
-      
+
       <x-page-section-header title="Misc. Details" :breakline="true">
         <x-heroicon-s-clipboard-document-list class="size-6 text-gray-600"/>
       </x-page-section-header>
@@ -145,12 +145,12 @@
         <div class = "flex flex-col flex-1 gap-4">
           <div class = "form-row">
             <x-page-label for="supplier">Supplier</x-page-label>
-            <x-page-select name="supplier" id="supplier">
-              <option value="" disabled selected {{ old('supplier') ? '' : 'selected' }}>--Select Supplier--</option>
+            <select name="supplier" id="supplier" data-create-url="{{ route('suppliers.quickStore') }}" class="max-w-xs w-full">
+              <option value="">--Select Supplier--</option>
               @foreach($suppliers as $id=>$name)
                 <option value="{{ $id }}" {{ old('supplier') == $id ? 'selected' : '' }}>{{ $name }}</option>
               @endforeach
-            </x-page-select>
+            </select>
           </div>
         </div>
 
@@ -164,8 +164,8 @@
         </div>
       </div>
 
-      <x-page-create-submit-button>Create Asset</x-page-create-submit-button>
-      
+      <x-page-create-submit-button>Submit</x-page-create-submit-button>
+
     </div>
   </form>
 </div>
@@ -175,4 +175,5 @@
   @vite('resources/js/assets/create-asset/getSubcategory.js')
   @vite('resources/js/assets/endOfLifeCalc.js')
   @vite('resources/js/assets/filepond-asset.js')
+  @vite('resources/js/assets/assetTomSelect.js')
 @endsection

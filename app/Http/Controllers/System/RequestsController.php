@@ -97,6 +97,37 @@ class RequestsController extends Controller
         return redirect()->route("requests.index")->with("success","Request successfully created!");
     }
 
+    public function getEditRequest($id){
+        $requestModel = RequestModel::with(['department','asset','requestedBy'])->findOrFail($id);
+        $requestTypes = RequestTypes::cases();
+        $departments = Department::orderBy('name')->pluck('name', 'id');
+        $assets = Asset::where('department_id', auth()->user()->employee->department_id)
+            ->orderBy('asset_code')
+            ->get();
+        return view('pages.requests.edit-request', compact('requestModel', 'requestTypes','assets', 'departments'));
+    }
+
+    public function updateRequest(RequestValidation $request, $id){
+        $validated = $request->validated();
+
+        $requestModel = RequestModel::findOrFail($id);
+
+        $requestModel->update([
+            "description" => $validated["description"],
+            "request_type" => $validated["request_type"],
+            "asset_id" => $validated["asset"],
+            "department_id" => $validated["department"],
+        ]);
+
+        return redirect()->route("requests.index")->with("success","Request successfully edited!");
+    }
+
+    public function getPageRequest($id){
+        $requestModel = RequestModel::with(['asset','department', 'requestedBy', 'approvedBy'])->findOrFail($id);
+        return view('pages.requests.show-request', compact('requestModel'));
+    }
+
+
     public function submitRequest($id){
         $requestModel = RequestModel::findOrFail($id);
         $requestModel->status = RequestStatus::PENDING;
@@ -184,111 +215,11 @@ class RequestsController extends Controller
     public function declineRequest($id){
         $requestModel = RequestModel::findOrFail($id);
         $requestModel->update([
-            "status" => RequestStatus::DECLINE,
+            "status" => RequestStatus::REJECTED,
             "handled_by" => auth()->id(),
             "date_approved" => now()
         ]);
 
         return redirect()->route('requests.index')->with('success', 'Request Successfully Declined!');
-    }
-
-    public function getEditRequest($id){
-        $requestModel = RequestModel::with(['category','subCategory','asset','files'])->findOrFail($id);
-        $requestTypes = RequestTypes::cases();
-        $assets = Asset::where('department_id', auth()->user()->employee->department_id)
-            ->orderBy('asset_code')
-            ->get();
-        $categories = Category::orderBy('name')->pluck('name', 'id');
-        $serviceTypes = ServiceTypes::cases();
-        $disposalConditions = DisposalConditions::cases();
-        return view('pages.requests.edit-request', compact('requestModel', 'requestTypes', 'categories', 'assets', 'serviceTypes', 'disposalConditions'));
-    }
-
-    public function updateRequest(RequestValidation $request, $id){
-        $validated = $request->validated();
-        $validated['is_new_asset'] = $request->has('is_new_asset');
-
-        if($validated['type'] == RequestTypes::DISPOSAL->value || $validated['type'] == RequestTypes::SERVICE->value){
-            $asset = Asset::findOrFail($validated['asset_id']);
-            if($validated["quantity"] > $asset->quantity){
-                return redirect()->back()->with("error", "Request quantity exceeds available quantity!");
-            }
-        }
-
-        $requestModel = RequestModel::findOrFail($id);
-        if($request->hasFile('attachments')){
-            $existingCount = $requestModel->files()->count();
-            $deleteCount = $request->has('delete_files') ? count($request->delete_files) : 0;
-            $newfiles = $request->file('attachments');
-
-            if($existingCount - $deleteCount + count($newfiles) > 5){
-                return redirect()->route("requests.edit", $requestModel->id)->with('error', 'Maximum of 5 attachment allowed!');
-            }
-        }
-
-        try{
-            DB::transaction(function() use($id, $validated,$request,$requestModel){
-
-                $requestModel->update([
-                    'request_code' => $validated['request_code'],
-                    'type' => $validated['type'],
-                    'quantity'=> $validated['quantity'],
-                    'description' => $validated['description'],
-                    'is_new_asset' => $validated['is_new_asset'],
-
-                    // Requisition fields (nullable)
-                    'asset_name' => $validated['asset_name'] ?? null,
-                    'category_id' => $validated['category'] ?? null,
-                    'sub_category_id' => $validated['subcategory'] ?? null,
-
-                    // Service/Disposal fields (nullable)
-                    'asset_id' => $validated['asset_id'] ?? null,
-                    'service_type' => $validated['service_type'] ?? null,
-                    'condition' => $validated['condition'] ?? null,
-                ]);
-
-                if($request->has('delete_files')){
-                    foreach($request->delete_files as $fileID){
-                        $file = RequestFile::findOrFail($fileID);
-                        Storage::delete($file->file_path);
-                        $file->delete();
-                    }
-                }
-
-                if($request->has('attachments')){
-                    $existingCount = $requestModel->files()->count();
-                    $newfiles = $request->file('attachments');
-
-                    if($existingCount + count($newfiles) > 5){
-                        return redirect()->route("requests.index")->with('error', 'Maximum of 5 attachment allowed!');
-                    }
-                    foreach($request->file('attachments') as $file){
-
-                        $path = $file->store('request-attachments');
-                        RequestFile::create([
-                            'request_id' => $requestModel->id,
-                            'file_path' => $path,
-                            'file_type' => $file->getMimeType(),
-                            'original_name' => $file->getClientOriginalName()
-                        ]);
-                    }
-                }
-            });
-            return redirect()->route('requests.index')->with('success', 'Request edited successfully!');
-        }catch(\Exception $e){
-            return redirect()->route("requests.index")->with('error', 'Something went wrong!');
-        }
-    }
-
-    public function serveAttachments($id){
-        $file = RequestFile::findOrFail($id);
-        return Storage::response($file->file_path);
-    }
-
-    public function getPageRequest($id){
-        $requestModel = RequestModel::with(['category','subCategory','asset','files'])->findOrFail($id);
-        $requestTypes = RequestTypes::cases();
-        $requestStatus = RequestStatus::cases();
-        return view('pages.requests.show-request', compact('requestModel','requestTypes','requestTypes'));
     }
 }

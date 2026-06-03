@@ -76,12 +76,14 @@ class Request extends Model
       'requested_by',
       'department_id',
       'approved_by',
-      'approved_at'
+      'approved_at',
+      'status'
     ];
 
     protected $casts = [
         'request_type' => RequestTypes::class,
         'status' => RequestStatus::class,
+        'approved_at' => 'date'
     ];
     public function requestedBy(){
         return $this->belongsTo(User::class, 'requested_by');
@@ -103,7 +105,7 @@ class Request extends Model
         if (!$search) return $query;
 
         return $query->where(function($q) use ($search) {
-          
+
         });
     }
 }

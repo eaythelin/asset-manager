@@ -5,7 +5,7 @@
   {{-- Back button + Action buttons --}}
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
     <x-back-link route="assets.index">Return to Assets</x-back-link>
-    
+
     <div class="flex flex-wrap gap-2">
       @if(auth()->user()->can('manage assets') && $asset->status->value !== "disposed")
         <a href="{{ route('assets.edit', $asset->id) }}">
@@ -14,8 +14,8 @@
             Edit Asset
           </x-buttons>
         </a>
-        <x-buttons 
-          class="disposeBtn btn-sm sm:btn-md" 
+        <x-buttons
+          class="disposeBtn btn-sm sm:btn-md"
           onclick="disposeAsset.showModal()"
           data-route="{{ route('assets.dispose', $asset->id) }}">
           <x-heroicon-o-trash class="size-4"/>
@@ -100,7 +100,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="bg-white p-4 rounded-2xl shadow-xl">
           <div class="flex flex-row items-center gap-2 mb-2">
             <x-heroicon-s-user-group class="size-6 text-green-700"/>
@@ -156,36 +156,12 @@
           <x-heroicon-s-clock class="size-6 text-purple-700"/>
           <h3 class="text-lg font-semibold">Asset History</h3>
         </div>
-        @if($hasWorkorders)
-         <x-tables :columnNames="$columns" :centeredColumns="[0,2]">
-          <tbody class = "divide-y divide-gray-400">  
-            @foreach($history as $record)
-              <tr>
-                <th class = "p-3 text-center">{{ $record->workorder->workorder_code }}</th>
-                <x-td>{{ $record->workorder->workorder_type->label()}}</x-td>
-                <x-td class="text-center"> <span class="badge {{ $record->workorder->status->badgeClass() }} text-white font-medium text-sm"> {{ $record->workorder->status->label() }} </span> </x-td>
-                <x-td>{{ $record->workorder->start_date?->format('F j, Y') }}</x-td>
-                <x-td>{{ $record->workorder->end_date?->format('F j, Y') }}</x-td>
-                <x-td>
-                  @if($record->workorder->workorder_type->value === 'disposal')
-                    {{ $record->workorder?->disposalWorkorder?->quantity }}
-                  @else
-                    {{ $record->workorder->request?->quantity }}
-                  @endif
-                </x-td> 
-                <x-td>{{ $record->workorder->completedBy?->name }}</x-td>
-              </tr>
-            @endforeach
-          </tbody>
-         </x-tables>
-        @else
-          {{-- Timeline placeholder --}}
-          <div class="text-center py-8">
-            <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
-            <p class="text-gray-500">No history recorded yet</p>
-            <p class="text-sm text-gray-400 mt-1">Asset activities will appear here</p>
-          </div>
-        @endif
+        {{-- Timeline placeholder --}}
+        <div class="text-center py-8">
+          <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
+          <p class="text-gray-500">No history recorded yet</p>
+          <p class="text-sm text-gray-400 mt-1">Asset activities will appear here</p>
+        </div>
       </div>
     </div>
   </div>

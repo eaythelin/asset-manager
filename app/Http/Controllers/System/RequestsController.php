@@ -127,15 +127,6 @@ class RequestsController extends Controller
         return view('pages.requests.show-request', compact('requestModel'));
     }
 
-
-    public function submitRequest($id){
-        $requestModel = RequestModel::findOrFail($id);
-        $requestModel->status = RequestStatus::PENDING;
-        $requestModel->save();
-
-        return redirect()->route('requests.index')->with('success', 'Request submitted!');
-    }
-
     public function cancelRequest($id){
         $requestModel = RequestModel::findOrFail($id);
         $requestModel->status = RequestStatus::CANCELLED;
@@ -149,60 +140,14 @@ class RequestsController extends Controller
             DB::transaction(function() use($id){
                 $requestModel = RequestModel::findOrFail($id);
                 $requestModel->update([
-                    "status" => RequestStatus::APPROVED,
-                    "handled_by" => auth()->id(),
-                    "date_approved" => now()
+                    "status" => RequestStatus::APPROVED->value,
+                    "approved_by" => auth()->id(),
+                    "approved_at" => now()
                 ]);
 
-                if($requestModel->type === RequestTypes::REQUISITION){
-                    $count = Workorder::where('workorder_type', WorkorderType::REQUISITION)->count();
-                    $nextCode = 'WO-REQ-'.($count + 1);
-                    $workorder = Workorder::create([
-                        "workorder_code" => $nextCode,
-                        "workorder_type" => WorkorderType::REQUISITION,
-                        "request_id" => $requestModel->id
-                    ]);
-
-                    RequisitionWorkorder::create([
-                        "workorder_id" => $workorder->id,
-                        "asset_name" => $requestModel->is_new_asset ? $requestModel->asset_name : null,
-                        "asset_id" => $requestModel->is_new_asset ? null : $requestModel->asset_id,
-                    ]);
-                }elseif($requestModel->type === RequestTypes::SERVICE){
-                    $count = Workorder::where('workorder_type', WorkorderType::SERVICE)->count();
-                    $nextCode = 'WO-SER-'.($count + 1);
-
-                    $workorder = Workorder::create([
-                        "workorder_code" => $nextCode,
-                        "workorder_type" => WorkorderType::SERVICE,
-                        "request_id" => $requestModel->id
-                    ]);
-
-                    ServiceWorkorder::create([
-                        "workorder_id" => $workorder->id,
-                        "asset_id" => $requestModel->asset_id,
-                        "service_type" => $requestModel->service_type->value
-                    ]);
-
-                    Asset::findOrFail($requestModel->asset_id)->update([
-                        'status' => AssetStatus::UNDER_SERVICE
-                    ]);
-
-                }elseif($requestModel->type === RequestTypes::DISPOSAL){
-                    $count = Workorder::where('workorder_type', WorkorderType::DISPOSAL)->count();
-                    $nextCode = 'WO-DIS-'.($count + 1);
-                    $workorder = Workorder::create([
-                        "workorder_code" => $nextCode,
-                        "workorder_type" => WorkorderType::DISPOSAL,
-                        "request_id" => $requestModel->id
-                    ]);
-
-                    DisposalWorkorder::create([
-                        "workorder_id" => $workorder->id,
-                        "asset_id" => $requestModel->asset_id,
-                        "quantity" => $requestModel->quantity
-                    ]);
-                }
+                Asset::findOrFail($requestModel->asset_id)->update([
+                    'status' => $requestModel->request_type->value
+                ]);
             });
 
             return redirect()->route('requests.index')->with('success', 'Request Successfully Approved!');
@@ -216,8 +161,6 @@ class RequestsController extends Controller
         $requestModel = RequestModel::findOrFail($id);
         $requestModel->update([
             "status" => RequestStatus::REJECTED,
-            "handled_by" => auth()->id(),
-            "date_approved" => now()
         ]);
 
         return redirect()->route('requests.index')->with('success', 'Request Successfully Declined!');

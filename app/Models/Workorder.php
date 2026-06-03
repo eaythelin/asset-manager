@@ -69,18 +69,6 @@ class Workorder extends Model
       'is_direct'
     ];
 
-    public function disposalWorkOrder(){
-      return $this->hasOne(DisposalWorkorder::class);
-    }
-
-    public function serviceWorkorder(){
-      return $this->hasOne(ServiceWorkorder::class);
-    }
-
-    public function requisitionWorkorder(){
-      return $this->hasOne(RequisitionWorkorder::class);
-    }
-
     public function request(){
       return $this->belongsTo(Request::class);
     }

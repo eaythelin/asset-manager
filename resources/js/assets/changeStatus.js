@@ -3,9 +3,11 @@ const form = document.getElementById('changeStatusForm');
 const select = document.getElementById('status');
 
 const statusOptions = {
-  'active': [{ value: 'under_service', label: 'Under Service' }],
-  'under_service': [{ value: 'active', label: 'Active' }],
-  'expired': [{ value: 'under_service', label: 'Under Service' }],
+  'active': [{ value: 'maintenance', label: 'Maintenance' }, { value: 'repair', label: 'Repair' }, { value: 'fabrication', label: 'Fabrication' }],
+  'maintenance': [{ value: 'active', label: 'Active' }],
+  'repair': [{ value: 'active', label: 'Active' }],
+  'fabrication': [{ value: 'active', label: 'Active' }],
+  'expired': [{ value: 'maintenance', label: 'Maintenance' }, { value: 'repair', label: 'Repair' }, { value: 'fabrication', label: 'Fabrication' }],
 }
 
 changeBtns.forEach(button => {

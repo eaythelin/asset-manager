@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('workorders', function(Blueprint $table){
             $table->id();
             $table->string('workorder_code')->unique();
-            $table->foreignId('request_id')->nullable()->constrained('requests')->onDelete('set null');
+            $table->foreignId('request_id')->constrained('requests')->onDelete('restrict');
             $table->foreignId('completed_by')->nullable()->constrained('users', 'id')->onDelete('restrict');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->decimal('cost', 8, 2)->nullable();
+            $table->text('instructions')->nullable();
             //enums
             $table->string('priority_level')->default('low');
-            $table->string('workorder_type');
             $table->string('status')->default('pending');
 
             $table->timestamps();

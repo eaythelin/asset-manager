@@ -105,7 +105,17 @@ class Request extends Model
         if (!$search) return $query;
 
         return $query->where(function($q) use ($search) {
-
+            $q->where('control_number','LIKE',"%{$search}%")
+                ->orWhere('description', 'LIKE', "%{$search}%")
+                ->orWhere('request_type', 'LIKE', "%{$search}%")
+                ->orWhere('status', 'LIKE', "%{$search}%")
+                ->orWhereRaw('DATE_FORMAT(created_at, "%M %e, %Y") LIKE ?', ["%{$search}%"])
+                ->orWhereHas('asset', function($q2) use ($search) {
+                    $q2->where('name', 'LIKE', "%{$search}%");
+                })
+                ->orWhereHas('requestedBy', function($q2) use ($search) {
+                    $q2->where('name', 'LIKE', "%{$search}%");
+                });
         });
     }
 }

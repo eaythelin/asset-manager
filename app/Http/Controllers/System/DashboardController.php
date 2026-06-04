@@ -52,7 +52,7 @@ class DashboardController extends Controller
         $pendingWO = Workorder::where('status', 'pending')->count();
         $inProgWO = Workorder::where('status', 'in_progress')->count();
         $overdueWO = Workorder::where('status','overdue')->count();
-        $completedWO = Workorder::where('status', 'completed')->where('is_direct','false')->count();
+        $completedWO = Workorder::where('status', 'completed')->count();
 
         $requestCount = RequestModel::where('status', 'pending');
         if(auth()->user()->getRoleNames()->contains('General Manager')){

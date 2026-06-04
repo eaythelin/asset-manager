@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AssetStatusLog extends Model
 {
+    use HasFactory;
     protected $fillable = [
         "asset_id",
         "changed_by",

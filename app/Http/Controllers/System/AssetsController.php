@@ -4,17 +4,13 @@ namespace App\Http\Controllers\System;
 
 use App\Enums\AssetStatus;
 use App\Enums\DisposalMethods;
-use App\Enums\PriorityLevel;
-use App\Enums\WorkorderStatus;
-use App\Enums\WorkorderType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetValidation;
 use App\Models\AssetStatusLog;
 use App\Models\Department;
-use App\Models\DisposalWorkorder;
+use App\Models\AssetDisposalLog;
 use App\Models\Employee;
 use App\Models\Supplier;
-use App\Models\Workorder;
 use Illuminate\Http\Request;
 use App\Models\Asset;
 use App\Models\Category;
@@ -214,22 +210,7 @@ class AssetsController extends Controller
         //this make is so the DB updates in one go and if anything fails then everything fails!!
         try{
             DB::transaction(function() use($validated, $asset){
-                $count = Workorder::where('workorder_type', WorkorderType::DISPOSAL)->count();
-                $nextCode = 'WO-DIS-'.($count + 1);
-
-                $workorder = Workorder::create([
-                    "workorder_code" => $nextCode,
-                    "completed_by" => auth()->user()->id,
-                    "start_date" => now(),
-                    "end_date" => now(),
-                    "priority_level" => PriorityLevel::HIGH,
-                    "workorder_type" => WorkorderType::DISPOSAL,
-                    "status" => WorkorderStatus::COMPLETED,
-                    "is_direct" => true
-                ]);
-
-                DisposalWorkorder::create([
-                    "workorder_id" => $workorder->id,
+                AssetDisposalLog::create([
                     "asset_id" => $asset->id,
                     "disposal_method" => $validated['disposal_method'],
                     "disposal_date" => now(),
@@ -248,6 +229,7 @@ class AssetsController extends Controller
                 }
             });
         }catch(\Exception $e){
+            // dd($e->getMessage());
             return redirect()->route("assets.index")->with('error', 'Something went wrong!');
         }
 

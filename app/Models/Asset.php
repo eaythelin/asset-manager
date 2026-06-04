@@ -133,20 +133,12 @@ class Asset extends Model
         return $this->hasMany(Request::class);
     }
 
-    public function disposalWorkorders(){
-        return $this->hasMany(DisposalWorkorder::class);
-    }
-
-    public function serviceWorkorders(){
-        return $this->hasMany(ServiceWorkorder::class);
-    }
-
-    public function requisitionWorkorders(){
-        return $this->hasMany(RequisitionWorkorder::class);
-    }
-
     public function assetStatusLog(){
         return $this->hasMany(AssetStatusLog::class);
+    }
+
+    public function assetDisposalLogs(){
+        return $this->hasMany(AssetDisposalLog::class);
     }
 
     public function getBookValueAttribute(){

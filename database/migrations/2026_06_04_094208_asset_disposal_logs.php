@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asset_status_logs', function (Blueprint $table) {
+        Schema::create("asset_disposal_logs", function (Blueprint $table) {
             $table->id();
             $table->foreignId('asset_id')->constrained('assets')->onDelete('restrict');
-            $table->foreignId('changed_by')->nullable()->constrained('users', 'id')->onDelete('set null');
-            $table->string('from_status');
-            $table->string('to_status');
-            $table->text('notes')->nullable();
+            $table->string('disposal_method')->nullable();
+            $table->dateTime('disposal_date')->nullable();
+            $table->integer('quantity')->nullable();
+            $table->text('reason')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asset_status_logs');
+        Schema::dropIfExists('asset_disposal_logs');
     }
 };

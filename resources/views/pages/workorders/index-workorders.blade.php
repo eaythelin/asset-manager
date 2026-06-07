@@ -10,27 +10,20 @@
 
 <div class = "md:m-4">
   <x-validation-error />
-  
+
   <div class = "bg-white p-4 rounded-2xl shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
 
       <x-search-bar route="workorders.index" placeholder="Search workorders..."/>
-      
+
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[0,1,3,6,7]">
+    <x-tables :columnNames="$columns" :centeredColumns="[0,1,3,4]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($workorders as $workorder)
             <tr>
               <th class = "p-3 text-center">{{ $workorder->workorder_code }}</th>
-              <x-td class="text-center">{{ $workorder->request?->request_code}}</x-td>
-              <x-td>{{ $workorder->workorder_type->label()}}</x-td>
-              <x-td class="text-center">
-                <span class="badge {{ $workorder->priority_level->badgeClass() }} text-white font-medium text-sm">
-                  {{ $workorder->priority_level->label() }}
-                </span>
-              </x-td>
-              <x-td>{{ $workorder->start_date?->format('M d, Y') }}</x-td>
-              <x-td>{{ $workorder->end_date?->format('M d, Y') }}</x-td>
+              <x-td class="text-center">{{ $workorder->request->control_number}}</x-td>
+              <x-td>{{ $workorder->type?->label()}}</x-td>
               <x-td class="text-center">
                 <span class="badge {{ $workorder->status->badgeClass() }} text-white font-medium text-sm">
                   {{ $workorder->status->label() }}

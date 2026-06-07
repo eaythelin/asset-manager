@@ -2,26 +2,17 @@
 
 namespace App\Http\Controllers\System;
 
-use App\Enums\AssetStatus;
-use App\Enums\DisposalConditions;
+
 use App\Enums\RequestTypes;
-use App\Enums\ServiceTypes;
 use App\Http\Controllers\Controller;
-use App\Models\RequisitionWorkorder;
-use App\Models\RequestFile;
-use App\Models\ServiceWorkorder;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\Request as RequestModel;
 use App\Models\Asset;
-use App\Models\Category;
 use App\Models\Workorder;
-use App\Models\DisposalWorkorder;
 use App\Enums\RequestStatus;
-use App\Enums\WorkorderType;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\RequestValidation;
 
 class RequestsController extends Controller
@@ -143,6 +134,16 @@ class RequestsController extends Controller
                     "status" => RequestStatus::APPROVED->value,
                     "approved_by" => auth()->id(),
                     "approved_at" => now()
+                ]);
+
+                $year = now()->year;
+                $latest = Workorder::whereYear('created_at', $year)->latest()->first();
+                $count = $latest ? (int) substr($latest->workorder_code, -4) + 1 : 1;
+                $nextCode = 'WO-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+
+                Workorder::create([
+                    "workorder_code" => $nextCode,
+                    "request_id"=> $requestModel->id,
                 ]);
 
                 Asset::findOrFail($requestModel->asset_id)->update([

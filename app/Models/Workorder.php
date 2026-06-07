@@ -51,22 +51,34 @@ class Workorder extends Model
 
     protected $casts = [
       'priority_level' => PriorityLevel::class,
-      'workorder_type' => WorkorderType::class,
       'status' => WorkorderStatus::class,
-      'start_date'=> 'date',
-      'end_date' => 'date'
+      'started_at' => 'datetime',
+      'finished_at' => 'datetime',
+      'sub_date_released' => 'date',
+      'sub_date_returned'=> 'date',
     ];
 
     protected $fillable = [
-      'request_id',
-      'completed_by',
-      'start_date',
-      'end_date',
-      'priority_level',
-      'workorder_type',
-      'status',
-      'workorder_code',
-      'is_direct'
+        'workorder_code',
+        'request_id',
+        'completed_by',
+        'cost',
+        'status',
+        'type',
+        // in-house
+        'priority_level',
+        'estimated_duration',
+        'instructions',
+        // subcontractor
+        'sub_name',
+        'sub_document',
+        'sub_details',
+        'sub_date_released',
+        'sub_date_returned',
+        // accomplishment
+        'started_at',
+        'finished_at',
+        'accomplishment_details',
     ];
 
     public function request(){
@@ -77,30 +89,15 @@ class Workorder extends Model
       return $this->belongsTo(User::class, 'completed_by');
     }
 
-    public function getCheckStatusAttribute(){
-      if($this->end_date && now()->greaterThan($this->end_date)){
-        $protected = ['pending', 'completed', 'cancelled'];
-
-        if(!in_array($this->status->value, $protected) && $this->status->value !== WorkorderStatus::OVERDUE->value){
-          $this->update(['status'=> WorkorderStatus::OVERDUE->value]);
-          $this->refresh();
-        }
-      }
+    public function assignedEmployees(){
+        return $this->belongsToMany(Employee::class, 'workorder_employees');
     }
 
     public function scopeSearch($query, $search){
         if (!$search) return $query;
 
         return $query->where(function($q) use ($search) {
-            $q->where('workorder_code', 'LIKE', "%{$search}%")
-            ->orWhere('workorder_type', 'LIKE', "%{$search}%")
-            ->orWhere('priority_level', 'LIKE', "{$search}")
-            ->orWhere('status', 'LIKE', "{$search}")
-            ->orWhereRaw("DATE_FORMAT(start_date, '%M %d, %Y') LIKE ?", ["%{$search}%"])
-            ->orWhereRaw("DATE_FORMAT(end_date, '%M %d, %Y') LIKE ?", ["%{$search}%"])
-            ->orWhereHas('request', function($q2) use ($search) {
-                $q2->where('request_code', 'LIKE', "%{$search}%");
-            });
+
         });
     }
 }

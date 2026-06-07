@@ -16,13 +16,26 @@ return new class extends Migration
             $table->string('workorder_code')->unique();
             $table->foreignId('request_id')->constrained('requests')->onDelete('restrict');
             $table->foreignId('completed_by')->nullable()->constrained('users', 'id')->onDelete('restrict');
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
             $table->decimal('cost', 8, 2)->nullable();
-            $table->text('instructions')->nullable();
-            //enums
-            $table->string('priority_level')->default('low');
             $table->string('status')->default('pending');
+            $table->string('type')->nullable();
+
+            //in-house
+            $table->string('priority_level')->nullable();
+            $table->string('estimated_duration')->nullable();
+            $table->text('instructions')->nullable();
+
+            //subcontractor
+            $table->string('sub_name')->nullable();
+            $table->string('sub_document')->nullable();
+            $table->text('sub_details')->nullable();
+            $table->date('sub_date_released')->nullable();
+            $table->date('sub_date_returned')->nullable();
+
+            //accomplisment report
+            $table->dateTime('started_at')->nullable();
+            $table->dateTime('finished_at')->nullable();
+            $table->text('accomplishment_details')->nullable();
 
             $table->timestamps();
         });

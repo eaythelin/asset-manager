@@ -24,15 +24,15 @@ use Exception;
 class WorkordersController extends Controller
 {
     public function getWorkOrders(Request $request){
-        $query = Workorder::with('request', 'disposalWorkOrder', 'serviceWorkorder', 'requisitionWorkorder')->where('is_direct', false);
+        $query = Workorder::with('request');
 
         if($request->has('search')){
             $search = $request->input('search');
             $query->search($search);
         }
 
-        $columns = ["Workorder Code", "Request Code", "Type", "Priority", "Start Date", "End Date", "Status", "Actions"];
-        $query->orderByRaw("FIELD(status, 'pending', 'in_progress', 'overdue', 'completed', 'cancelled')");
+        $columns = ["Workorder Code", "Control No.", "Type", "Status", "Actions"];
+        $query->orderByRaw("FIELD(status, 'pending', 'in_progress', 'completed', 'cancelled')");
         $workorders = $query->paginate(5);
         return view('pages.workorders.index-workorders', compact('workorders', 'columns'));
     }
@@ -42,7 +42,7 @@ class WorkordersController extends Controller
         $priorities = PriorityLevel::cases();
         $disposalMethods = DisposalMethods::cases();
         $suppliers = Supplier::orderBy('name')->pluck('name','id');
-        $maintenanceTypes = MaintenanceType::cases();
+                $maintenanceTypes = MaintenanceType::cases();
         $employees = Employee::select('id', 'first_name', 'last_name')
             ->orderBy('first_name')
             ->orderBy('last_name')

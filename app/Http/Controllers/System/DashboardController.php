@@ -27,11 +27,7 @@ class DashboardController extends Controller
         //Get Departments
         $departments = Department::with("assets")->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
-
-        Workorder::whereNotNull('end_date')
-            ->get()
-            ->each(fn($workorder) => $workorder->check_status);
-
+        
         //asset numbers for the cards
         $activeAssetQuery = Asset::where('status', 'active');
         $disposeAssetsQuery = Asset::withTrashed()->where('status', 'disposed');

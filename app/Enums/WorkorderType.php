@@ -2,18 +2,16 @@
 
 namespace App\Enums;
 
-enum WorkorderType:string
+enum WorkorderType : string
 {
-    case REQUISITION = "requisition";
-    case SERVICE = "service";
-    case DISPOSAL = "disposal";
+    case SUBCONTRACTOR = "subcontractor";
+    case IN_HOUSE = "in_house";
 
     public function label():string
     {
         return match($this) {
-            self::REQUISITION => "Requisition",
-            self::SERVICE => "Service",
-            self::DISPOSAL => "Disposal",
+            self::SUBCONTRACTOR => "Subcontractor",
+            self::IN_HOUSE => "In House",
         };
     }
 }

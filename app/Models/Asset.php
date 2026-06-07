@@ -221,32 +221,6 @@ class Asset extends Model
     }
 
     protected static function booted(){
-        static::deleted(function($asset){
-            $asset->serviceWorkorders->each(function($service) {
-                if ($service->workorder) {
-                    $service->workorder()
-                        ->whereNotIn('status', ['completed', 'cancelled'])
-                        ->update(['status' => 'cancelled']);
-                }
-            });
-
-            $asset->disposalWorkorders->each(function($disposal) {
-                if ($disposal->workorder) {
-                    $disposal->workorder()
-                        ->whereNotIn('status', ['completed', 'cancelled'])
-                        ->update(['status' => 'cancelled']);
-                }
-            });
-
-            $asset->requisitionWorkorders->each(function($requisition) {
-                if ($requisition->workorder) {
-                    $requisition->workorder()
-                        ->whereNotIn('status', ['completed', 'cancelled'])
-                        ->update(['status' => 'cancelled']);
-                }
-            });
-        });
-
         static::created(function($asset){
             $asset->update([
                 'asset_code' => 'AST-'. $asset->id

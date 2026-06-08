@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\System;
 
-use App\Enums\DisposalMethods;
-use App\Enums\MaintenanceType;
 use App\Enums\PriorityLevel;
 use App\Enums\WorkorderStatus;
 use App\Enums\WorkorderType;
@@ -15,8 +13,6 @@ use App\Models\ServiceWorkorder;
 use App\Models\RequisitionWorkorder;
 use Illuminate\Http\Request;
 use App\Models\Workorder;
-use App\Models\Supplier;
-use App\Models\Employee;
 use App\Models\Asset;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -40,23 +36,8 @@ class WorkordersController extends Controller
     public function getEditWorkorder($id){
         $workorder = Workorder::with('request')->findOrFail($id);
         $priorities = PriorityLevel::cases();
-        $disposalMethods = DisposalMethods::cases();
-        $suppliers = Supplier::orderBy('name')->pluck('name','id');
-                $maintenanceTypes = MaintenanceType::cases();
-        $employees = Employee::select('id', 'first_name', 'last_name')
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get()
-            ->pluck('full_name', 'id');
-        $relations = match($workorder->type){
-            WorkorderType::REQUISITION => ['requisitionWorkorder'],
-            WorkorderType::SERVICE => ['serviceWorkorder'],
-            WorkorderType::DISPOSAL => ['disposalWorkorder'],
-            default => [],
-        };
-        $workorder->load($relations);
 
-        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities', 'disposalMethods','suppliers','maintenanceTypes','employees'));
+        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities'));
     }
 
     public function updateWorkorder(WorkorderValidation $request, $id){

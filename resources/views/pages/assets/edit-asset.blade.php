@@ -117,12 +117,12 @@
 
           <div class="form-row">
             <x-page-label for="cost" required="isDepreciable">Cost</x-page-label>
-            <x-page-input name="cost" id="cost" value="{{ old('cost', $asset->cost) }}"/>
+            <x-page-input type="number" name="cost" id="cost" value="{{ old('cost', $asset->cost) }}"/>
           </div>
 
           <div class="form-row">
             <x-page-label for="salvage_value" required="isDepreciable">Salvage Value</x-page-label>
-            <x-page-input name="salvage_value" id="salvage_value" value="{{ old('salvage_value', $asset->salvage_value) }}"/>
+            <x-page-input type="number" name="salvage_value" id="salvage_value" value="{{ old('salvage_value', $asset->salvage_value) }}"/>
           </div>
         </div>
 

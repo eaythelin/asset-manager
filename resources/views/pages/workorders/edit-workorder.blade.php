@@ -150,6 +150,49 @@
         </template>
       </div>
 
+      <hr class="border-gray-300 m-5">
+      <div x-data="{ has_spare_parts: {{ old('has_spare_parts', $workorder->has_spare_parts) ? 'true' : 'false' }} }">
+        <input type="checkbox" id="has_spare_parts" name="has_spare_parts" x-model="has_spare_parts" class="checkbox checkbox-primary checkbox-sm">
+        <label for="has_spare_parts" class="font-medium ml-2 text-lg">Requested Spare Parts</label>
+
+        <template x-if="has_spare_parts">
+          <div x-data="{ rows: [{part: '', description: '', quantity: 1}]}" class="overflow-x-auto mt-5">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Parts/Supplies</th>
+                  <th>Description & Specification</th>
+                  <th>Quantity</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(row, index) in rows" :key="index">
+                  <tr class="hover:bg-base-300">
+                    <td><input type="text" x-model="row.part" :name="`spare_parts[${index}][part]`" class="input input-sm w-full"></td>
+                    <td><input type="text" x-model="row.description" :name="`spare_parts[${index}][description]`" class="input input-sm w-full"></td>
+                    <td><input type="number" x-model="row.quantity" :name="`spare_parts[${index}][quantity]`" class="input input-sm w-full"></td>
+                    <td><button type="button" @click="rows.splice(index, 1)" class="btn btn-error btn-sm text-white">Remove</button></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <button type="button" @click="rows.push({part: '', description: '', quantity: 1})" class="btn btn-primary btn-sm mt-2 ml-2">
+              + Add Row
+            </button>
+          </div>
+        </template>
+      </div>
+
+      <hr class="border-gray-300 m-5">
+      <div x-data="{ has_vehicle: {{ old('has_vehicle', $workorder->has_vehicle) ? 'true' : 'false' }} }">
+        <input type="checkbox" id="has_vehicle" name="has_vehicle" x-model="has_vehicle" class="checkbox checkbox-primary checkbox-sm">
+        <label for="has_vehicle" class="font-medium ml-2 text-lg">Vehicle Repairs and Maintenance</label>
+
+        <template x-if="has_vehicle">
+
+        </template>
+      </div>
       <x-page-edit-submit-button />
 
     </div>

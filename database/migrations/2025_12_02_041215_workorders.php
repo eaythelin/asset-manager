@@ -40,7 +40,9 @@ return new class extends Migration
             $table->text('accomplishment_details')->nullable();
 
             //json
+            $table->boolean('has_spare_parts')->default(false);
             $table->json('spare_parts')->nullable();
+            $table->boolean('has_vehicle')->default(false);
             $table->json('vehicle_details')->nullable();
 
             $table->timestamps();

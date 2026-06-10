@@ -39,11 +39,25 @@ return new class extends Migration
             $table->dateTime('finished_at')->nullable();
             $table->text('accomplishment_details')->nullable();
 
-            //json
+            //spareparts
             $table->boolean('has_spare_parts')->default(false);
             $table->json('spare_parts')->nullable();
+
+            //vehicle stuff
             $table->boolean('has_vehicle')->default(false);
-            $table->json('vehicle_details')->nullable();
+            $table->boolean('has_minor')->default(false);
+            $table->string('vehicle_minor_details')->nullable();
+            $table->boolean('has_major')->default(false);
+            $table->string('vehicle_major_details')->nullable();
+            $table->boolean('has_change_oil')->default(false);
+            $table->date('last_change_oil_date')->nullable();
+            $table->string('meter_reading')->nullable();
+            $table->boolean('has_insurance')->default(false);
+            $table->date('insurance_date')->nullable();
+            $table->boolean('has_registration')->default(false);
+            $table->date('registration_date')->nullable();
+            $table->boolean('has_other')->default(false);
+            $table->text('other_details')->nullable();
 
             $table->timestamps();
         });

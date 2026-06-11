@@ -64,6 +64,26 @@ class WorkordersController extends Controller
             ]);
         }
 
+        if(!$validated['is_subcontractor']){
+            $data = array_merge($data, [
+                'sub_name' => null,
+                'sub_document' => null,
+                'sub_details' => null,
+                'sub_cost' => null,
+                'sub_date_released' => null,
+                'sub_date_returned' => null,
+            ]);
+        }
+
+        if(!$validated['is_inhouse']){
+            $data = array_merge($data, [
+                'priority_level' => null,
+                'inhouse_cost' => null,
+                'estimated_duration' => null,
+                'instructions' => null,
+            ]);
+        }
+
         //vehicle + spare parts false checker wipe
         $data['spare_parts'] = $validated['has_spare_parts'] ? ($validated['spare_parts'] ?? null) : null;
         $data['vehicle_minor_details'] = $validated['has_minor'] ? $validated['vehicle_minor_details'] : null;
@@ -100,12 +120,10 @@ class WorkordersController extends Controller
                     'status' => WorkorderStatus::CANCELLED
                 ]);
 
-                if($workorder->workorder_type === WorkorderType::SERVICE){
-                    $asset = $workorder->serviceWorkorder->asset;
-                    $asset->update([
-                        'status' => AssetStatus::ACTIVE->value
-                    ]);
-                };
+                $asset = $workorder->request->asset;
+                $asset->update([
+                    'status' => AssetStatus::ACTIVE->value
+                ]);
             });
 
             return redirect()->route("workorders.index")->with('success', 'Workorder cancelled successfully!');

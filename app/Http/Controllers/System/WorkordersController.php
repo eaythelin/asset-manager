@@ -44,52 +44,39 @@ class WorkordersController extends Controller
         $validated = $request->validated();
         $workorder = Workorder::findOrFail($id);
 
-        try {
-            DB::transaction(function() use ($workorder, $validated, $request){
-                $workorder->update([
-                    "priority_level" => $validated["priority_level"],
-                    "start_date" => $validated["start_date"],
-                    "end_date" => $validated["end_date"],
-                ]);
+        $data = $validated;
 
-                if($workorder->workorder_type === WorkorderType::DISPOSAL){
-                    $disposalWO = DisposalWorkorder::findOrFail($request->sub_wo_id);
-
-                    $disposalWO->update([
-                        "quantity" => $validated["quantity"],
-                        "disposal_method" => $validated["disposal_method"],
-                        "disposal_date" => $validated["disposal_date"],
-                        "reason" => $validated["reason"] ?? null,
-                    ]);
-                }elseif($workorder->workorder_type === WorkorderType::SERVICE){
-                    $serviceWO = ServiceWorkorder::findOrFail($request->sub_wo_id);
-
-                    $serviceWO->update([
-                        "maintenance_type" => $validated["maintenance_type"],
-                        "instructions" => $validated["instructions"] ?? null,
-                        "accomplishment_report" => $validated["accomplishment_report"] ?? null,
-                        "assigned_to" => $validated["assigned_to"] ?? null,
-                        "estimated_hours" => $validated["estimated_hours"] ?? null,
-                        "subcontractor_name" => $validated["subcontractor_name"] ?? null,
-                        "subcontractor_details" => $validated["subcontractor_details"] ?? null,
-                        "cost" => $validated["cost"]
-                    ]);
-                }elseif($workorder->workorder_type === WorkorderType::REQUISITION){
-                    $requisitionWO = RequisitionWorkorder::findOrFail($request->sub_wo_id);
-
-                    $requisitionWO->update([
-                        "asset_name" => $request->is_new_asset ? $validated["asset_name"]: null,
-                        "acquisition_date"=> $request->is_new_asset ? $validated["acquisition_date"] : null,
-                        "estimated_cost" => $request->is_new_asset ? $validated["estimated_cost"] : 0,
-                        "supplier_id" => $validated["supplier_id"] ?? null,
-                        "description" => $validated["description"] ?? null
-                    ]);
-                }
-            });
-            return redirect()->route("workorders.index")->with("success","Workorder edited successfully!");
-        }catch (Exception $e){
-            return redirect()->back()->with('error', 'Something went wrong!');
+        if(!$validated['has_vehicle']){
+            $data = array_merge($data, [
+                'has_minor' => false,
+                'vehicle_minor_details' => null,
+                'has_major' => false,
+                'vehicle_major_details' => null,
+                'has_change_oil' => false,
+                'last_change_oil_date' => null,
+                'meter_reading' => null,
+                'has_insurance' => false,
+                'insurance_date' => null,
+                'has_registration' => false,
+                'registration_date' => null,
+                'has_other' => false,
+                'other_details' => null,
+            ]);
         }
+
+        //vehicle + spare parts false checker wipe
+        $data['spare_parts'] = $validated['has_spare_parts'] ? ($validated['spare_parts'] ?? null) : null;
+        $data['vehicle_minor_details'] = $validated['has_minor'] ? $validated['vehicle_minor_details'] : null;
+        $data['vehicle_major_details'] = $validated['has_major'] ? $validated['vehicle_major_details'] : null;
+        $data['last_change_oil_date'] = $validated['has_change_oil'] ? $validated['last_change_oil_date'] : null;
+        $data['meter_reading'] = $validated['has_change_oil'] ? $validated['meter_reading'] : null;
+        $data['insurance_date'] = $validated['has_insurance'] ? $validated['insurance_date'] : null;
+        $data['registration_date'] = $validated['has_registration'] ? $validated['registration_date'] : null;
+        $data['other_details'] = $validated['has_other'] ? $validated['other_details'] : null;
+
+        $workorder->update($data);
+
+        return redirect()->route("workorders.index")->with("success","Workorder edited successfully!");
     }
 
     public function startWO($id){

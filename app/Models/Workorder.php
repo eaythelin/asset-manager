@@ -56,29 +56,53 @@ class Workorder extends Model
       'finished_at' => 'datetime',
       'sub_date_released' => 'date',
       'sub_date_returned'=> 'date',
+      'spare_parts' => 'array',
+      'last_change_oil_date' => 'date',
+      'insurance_date' => 'date',
+      'registration_date' => 'date'
     ];
 
     protected $fillable = [
         'workorder_code',
         'request_id',
         'completed_by',
-        'cost',
         'status',
-        'type',
         // in-house
+        'is_inhouse',
         'priority_level',
+        'inhouse_cost',
         'estimated_duration',
         'instructions',
         // subcontractor
+        'is_subcontractor',
         'sub_name',
         'sub_document',
         'sub_details',
+        'sub_cost',
         'sub_date_released',
         'sub_date_returned',
         // accomplishment
         'started_at',
         'finished_at',
         'accomplishment_details',
+        // spare parts
+        'has_spare_parts',
+        'spare_parts',
+        // vehicle
+        'has_vehicle',
+        'has_minor',
+        'vehicle_minor_details',
+        'has_major',
+        'vehicle_major_details',
+        'has_change_oil',
+        'last_change_oil_date',
+        'meter_reading',
+        'has_insurance',
+        'insurance_date',
+        'has_registration',
+        'registration_date',
+        'has_other',
+        'other_details',
     ];
 
     public function request(){

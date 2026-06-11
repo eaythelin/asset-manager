@@ -76,7 +76,7 @@
 
                 <div class="form-row">
                   <x-page-label for="sub_document" :required="true">Request Document</x-page-label>
-                  <x-page-input value="{{ old('sub_document', $workorder->sub_document) }}" name="sub_name" id="sub_name"/>
+                  <x-page-input value="{{ old('sub_document', $workorder->sub_document) }}" name="sub_document" id="sub_document"/>
                 </div>
 
                 <div class="form-row">
@@ -93,12 +93,12 @@
 
                 <div class="form-row">
                   <x-page-label for="sub_date_released" :required="true">Date Released</x-page-label>
-                  <x-page-input value="{{ old('sub_date_released', $workorder->sub_date_released) }}" name="sub_date_released" id="sub_date_released" type="date"/>
+                  <x-page-input value="{{ old('sub_date_released',  $workorder->sub_date_released?->format('Y-m-d')) }}" name="sub_date_released" id="sub_date_released" type="date"/>
                 </div>
 
                 <div class="form-row">
-                  <x-page-label for="sub_date_returned" :required="true">Date Returned</x-page-label>
-                  <x-page-input value="{{ old('sub_date_returned', $workorder->sub_date_returned) }}" name="sub_name" id="sub_name" type="date"/>
+                  <x-page-label for="date_returned" :required="true">Date Returned</x-page-label>
+                  <x-page-input value="{{ old('date_returned', $workorder->sub_date_returned?->format('Y-m-d')) }}" name="sub_date_returned" id="sub_date_returned" type="date"/>
                 </div>
               </div>
             </div>
@@ -116,7 +116,7 @@
             <div class = "flex flex-col flex-1 gap-4">
               <div class="form-row">
                 <x-page-label for="employees" :required="true">Assigned Maintenance Crew(s)</x-page-label>
-                <x-page-input value="{{ old('employees', $workorder->employees) }}" name="employees" id="employees"/>
+                <x-page-input value="{{ old('employees', $workorder->employees) }}"/>
               </div>
 
               <div class="form-row">
@@ -156,7 +156,7 @@
         <label for="has_spare_parts" class="font-medium ml-2 text-lg">Requested Spare Parts</label>
 
         <template x-if="has_spare_parts">
-          <div x-data="{ rows: [{part: '', description: '', quantity: 1}]}" class="overflow-x-auto mt-5">
+          <div x-data="{ rows: {{ json_encode(old('spare_parts', $workorder->spare_parts ?? [])) }} }" class="overflow-x-auto mt-5">
             <table class="table">
               <thead>
                 <tr>
@@ -182,6 +182,31 @@
             </button>
           </div>
         </template>
+      </div>
+
+      <x-page-section-header title="Accomplisment Report" :breakline="true">
+        <x-heroicon-s-clipboard-document-check class="size-6 text-blue-700"/>
+      </x-page-section-header>
+
+      <div class = "flex flex-col sm:flex-row gap-6">
+        <div class = "flex flex-col flex-1 gap-4">
+          <div class="form-row">
+            <x-page-label for="started_at">Date/hour Started</x-page-label>
+            <x-page-input name="started_at" id="started_at" value="{{ $workorder->started_at?->format('Y-m-d\TH:i') }}" disabled/>
+          </div>
+        </div>
+
+        <div class = "flex flex-col flex-1 gap-4">
+          <div class="form-row">
+            <x-page-label for="finished_at">Date/hour Finished</x-page-label>
+            <x-page-input name="finished_at" id="finished_at" value="{{ $workorder->finished_at?->format('Y-m-d\TH:i') }}" disabled/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row mt-5">
+        <x-page-label for="accomplishment_details">Details (if nay)</x-page-label>
+        <textarea name="accomplishment_details" id="accomplishment_details" class="textarea w-full md:mx-10 border-2 border-gray-400">{{ old('accomplishment_details', $workorder->accomplishment_details) }}</textarea>
       </div>
 
       <hr class="border-gray-300 m-5">
@@ -217,7 +242,7 @@
                 <x-page-label for="last_change_oil_date">Last Change Oil Date</x-page-label>
                 <input type="date" :disabled="!has_change_oil" name="last_change_oil_date" :class="!has_change_oil ? 'opacity-50' : ''"
                 class="input max-w-xs border-2 border-gray-400 rounded-lg" id="last_change_oil_date"
-                value="{{ old('last_change_oil_date', $workorder->last_change_oil_date) }}">
+                value="{{ old('last_change_oil_date', $workorder->last_change_oil_date?->format('Y-m-d')) }}">
               </div>
 
               <div class="form-row md:ml-8">
@@ -236,7 +261,7 @@
                   <input type="date" :disabled="!has_insurance" name="insurance_date"
                     :class="!has_insurance ? 'opacity-50' : ''"
                     class="input border-2 border-gray-400 rounded-lg" id="insurance_date"
-                    value="{{ old('insurance_date', $workorder->insurance_date) }}">
+                    value="{{ old('insurance_date', $workorder->insurance_date?->format('Y-m-d')) }}">
               </div>
 
               <div class="form-row" x-data="{ has_registration: {{ old('has_registration', $workorder->has_registration) ? 'true' : 'false' }} }">
@@ -246,15 +271,13 @@
                   <input type="date" :disabled="!has_registration" name="registration_date"
                     :class="!has_registration ? 'opacity-50' : ''"
                     class="input border-2 border-gray-400 rounded-lg" id="registration_date"
-                    value="{{ old('registration_date', $workorder->registration_date) }}">
+                    value="{{ old('registration_date', $workorder->registration_date?->format('Y-m-d')) }}">
               </div>
 
               <div class="form-row" x-data="{has_other: {{ old('has_other', $workorder->has_other) ? 'true' : 'false' }} }">
                 <input type="checkbox" x-model="has_other" name="has_other" class="checkbox checkbox-sm checkbox-primary">
                 <x-page-label for="other_details">Other</x-page-label>
-                <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400">
-                  {{ old('other_details', $workorder->other_details) }}
-                </textarea>
+                <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400">{{ old('other_details', $workorder->other_details) }}</textarea>
               </div>
             </div>
           </div>

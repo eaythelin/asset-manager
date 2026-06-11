@@ -2,14 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\DisposalMethods;
-use App\Enums\MaintenanceType;
-use App\Enums\PriorityLevel;
-use App\Enums\ServiceTypes;
-use App\Enums\WorkorderType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use App\Enums\PriorityLevel;
 
 class WorkorderValidation extends FormRequest
 {
@@ -21,6 +17,22 @@ class WorkorderValidation extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            "is_inhouse"=> $this->has("is_inhouse"),
+            "is_subcontractor"=> $this->has("is_subcontractor"),
+            "has_spare_parts"=> $this->has("has_spare_parts"),
+            "has_vehicle"=> $this->has("has_vehicle"),
+            "has_minor"=> $this->has("has_minor"),
+            "has_major"=> $this->has("has_major"),
+            "has_change_oil"=> $this->has("has_change_oil"),
+            "has_insurance"=> $this->has("has_insurance"),
+            "has_registration"=> $this->has("has_registration"),
+            "has_other"=> $this->has("has_other"),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,54 +42,43 @@ class WorkorderValidation extends FormRequest
     {
         $id = $this->route("id");
 
-        $baseRules = [
-            //general fields
+        return [
+            "is_inhouse" => ["boolean"],
             "priority_level" => ["nullable", new Enum(PriorityLevel::class)],
-            "start_date" => ["required", "date"],
-            "end_date" => ["required", "date", "after_or_equal:start_date"],
-        ];
+            "inhouse_cost" => ["nullable", "numeric", "min:1"],
+            "estimated_duration" => ["nullable", "string"],
+            "instructions" => ["nullable", "max:255"],
 
-        return match($this->workorder_type){
-            WorkorderType::DISPOSAL->value => array_merge($baseRules, [
-                "disposal_method" => ["required", new Enum(DisposalMethods::class)],
-                "disposal_date" => ["required_if:status,in_progress", "nullable", "date", "after_or_equal:start_date"],
-                "reason" => ["nullable", "string", "max:500"],
-                "quantity" => ["required", "integer", "min:1"]
-            ]),
-            WorkorderType::SERVICE->value => array_merge($baseRules, [
-                "maintenance_type" => ["required", new Enum(MaintenanceType::class)],
-                "instructions" => ["nullable", "string", "max:500"],
-                "accomplishment_report" => ["nullable", "string", "max:500"],
-                "cost" => ["required", "numeric", "min:0"],
-                ...match($this->maintenance_type){
-                    MaintenanceType::IN_HOUSE->value => [
-                        "assigned_to" => ["required","exists:employees,id"],
-                        "estimated_hours" => ["required","numeric", "min:0"],
-                    ],
-                    MaintenanceType::SUBCONTRACTOR->value => [
-                        "subcontractor_name" => ["required","string", "max:255"],
-                        "subcontractor_details" => ["nullable", "string", "max:500"]
-                    ],
-                    default => []
-                }
-            ]),
-            WorkorderType::REQUISITION->value => array_merge($baseRules, [
-                "is_new_asset"=> ["required", "boolean"],
-                "supplier_id" => ["nullable", "exists:suppliers,id"],
-                "description" => ["nullable", "string", "max:500"],
-                ...match($this->is_new_asset){
-                    "1" => [
-                        "asset_name" => ["required","max:100", "string"],
-                        "acquisition_date" => [Rule::requiredIf(in_array($this->status, ['in_progress', 'overdue'])),"nullable", "date", "after_or_equal:start_date"],
-                        "estimated_cost" => [Rule::requiredIf(in_array($this->status, ['in_progress', 'overdue'])), "nullable", "numeric", "min:0"],
-                    ],
-                    "0" => [    
-                        // "asset_id" => ["required", "exists:assets,id"], //nothing o3o
-                    ],
-                    default => []
-                }
-            ]),
-            default => $baseRules
-        };
+            "is_subcontractor" => ["boolean"],
+            "sub_name" => ["nullable", "string", "max:100"],
+            "sub_document" => ["nullable","string", "max:100"],
+            "sub_details" => ["nullable","string", "max:100"],
+            "sub_cost" => ["nullable", "numeric", "min:1"],
+            "sub_date_released" => ["nullable", "date"],
+            "sub_date_returned" => ["nullable", "date", "after_or_equal:sub_date_released"],
+
+            "has_vehicle" => ["boolean"],
+            "has_minor" => ["boolean"],
+            "vehicle_minor_details" => ["nullable","string", "max:100"],
+            "has_major" => ["boolean"],
+            "vehicle_major_details" => ["nullable","string", "max:100"],
+            "has_change_oil" => ["boolean"],
+            "last_change_oil_date" => ["nullable", "date"],
+            "meter_reading" => ["nullable", "string", "max:100"],
+            "has_insurance" => ["boolean"],
+            "insurance_date" => ["nullable", "date"],
+            "has_registration" => ["boolean"],
+            "registration_date" => ["nullable", "date"],
+            "has_other" => ["boolean"],
+            "other_details" => ["nullable", "string", "max:255"],
+
+            'has_spare_parts' => ['boolean'],
+            'spare_parts' => ['nullable', 'array'],
+            'spare_parts.*.part' => ['required', 'string'],
+            'spare_parts.*.description' => ['nullable', 'string'],
+            'spare_parts.*.quantity' => ['required', 'integer', 'min:1'],
+
+            "accomplishment_details" => ["nullable", "string", "max:255"]
+        ];
     }
 }

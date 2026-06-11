@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\DisposalConditions;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use App\Enums\RequestTypes;
-use App\Enums\ServiceTypes;
+
 class RequestValidation extends FormRequest
 {
     /**

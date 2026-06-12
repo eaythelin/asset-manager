@@ -198,27 +198,27 @@
     </div>
 
     <hr class="border-gray-300 m-5">
-    <div x-data="{ has_vehicle: {{ old('has_vehicle', $workorder->has_vehicle) ? 'true' : 'false' }} }">
+    <div x-data="{ has_vehicle: {{ $workorder->has_vehicle ? 'true' : 'false' }} }">
       <input type="checkbox" id="has_vehicle" name="has_vehicle" x-model="has_vehicle" class="checkbox checkbox-primary checkbox-sm">
       <label for="has_vehicle" class="font-medium ml-2 text-lg">Vehicle Repairs and Maintenance</label>
 
       <template x-if="has_vehicle">
         <div class = "flex flex-col sm:flex-row gap-6 mt-5">
-          <div class = "flex flex-col flex-1 gap-4" x-data="{has_change_oil : {{ old('has_change_oil', $workorder->has_change_oil) ? 'true' : 'false' }} }">
-            <div class="form-row" x-data="{has_minor: {{ old('has_minor', $workorder->has_minor) ? 'true' : 'false' }} }">
+          <div class = "flex flex-col flex-1 gap-4" x-data="{{ $workorder->has_change_oil ? 'true' : 'false'  }} }">
+            <div class="form-row" x-data="{has_minor: {{ $workorder->has_minor ? 'true' : 'false' }} }">
               <input type="checkbox" x-model="has_minor" name="has_minor" class="checkbox checkbox-sm checkbox-primary">
               <x-page-label for="vehicle_minor_details">Minor</x-page-label>
               <input :disabled="!has_minor" name="vehicle_minor_details" :class="!has_minor ? 'opacity-50' : ''"
               class="input max-w-xs border-2 border-gray-400 rounded-lg" id="vehicle_minor_details"
-              value="{{ old('vehicle_minor_details', $workorder->vehicle_minor_details) }}">
+              value="{{ $workorder->vehicle_minor_details }}">
             </div>
 
-            <div class="form-row" x-data="{has_major: {{ old('has_major', $workorder->has_major) ? 'true' : 'false' }} }">
+            <div class="form-row" x-data="{has_major: {{ $workorder->has_major ? 'true' : 'false' }} }">
               <input type="checkbox" x-model="has_major" name="has_major" class="checkbox checkbox-sm checkbox-primary">
               <x-page-label for="vehicle_major_details">Major</x-page-label>
               <input :disabled="!has_major" name="vehicle_major_details" :class="!has_major ? 'opacity-50' : ''"
               class="input max-w-xs border-2 border-gray-400 rounded-lg" id="vehicle_major_details"
-              value="{{ old('vehicle_major_details', $workorder->vehicle_major_details) }}">
+              value="{{ $workorder->vehicle_major_details }}">
             </div>
 
             <div class="form-row">
@@ -230,42 +230,42 @@
               <x-page-label for="last_change_oil_date">Last Change Oil Date</x-page-label>
               <input type="date" :disabled="!has_change_oil" name="last_change_oil_date" :class="!has_change_oil ? 'opacity-50' : ''"
               class="input max-w-xs border-2 border-gray-400 rounded-lg" id="last_change_oil_date"
-              value="{{ old('last_change_oil_date', $workorder->last_change_oil_date?->format('Y-m-d')) }}">
+              value="{{ $workorder->last_change_oil_date?->format('Y-m-d') }}">
             </div>
 
             <div class="form-row md:ml-8">
               <x-page-label for="meter_reading">Meter Reading</x-page-label>
               <input :disabled="!has_change_oil" name="meter_reading" :class="!has_change_oil ? 'opacity-50' : ''"
                 class="input max-w-xs border-2 border-gray-400 rounded-lg" id="meter_reading"
-                value="{{ old('meter_reading', $workorder->meter_reading) }}">
+                value="{{ $workorder->meter_reading }}">
             </div>
           </div>
 
           <div class = "flex flex-col flex-1 gap-4">
-            <div class="form-row" x-data="{ has_insurance: {{ old('has_insurance', $workorder->has_insurance) ? 'true' : 'false' }} }">
+            <div class="form-row" x-data="{ has_insurance: {{ $workorder->has_insurance ? 'true' : 'false' }} }">
                 <input type="checkbox" x-model="has_insurance" name="has_insurance" class="checkbox checkbox-sm checkbox-primary">
                 <x-page-label for="insurance_date">Insurance</x-page-label>
                 <span class="text-sm text-gray-500">Expiry Date:</span>
                 <input type="date" :disabled="!has_insurance" name="insurance_date"
                   :class="!has_insurance ? 'opacity-50' : ''"
                   class="input border-2 border-gray-400 rounded-lg" id="insurance_date"
-                  value="{{ old('insurance_date', $workorder->insurance_date?->format('Y-m-d')) }}">
+                  value="{{ $workorder->insurance_date?->format('Y-m-d') }}">
             </div>
 
-            <div class="form-row" x-data="{ has_registration: {{ old('has_registration', $workorder->has_registration) ? 'true' : 'false' }} }">
+            <div class="form-row" x-data="{ has_registration: {{ $workorder->has_registration ? 'true' : 'false' }} }">
                 <input type="checkbox" x-model="has_registration" name="has_registration" class="checkbox checkbox-sm checkbox-primary">
                 <x-page-label for="registration_date">Registration</x-page-label>
                 <span class="text-sm text-gray-500">Expiry Date:</span>
                 <input type="date" :disabled="!has_registration" name="registration_date"
                   :class="!has_registration ? 'opacity-50' : ''"
                   class="input border-2 border-gray-400 rounded-lg" id="registration_date"
-                  value="{{ old('registration_date', $workorder->registration_date?->format('Y-m-d')) }}">
+                  value="{{ $workorder->registration_date?->format('Y-m-d') }}">
             </div>
 
-            <div class="form-row" x-data="{has_other: {{ old('has_other', $workorder->has_other) ? 'true' : 'false' }} }">
+            <div class="form-row" x-data="{has_other: {{ $workorder->has_other ? 'true' : 'false' }} }">
               <input type="checkbox" x-model="has_other" name="has_other" class="checkbox checkbox-sm checkbox-primary">
               <x-page-label for="other_details">Other</x-page-label>
-              <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400">{{ old('other_details', $workorder->other_details) }}</textarea>
+              <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400">{{ $workorder->other_details }}</textarea>
             </div>
           </div>
         </div>

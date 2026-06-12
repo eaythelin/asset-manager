@@ -59,22 +59,12 @@ class AssetsController extends Controller
     }
 
     public function getAsset($id){
-        $asset = Asset::withTrashed()
-            ->with(['category', 'custodian', 'department', 'subCategory', 'supplier', 'serviceWorkorders', 'disposalWorkorders', 'requisitionWorkorders'])
-            ->findOrFail($id);
+        $asset = Asset::withTrashed()->with(['category', 'custodian', 'department', 'subCategory', 'supplier', 'requests'])->findOrFail($id);
         $disposalMethods = DisposalMethods::cases();
-        $history = $asset->serviceWorkorders
-            ->concat($asset->disposalWorkorders)
-            ->concat($asset->requisitionWorkorders)
-            ->sortByDesc('created_at');
+        $history = $asset->workorders()->with('request')->latest()->get();
+        $columns = ["Workorder Code", "Control No.", "Start Date", "Date Finished", "Status", "Handled By" ,"Actions"];
 
-        $hasWorkorders = $asset->serviceWorkorders()->exists() ||
-                 $asset->disposalWorkorders()->exists() ||
-                 $asset->requisitionWorkorders()->exists();
-
-        $columns = ["Workorder Code", "Type", "Status", "Start Date", "End Date", "Quantity", "Handled By"];
-
-        return view('pages.assets.show-asset', compact('asset', 'disposalMethods','hasWorkorders','columns','history'));
+        return view('pages.assets.show-asset', compact('asset','columns','history', 'disposalMethods'));
     }
 
     public function getCreateAsset(){
@@ -95,11 +85,7 @@ class AssetsController extends Controller
     public function getEditAsset($id){
         $categories = Category::orderBy('name')->pluck('name', 'id');
         $departments = Department::orderBy('name')->pluck('name', 'id');
-        $employees = Employee::select('id', 'first_name', 'last_name')
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get()
-            ->pluck('full_name', 'id');
+        $employees = Employee::orderBy('name')->pluck('name', 'id');
         $suppliers = Supplier::orderBy('name')->pluck('name', 'id');
 
         $asset = Asset::with(['category', 'custodian', 'department', 'subCategory', 'supplier'])->findOrFail($id);

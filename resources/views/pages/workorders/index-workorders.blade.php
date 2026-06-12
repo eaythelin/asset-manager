@@ -17,13 +17,14 @@
       <x-search-bar route="workorders.index" placeholder="Search workorders..."/>
 
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[0,1,3,4]">
+    <x-tables :columnNames="$columns" :centeredColumns="[0,1,4,5]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($workorders as $workorder)
             <tr>
               <th class = "p-3 text-center">{{ $workorder->workorder_code }}</th>
               <x-td class="text-center">{{ $workorder->request->control_number}}</x-td>
-              <x-td>{{ $workorder->type?->label()}}</x-td>
+              <x-td>{{ $workorder->started_at?->format('M d, Y h:i A') }}</x-td>
+              <x-td>{{ $workorder->finished_at?->format('M d, Y h:i A') }}</x-td>
               <x-td class="text-center">
                 <span class="badge {{ $workorder->status->badgeClass() }} text-white font-medium text-sm">
                   {{ $workorder->status->label() }}
@@ -31,6 +32,7 @@
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
                 @can("manage workorders")
+                  @if($workorder->status->value === 'completed')
                   <a class="w-full sm:w-auto flex justify-center" href="{{ route('workorders.view', $workorder->id) }}">
                     <x-buttons
                       class="viewBtn tooltip tooltip-top"
@@ -39,6 +41,7 @@
                       <x-heroicon-s-eye class="size-4 sm:size-5" />
                     </x-buttons>
                   </a>
+                  @endif
                   @if($workorder->status->value === "pending")
                     <x-buttons onclick="startWorkorder.showModal()"
                       class="startBtn bg-green-700 tooltip tooltip-top"

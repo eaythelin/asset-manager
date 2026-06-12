@@ -141,6 +141,10 @@ class Asset extends Model
         return $this->hasMany(AssetDisposalLog::class);
     }
 
+    public function workorders(){
+        return $this->hasManyThrough(Workorder::class, Request::class, 'asset_id', 'request_id');
+    }
+
     public function getBookValueAttribute(){
         //this is Straight Line Depreciation
         if(!$this->is_depreciable){

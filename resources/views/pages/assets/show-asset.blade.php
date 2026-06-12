@@ -149,18 +149,18 @@
     </div>
 
     {{-- History Tab --}}
-    <input type="radio" name="asset_tabs" role="tab" class="tab" aria-label="History" />
+    <input type="radio" name="asset_tabs" role="tab" class="tab" aria-label="Request History" />
     <div role="tabpanel" class="tab-content bg-base-200 border-base-300 rounded-box p-6">
       <div class="bg-white p-4 rounded-2xl shadow-xl">
         <div class="flex flex-row items-center gap-2 mb-4">
           <x-heroicon-s-clock class="size-6 text-purple-700"/>
-          <h3 class="text-lg font-semibold">Asset History</h3>
+          <h3 class="text-lg font-semibold">Request Asset History</h3>
         </div>
         {{-- Timeline placeholder --}}
         <div class="text-center py-8">
           <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
           <p class="text-gray-500">No history recorded yet</p>
-          <p class="text-sm text-gray-400 mt-1">Asset activities will appear here</p>
+          <p class="text-sm text-gray-400 mt-1">Asset requests activities will appear here</p>
         </div>
       </div>
     </div>

@@ -38,18 +38,12 @@ class ReportsController extends Controller
         $assetStatus = AssetStatus::cases();
         $disposalMethods = DisposalMethods::cases();
         $workorderTypes = WorkorderType::cases();
-        $serviceTypes = ServiceTypes::cases();
-        $maintenanceTypes = MaintenanceType::cases();
-        $employees = Employee::select('id', 'first_name', 'last_name')
-            ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get()
-            ->pluck('full_name', 'id');
+        $employees = Employee::orderBy('name')->pluck('name','id');
         $departments = Department::orderBy('name')->pluck('name','id');
         $categories = Category::orderBy('name')->pluck('name','id');
         $suppliers = Supplier::orderBy('name')->pluck('name','id');
         return view('pages.reports', compact('reports', 'columns', 'reportTypes', 'employees', 'departments','categories', 'assetStatus','disposalMethods', 'workorderTypes',
-                                    'serviceTypes', 'maintenanceTypes','suppliers'));
+                                    'suppliers'));
     }
 
     public function generateReport(ReportValidation $request){

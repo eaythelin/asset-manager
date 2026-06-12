@@ -8,9 +8,6 @@ use App\Enums\WorkorderType;
 use App\Enums\AssetStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WorkorderValidation;
-use App\Models\DisposalWorkorder;
-use App\Models\ServiceWorkorder;
-use App\Models\RequisitionWorkorder;
 use Illuminate\Http\Request;
 use App\Models\Workorder;
 use App\Models\Asset;
@@ -27,7 +24,7 @@ class WorkordersController extends Controller
             $query->search($search);
         }
 
-        $columns = ["Workorder Code", "Control No.", "Type", "Status", "Actions"];
+        $columns = ["Workorder Code", "Control No.", "Start Date", "Date Finished", "Status", "Actions"];
         $query->orderByRaw("FIELD(status, 'pending', 'in_progress', 'completed', 'cancelled')");
         $workorders = $query->paginate(5);
         return view('pages.workorders.index-workorders', compact('workorders', 'columns'));
@@ -102,12 +99,10 @@ class WorkordersController extends Controller
     public function startWO($id){
         $workorder = Workorder::findOrFail($id);
 
-        if($workorder->start_date === null && $workorder->end_date === null){
-            return redirect()->back()->with('error','Date fields are not filled!');
-        };
-
-        $workorder->status = WorkorderStatus::IN_PROGRESS->value;
-        $workorder->save();
+        $workorder->update([
+            "started_at" => now(),
+            "status" => WorkorderStatus::IN_PROGRESS->value
+        ]);
 
         return back()->with('success','Workorder status changed successfully!');
     }
@@ -134,87 +129,45 @@ class WorkordersController extends Controller
     }
 
     public function completeWO($id){
-        try{
-            DB::transaction(function() use($id){
-                $workorder = Workorder::findOrFail($id);
-                $workorder->update([
-                    "completed_by" => auth()->user()->id,
-                    "status" => WorkorderStatus::COMPLETED->value
-                ]);
+        $workorder = Workorder::findOrFail($id);
 
-                if($workorder->workorder_type === WorkorderType::DISPOSAL){
-                    $disposalWO = $workorder->disposalWorkOrder;
-                    $asset = $disposalWO->asset;
+        if($workorder->is_subcontractor){
+            if(!$workorder->sub_name || !$workorder->sub_document || !$workorder->sub_cost || !$workorder->sub_date_released || !$workorder->sub_date_returned){
+                return redirect()->back()->with('error','Please fill in required Subcontractor fields before completing!');
+            }
+        }
 
-                    $remaining = $asset->quantity - $disposalWO->quantity;
-                    if($remaining <= 0){
-                        $asset->status = AssetStatus::DISPOSED;
-                        $asset->save();
-                        $asset->delete();
-                    }else{
-                        $asset->quantity = $remaining;
-                        $asset->save();
-                    }
-                }elseif($workorder->workorder_type === WorkorderType::REQUISITION){
-                    $requisitionWO = $workorder->requisitionWorkOrder;
-                    $requestModel = $workorder->request;
+        if($workorder->is_inhouse){
+            if(!$workorder->priority_level || !$workorder->estimated_duration || !$workorder->inhouse_cost){
+                return back()->with('error', 'Please fill in required In-House fields before completing!');
+            }
+        }
 
-                    if($requisitionWO->asset_name !== null){
-                        $count = Asset::withTrashed()->count();
-                        $nextCode = 'AST-'.($count + 1);
+        if(!$workorder->is_inhouse && !$workorder->is_subcontractor){
+            return back()->with('error', 'Please select In-House or Subcontractor before completing!');
+        }
 
-                        $asset = Asset::create([
-                            'asset_code' => $nextCode,
-                            'name' => $requisitionWO->asset_name,
-                            'category_id'=> $requestModel->category_id,
-                            'sub_category_id' => $requestModel->sub_category_id ?? null,
-                            'quantity' => $requestModel->quantity,
-                            'acquisition_date' => $requisitionWO->acquisition_date,
-                            'supplier_id' => $requisitionWO->supplier_id ?? null,
-                            'description' => $requisitionWO->description ?? null,
-                            'status' => AssetStatus::ACTIVE,
-                            'department_id' => $requestModel->department_id,
-                            'cost' => $requisitionWO->estimated_cost
-                        ]);
+        if($workorder->has_spare_parts){
+            if(empty($workorder->spare_parts)){
+                return back()->with('error', 'Please add at least one spare part!');
+            }
+        }
 
-                        $requisitionWO->update(['asset_id' => $asset->id]);
-                    }else{
-                        $asset = $requisitionWO->asset;
+        $workorder->update([
+            'finished_at' => now(),
+            'status' => WorkorderStatus::COMPLETED,
+            'completed_by' => auth()->user()->id
+        ]);
 
-                        $asset->update([
-                            'quantity' => $asset->quantity + $requestModel->quantity
-                        ]);
-                    }
-                }elseif($workorder->workorder_type === WorkorderType::SERVICE){
-                    $serviceWO = $workorder->serviceWorkorder;
-                    $asset = $serviceWO->asset;
+        $workorder->request->asset->update([
+            'status' => AssetStatus::ACTIVE->value
+        ]);
 
-                    $asset->update([
-                        'status' => AssetStatus::ACTIVE->value
-                    ]);
-                }
-            });
-
-            return redirect()->route("workorders.index")->with('success', 'Workorder completed successfully!');
-
-        }catch (Exception $e){
-            return redirect()->route("workorders.index")->with('error', 'Something went wrong!');
-        };
+        return redirect()->route("workorders.index")->with('success', 'Workorder completed successfully!');
     }
 
     public function getWOPage($id){
         $workorder = Workorder::with('request')->findOrFail($id);
-        $relations = match($workorder->workorder_type){
-            WorkorderType::REQUISITION => ['requisitionWorkorder.asset'],
-            WorkorderType::SERVICE => ['serviceWorkorder.asset'],
-            WorkorderType::DISPOSAL => ['disposalWorkorder' => function($q){
-                $q->with(['asset' => function($q2){
-                    $q2->withTrashed();
-                }]);
-            }],
-            default => [],
-        };
-        $workorder->load($relations);
 
         return view('pages.workorders.show-workorder', compact('workorder'));
     }

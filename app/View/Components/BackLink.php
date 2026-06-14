@@ -13,9 +13,11 @@ class BackLink extends Component
      */
 
     public $route;
-    public function __construct($route)
+    public $params;
+    public function __construct($route, $params = null)
     {
         $this->route=$route;
+        $this->params=$params;
     }
 
     /**

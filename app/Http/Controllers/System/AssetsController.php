@@ -4,6 +4,7 @@ namespace App\Http\Controllers\System;
 
 use App\Enums\AssetStatus;
 use App\Enums\DisposalMethods;
+use App\Enums\WorkorderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetValidation;
 use App\Models\AssetStatusLog;
@@ -11,6 +12,7 @@ use App\Models\Department;
 use App\Models\AssetDisposalLog;
 use App\Models\Employee;
 use App\Models\Supplier;
+use App\Models\Workorder;
 use Illuminate\Http\Request;
 use App\Models\Asset;
 use App\Models\Category;
@@ -61,8 +63,8 @@ class AssetsController extends Controller
     public function getAsset($id){
         $asset = Asset::withTrashed()->with(['category', 'custodian', 'department', 'subCategory', 'supplier', 'requests'])->findOrFail($id);
         $disposalMethods = DisposalMethods::cases();
-        $history = $asset->workorders()->with('request')->latest()->get();
-        $columns = ["Workorder Code", "Control No.", "Start Date", "Date Finished", "Status", "Handled By" ,"Actions"];
+        $history = $asset->workorders()->with('completedBy')->where('workorders.status', WorkorderStatus::COMPLETED)->get();
+        $columns = ["Workorder Code", "Control No.", "Start Date", "Date Finished", "Handled By" ,"Actions"];
 
         return view('pages.assets.show-asset', compact('asset','columns','history', 'disposalMethods'));
     }
@@ -78,8 +80,7 @@ class AssetsController extends Controller
 
         $suppliers = Supplier::orderBy('name')->pluck('name', 'id');
 
-        return view('pages.assets.create-asset', compact('nextCode', 'categories', 'departments'
-                                                                    , 'employees', 'suppliers'));
+        return view('pages.assets.create-asset', compact('nextCode', 'categories', 'departments', 'employees', 'suppliers'));
     }
 
     public function getEditAsset($id){
@@ -267,5 +268,12 @@ class AssetsController extends Controller
         ]);
 
         return redirect()->back()->with('success','Asset status updated successfully!');
+    }
+
+    public function getRequestPage($id){
+        $workorder = Workorder::with('request')->findOrFail($id);
+        $backRoute = 'assets.show';
+        $backLabel = 'Asset';
+        return view('pages.workorders.show-workorder', compact('workorder', 'backRoute', 'backLabel'));
     }
 }

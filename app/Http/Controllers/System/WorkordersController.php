@@ -168,7 +168,9 @@ class WorkordersController extends Controller
 
     public function getWOPage($id){
         $workorder = Workorder::with('request')->findOrFail($id);
+        $backRoute = 'workorders.index';
+        $backLabel = 'Workorders';
 
-        return view('pages.workorders.show-workorder', compact('workorder'));
+        return view('pages.workorders.show-workorder', compact('workorder', 'backLabel', 'backRoute'));
     }
 }

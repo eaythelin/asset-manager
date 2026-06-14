@@ -156,12 +156,38 @@
           <x-heroicon-s-clock class="size-6 text-purple-700"/>
           <h3 class="text-lg font-semibold">Request Asset History</h3>
         </div>
-        {{-- Timeline placeholder --}}
-        <div class="text-center py-8">
-          <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
-          <p class="text-gray-500">No history recorded yet</p>
-          <p class="text-sm text-gray-400 mt-1">Asset requests activities will appear here</p>
-        </div>
+        @if(!$history->isEmpty())
+          <x-tables :columnNames="$columns" :centeredColumns="[0,1,5]">
+            <tbody class = "divide-y divide-gray-400">
+              @foreach($history as $workorder)
+                <tr>
+                  <th class="p-3 text-center">{{ $workorder->workorder_code }}</th>
+                  <x-td class="text-center">{{ $workorder->request->control_number }}</x-td>
+                  <x-td>{{ $workorder->started_at?->format('M d, Y h:i A') }}</x-td>
+                  <x-td>{{ $workorder->finished_at?->format('M d, Y h:i A') }}</x-td>
+                  <x-td>{{ $workorder->completedBy?->name }}</x-td>
+                  <x-td class="text-center">
+                    <a class="w-full sm:w-auto flex justify-center" href="{{ route('assets.request-show', $workorder->id) }}">
+                      <x-buttons
+                        class="viewBtn tooltip tooltip-top"
+                        data-tip="View"
+                        aria-label="View Workorder">
+                        <x-heroicon-s-eye class="size-4 sm:size-5" />
+                      </x-buttons>
+                    </a>
+                  </x-td>
+                </tr>
+              @endforeach
+            </tbody>
+          </x-tables>
+        @else
+          {{-- Timeline placeholder --}}
+          <div class="text-center py-8">
+            <x-heroicon-o-clock class="size-16 text-gray-300 mx-auto mb-3"/>
+            <p class="text-gray-500">No history recorded yet</p>
+            <p class="text-sm text-gray-400 mt-1">Asset requests activities will appear here</p>
+          </div>
+        @endif
       </div>
     </div>
   </div>

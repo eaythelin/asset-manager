@@ -3,7 +3,7 @@
 
 <div class = "md:mx-4">
   <div class = "mb-4">
-    <x-back-link route="workorders.index">Return to Workorders</x-back-link>
+    <x-back-link :route="$backRoute" :params="$workorder->request->asset->id">Return to {{ $backLabel }}</x-back-link>
   </div>
 
 	<div class="bg-white p-4 rounded-2xl shadow-2xl mt-4">

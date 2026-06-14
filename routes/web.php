@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
       //individual page
       Route::get('/{id}', [AssetsController::class, 'getAsset'])->name('assets.show');
+      Route::get('/{id}/request-view', [AssetsController::class, 'getRequestPage'])->name('assets.request-show');
     });
 
     //Requests

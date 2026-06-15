@@ -26,6 +26,31 @@
         </select>
       </div>
 
+      <div x-show="selectedType === 'disposal'" class="flex flex-col gap-2">
+        <x-label for="asset">Asset</x-label>
+        <select name="asset" id="asset" class="select w-full rounded-xl">
+          <option value="" disabled selected>--Select Asset</option>
+          @foreach ($assets as $asset)
+            <option value="{{ $asset->id }}">{{ $asset->asset_code }} {{  $asset->name  }}
+              @if($asset->serial_name)
+                ({{ $asset->serial_name }})
+              @endif</option>
+          @endforeach
+        </select>
+        <label class="font-medium">Disposal Date Range</label>
+        <x-label for="disposal_date_from" class="text-sm">Date From</x-label>
+        <input class = "input w-full rounded-xl" type="date" name="disposal_date_from" id="disposal_date_from">
+        <x-label for="disposal_date_to" class="text-sm">Date To</x-label>
+        <input class = "input w-full rounded-xl" type="date" name="disposal_date_to" id="disposal_date_to">
+        <x-label for="disposal_method">Disposal Method</x-label>
+        <select name="disposal_method" id="disposal_method" class="select w-full rounded-xl">
+          <option value="" disabled selected>--Select Disposal Method</option>
+          @foreach ($disposalMethods as $method)
+            <option value="{{ $method->value }}">{{ $method->label() }}</option>
+          @endforeach
+        </select>
+      </div>
+
       <div x-show="selectedType === 'asset' || selectedType === 'depreciation'" class="flex flex-col gap-2">
         <x-label for="status">Status</x-label>
         <select name="status" id="status" class="select w-full rounded-xl">
@@ -44,7 +69,7 @@
         </select>
       </div>
 
-      <div x-show="selectedType !== '' || selectedWOType !== ''" class="flex flex-col gap-2">
+      <div x-show="selectedType !== 'disposal' && selectedType !== ''" class="flex flex-col gap-2">
         <x-label for="department_id">Department</x-label>
         <select name="department_id" id="department_id" class="select w-full rounded-xl">
           <option value="" disabled selected>--Select Department--</option>

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use App\Enums\PriorityLevel;
+use App\Enums\WorkorderType;
 
 class WorkorderValidation extends FormRequest
 {
@@ -19,8 +20,6 @@ class WorkorderValidation extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            "is_inhouse"=> $this->has("is_inhouse"),
-            "is_subcontractor"=> $this->has("is_subcontractor"),
             "has_spare_parts"=> $this->has("has_spare_parts"),
             "has_vehicle"=> $this->has("has_vehicle"),
             "has_minor"=> $this->has("has_minor"),
@@ -42,13 +41,12 @@ class WorkorderValidation extends FormRequest
         $id = $this->route("id");
 
         return [
-            "is_inhouse" => ["boolean"],
+            "workorder_type" => ["required", new Enum(WorkorderType::class)],
             "priority_level" => ["nullable", new Enum(PriorityLevel::class)],
             "inhouse_cost" => ["nullable", "numeric", "min:1"],
             "estimated_duration" => ["nullable", "string"],
             "instructions" => ["nullable", "max:255"],
 
-            "is_subcontractor" => ["boolean"],
             "sub_name" => ["nullable", "string", "max:100"],
             "sub_document" => ["nullable","string", "max:100"],
             "sub_details" => ["nullable","string", "max:100"],

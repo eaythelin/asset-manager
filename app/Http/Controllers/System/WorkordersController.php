@@ -24,7 +24,7 @@ class WorkordersController extends Controller
             $query->search($search);
         }
 
-        $columns = ["Workorder Code", "Control No.", "Start Date", "Date Finished", "Status", "Actions"];
+        $columns = ["Workorder Code", "Control No.", "Type" ,"Start Date", "Date Finished", "Status", "Actions"];
         $query->orderByRaw("FIELD(status, 'pending', 'in_progress', 'completed', 'cancelled')");
         $workorders = $query->paginate(5);
         return view('pages.workorders.index-workorders', compact('workorders', 'columns'));

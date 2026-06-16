@@ -52,6 +52,7 @@ class Workorder extends Model
     protected $casts = [
       'priority_level' => PriorityLevel::class,
       'status' => WorkorderStatus::class,
+      'type' => WorkorderType::class,
       'started_at' => 'datetime',
       'finished_at' => 'datetime',
       'sub_date_released' => 'date',
@@ -67,14 +68,13 @@ class Workorder extends Model
         'request_id',
         'completed_by',
         'status',
+        'type',
         // in-house
-        'is_inhouse',
         'priority_level',
         'inhouse_cost',
         'estimated_duration',
         'instructions',
         // subcontractor
-        'is_subcontractor',
         'sub_name',
         'sub_document',
         'sub_details',

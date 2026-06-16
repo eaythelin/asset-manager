@@ -60,11 +60,11 @@
       </div>
 
       <hr class="border-gray-300 m-5">
-      <div x-data="{ is_subcontractor: {{ old('is_subcontractor', $workorder->is_subcontractor) ? 'true' : 'false' }} }">
-        <input type="checkbox" id="is_subcontractor" name="is_subcontractor" x-model="is_subcontractor" class="checkbox checkbox-primary checkbox-sm">
-        <label for="is_subcontractor" class="font-medium ml-2 text-lg">Repair by Subcontractor</label>
+      <div x-data="{ workorder_type: '{{ old('type', $workorder->type) }}'}">
+        <input type="radio" name="type" value="subcontractor" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+        <label class="font-medium ml-2 text-lg">Repair by Subcontractor</label>
 
-        <template x-if="is_subcontractor">
+        <template x-if="workorder_type === 'subcontractor'">
           <div>
             <p class="font-medium text-gray-600 mb-2 mt-5">Subcontractor Details: </p>
             <div class = "flex flex-col sm:flex-row gap-6 mt-2">
@@ -104,14 +104,12 @@
             </div>
           </div>
         </template>
-      </div>
 
-      <hr class="border-gray-300 m-5">
-      <div x-data="{ is_inhouse: {{ old('is_inhouse', $workorder->is_inhouse) ? 'true' : 'false' }} }">
-        <input type="checkbox" id="is_inhouse" name="is_inhouse" x-model="is_inhouse" class="checkbox checkbox-primary checkbox-sm">
-        <label for="is_inhouse" class="font-medium ml-2 text-lg">In House Maintenance</label>
+        <hr class="border-gray-300 m-5">
+        <input type="radio" name="type" value="inhouse" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+        <label class="font-medium ml-2 text-lg">In House Maintenance</label>
 
-        <template x-if="is_inhouse">
+        <template x-if="workorder_type === 'inhouse'">
           <div class = "flex flex-col sm:flex-row gap-6 mt-5">
             <div class = "flex flex-col flex-1 gap-4">
               <div class="form-row">

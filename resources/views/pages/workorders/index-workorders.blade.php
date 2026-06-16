@@ -17,12 +17,13 @@
       <x-search-bar route="workorders.index" placeholder="Search workorders..."/>
 
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[0,1,4,5]">
+    <x-tables :columnNames="$columns" :centeredColumns="[0,1,5,6]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($workorders as $workorder)
             <tr>
               <th class = "p-3 text-center">{{ $workorder->workorder_code }}</th>
               <x-td class="text-center">{{ $workorder->request->control_number}}</x-td>
+              <x-td>{{ $workorder->type }}</x-td>
               <x-td>{{ $workorder->started_at?->format('M d, Y h:i A') }}</x-td>
               <x-td>{{ $workorder->finished_at?->format('M d, Y h:i A') }}</x-td>
               <x-td class="text-center">

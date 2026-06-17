@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\WorkorderValidation;
 use Illuminate\Http\Request;
 use App\Models\Workorder;
-use App\Models\Asset;
+use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -33,8 +33,9 @@ class WorkordersController extends Controller
     public function getEditWorkorder($id){
         $workorder = Workorder::with('request')->findOrFail($id);
         $priorities = PriorityLevel::cases();
+        $employees = Employee::where('is_maintenance', true)->orderBy('name')->pluck('name','id');
 
-        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities'));
+        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities', 'employees'));
     }
 
     public function updateWorkorder(WorkorderValidation $request, $id){
@@ -61,7 +62,7 @@ class WorkordersController extends Controller
             ]);
         }
 
-        if(!$validated['is_subcontractor']){
+        if($validated['type'] !== WorkorderType::SUBCONTRACTOR->value){
             $data = array_merge($data, [
                 'sub_name' => null,
                 'sub_document' => null,
@@ -72,7 +73,7 @@ class WorkordersController extends Controller
             ]);
         }
 
-        if(!$validated['is_inhouse']){
+        if($validated['type'] !== WorkorderType::IN_HOUSE->value){
             $data = array_merge($data, [
                 'priority_level' => null,
                 'inhouse_cost' => null,

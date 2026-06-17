@@ -12,7 +12,11 @@
           <option value="{{ $id }}">{{ $department_name }}</option>
         @endforeach
       </select>
-      <x-buttons class="mt-2" type="Submit">Submit</x-buttons>
+      <div class="flex flex-row gap-3">
+        <label class="font-medium" for="edit_is_maintenance">Maintenance Crew <span class="text-xs text-gray-500 align-super tooltip tooltip-info" data-tip="Marks employee as maintenance crew">?</span></label>
+        <input type="checkbox" class="checkbox checkbox-primary" name="is_maintenance" id="edit_is_maintenance">
+      </div>
+      <x-buttons class="mt-2" type="Submit">Save Changes</x-buttons>
     </div>
   </form>
 </x-modal>

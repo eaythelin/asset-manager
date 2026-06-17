@@ -37,7 +37,7 @@ class EmployeesController extends Controller
         $employees = $query->paginate(5);
         $departments = Department::orderBy('name')->pluck('name', 'id');
 
-        $columns = ["","Name", "Department", "Custodian", "Actions"];
+        $columns = ["","Name", "Department", "Custodian", "Maintenance Crew" ,"Actions"];
         return view("pages.employees.index-employees", compact('employees', 'columns', 'departments', 'desc'));
     }
 
@@ -50,27 +50,38 @@ class EmployeesController extends Controller
     }
 
     public function storeEmployees(Request $request){
+        $request->merge(['is_maintenance' => $request->has('is_maintenance')]);
+
         $validated = $request->validate([
             "name"=> ["required", "max:100", "string"],
-            "department"=> ["required", "exists:departments,id"]
+            "department"=> ["required", "exists:departments,id"],
+            "is_maintenance" => ["required", "boolean"]
         ]);
 
         Employee::create([
-            "name" => $validated["name"],
-            "department_id" => $validated["department"]
+            'name' => $validated['name'],
+            'department_id' => $validated['department'],
+            'is_maintenance' => $validated['is_maintenance'],
         ]);
 
         return redirect()->route('employees.index')->with('success', 'Employee successfully created!');
     }
 
     public function updateEmployee(Request $request, $id){
+        $request->merge(['is_maintenance' => $request->has('is_maintenance')]);
+
         $validated = $request->validate([
             "name"=> ["required", "max:100", "string"],
-            "department"=> ["required", "exists:departments,id"]
+            "department"=> ["required", "exists:departments,id"],
+            "is_maintenance" => ["required", "boolean"]
         ]);
 
         $employee = Employee::findOrFail($id);
-        $employee->update($validated);
+        $employee->update([
+            'name' => $validated['name'],
+            'department_id' => $validated['department'],
+            'is_maintenance' => $validated['is_maintenance'],
+        ]);
 
         return redirect()->route('employees.index')->with('success', 'Employee edited successfully!');
     }

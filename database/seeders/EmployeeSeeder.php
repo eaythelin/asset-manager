@@ -15,7 +15,20 @@ class EmployeeSeeder extends Seeder
     {
         Employee::create([
             "name"=> "Alice Wanda",
-            "department_id"=>3
+            "department_id"=>3,
+            'is_maintenance' => true
+        ]);
+
+        Employee::create([
+            "name"=> "James Venom",
+            "department_id"=>3,
+            'is_maintenance' => true
+        ]);
+
+        Employee::create([
+            "name"=> "Victor Chill",
+            "department_id"=>3,
+            'is_maintenance' => true
         ]);
 
         Employee::create([

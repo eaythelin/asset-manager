@@ -110,38 +110,58 @@
         <label class="font-medium ml-2 text-lg">In House Maintenance</label>
 
         <template x-if="workorder_type === 'inhouse'">
-          <div class = "flex flex-col sm:flex-row gap-6 mt-5">
-            <div class = "flex flex-col flex-1 gap-4">
-              <div class="form-row">
-                <x-page-label for="employees" :required="true">Assigned Maintenance Crew(s)</x-page-label>
-                <x-page-input value="{{ old('employees', $workorder->employees) }}"/>
-              </div>
-
-              <div class="form-row">
-                <x-page-label for="priority_level" :required="true">Priority Level</x-page-label>
-                <x-page-select name="priority_level" id="priority_level">
-                  <option value="" disabled selected>--Select Priority Level--</option>
-                  @foreach($priorities as $priority)
-                    <option value="{{ $priority->value }}" {{ old('priority_level', $workorder->priority_level?->value) == $priority->value ? 'selected' : '' }}>{{ $priority->label() }}</option>
-                  @endforeach
-                </x-page-select>
-              </div>
-
-              <div class="form-row">
-                <x-page-label for="instructions">Instructions</x-page-label>
-                <x-page-textarea name="instructions" id="instructions">{{ old('instructions', $workorder->instructions) }}</x-page-textarea>
+          <div>
+            <div class="form-row items-start mt-2">
+              <x-page-label for="employee_1">Assigned Maintenance Crew(s)</x-page-label>
+              <div class="flex flex-col md:flex-row gap-4 md:gap-10">
+                <div class="flex flex-col">
+                  <span class="text-xs text-gray-400 mb-1">Crew 1</span>
+                  <x-page-select name="employee_1" class="w-80">
+                    <option value="" disabled selected>--Select Maintenance Crew--</option>
+                    @foreach ($employees as $id=>$name)
+                      <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                  </x-page-select>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-xs text-gray-400 mb-1">Crew 2 (Optional)</span>
+                  <x-page-select name="employee_2" class="w-80">
+                    <option value="" disabled selected>--Select Maintenance Crew--</option>
+                    @foreach ($employees as $id=>$name)
+                      <option value="{{ $id }}">{{ $name }}</option>
+                    @endforeach
+                  </x-page-select>
+                </div>
               </div>
             </div>
+            <div class = "flex flex-col sm:flex-row gap-6 mt-5">
+              <div class = "flex flex-col flex-1 gap-4">
+                <div class="form-row">
+                  <x-page-label for="priority_level" :required="true">Priority Level</x-page-label>
+                  <x-page-select name="priority_level" id="priority_level">
+                    <option value="" disabled selected>--Select Priority Level--</option>
+                    @foreach($priorities as $priority)
+                      <option value="{{ $priority->value }}" {{ old('priority_level', $workorder->priority_level?->value) == $priority->value ? 'selected' : '' }}>{{ $priority->label() }}</option>
+                    @endforeach
+                  </x-page-select>
+                </div>
 
-            <div class = "flex flex-col flex-1 gap-4">
-              <div class="form-row">
-                <x-page-label for="estimated_duration" :required="true">Estimated Day(s) Hour(s)</x-page-label>
-                <x-page-input value="{{ old('estimated_duration', $workorder->estimated_duration) }}" name="estimated_duration" id="estimated_duration"/>
+                <div class="form-row">
+                  <x-page-label for="instructions">Instructions</x-page-label>
+                  <x-page-textarea name="instructions" id="instructions">{{ old('instructions', $workorder->instructions) }}</x-page-textarea>
+                </div>
               </div>
 
-              <div class="form-row">
-                <x-page-label for="inhouse_cost" :required="true">Cost</x-page-label>
-                <x-page-input value="{{ old('inhouse_cost', $workorder->inhouse_cost) }}" name="inhouse_cost" id="inhouse_cost" type="number"/>
+              <div class = "flex flex-col flex-1 gap-4">
+                <div class="form-row">
+                  <x-page-label for="estimated_duration" :required="true">Estimated Day(s) Hour(s)</x-page-label>
+                  <x-page-input value="{{ old('estimated_duration', $workorder->estimated_duration) }}" name="estimated_duration" id="estimated_duration"/>
+                </div>
+
+                <div class="form-row">
+                  <x-page-label for="inhouse_cost" :required="true">Cost</x-page-label>
+                  <x-page-input value="{{ old('inhouse_cost', $workorder->inhouse_cost) }}" name="inhouse_cost" id="inhouse_cost" type="number"/>
+                </div>
               </div>
             </div>
           </div>

@@ -44,6 +44,7 @@ class Employee extends Model
     protected $fillable = [
         'name',
         'department_id',
+        'is_maintenance'
     ];
 
     //Employee can only have one Department

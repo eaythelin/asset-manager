@@ -44,13 +44,20 @@
               <th class = "p-3 text-center">{{ $employee-> id}}</th>
               <x-td>{{ $employee->name}}</x-td>
               <x-td>{{ $employee->department->name}}</x-td>
-              <td class = "p-3 text-center">
+              <x-td class="text-center">
                 @if($employee->assets->count() > 0)
                   <span class="badge badge-success"><x-heroicon-m-check class="size-5"/></span>
                 @else
                   <span class="badge badge-error"><x-heroicon-c-x-mark class="size-5"/></span>
                 @endif
-              </td>
+              </x-td>
+              <x-td class="text-center">
+                @if($employee->is_maintenance)
+                  <span class="badge badge-success"><x-heroicon-m-check class="size-5"/></span>
+                @else
+                  <span class="badge badge-error"><x-heroicon-c-x-mark class="size-5"/></span>
+                @endif
+              </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
                 @can('view employees')
                   <a href="{{ route('employees.show', $employee->id) }}" class="w-full sm:w-auto flex justify-center">
@@ -77,8 +84,9 @@
                       class="editButton tooltip tooltip-top"
                       data-tip="Edit"
                       aria-label="Edit Employee"
-                      data-name="{{ $employee -> name}}"
-                      data-department="{{ $employee-> department -> id}}"
+                      data-name="{{ $employee->name }}"
+                      data-department="{{ $employee->department->id }}"
+                      data-maintenance="{{ $employee->is_maintenance }}"
                       data-route="{{ route('employees.update', $employee->id ) }}">
                       <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
                     </x-buttons>

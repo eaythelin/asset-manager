@@ -41,7 +41,7 @@ class WorkorderValidation extends FormRequest
         $id = $this->route("id");
 
         return [
-            "workorder_type" => ["required", new Enum(WorkorderType::class)],
+            "type" => ["required", new Enum(WorkorderType::class)],
             "priority_level" => ["nullable", new Enum(PriorityLevel::class)],
             "inhouse_cost" => ["nullable", "numeric", "min:1"],
             "estimated_duration" => ["nullable", "string"],

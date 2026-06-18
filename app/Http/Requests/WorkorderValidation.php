@@ -42,10 +42,13 @@ class WorkorderValidation extends FormRequest
 
         return [
             "type" => ["required", new Enum(WorkorderType::class)],
+
             "priority_level" => ["nullable", new Enum(PriorityLevel::class)],
             "inhouse_cost" => ["nullable", "numeric", "min:1"],
             "estimated_duration" => ["nullable", "string"],
             "instructions" => ["nullable", "max:255"],
+            "employee_1" => ["nullable", "exists:employees,id"],
+            "employee_2" => ["nullable", "exists:employees,id"],
 
             "sub_name" => ["nullable", "string", "max:100"],
             "sub_document" => ["nullable","string", "max:100"],

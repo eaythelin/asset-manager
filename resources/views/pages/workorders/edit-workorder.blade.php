@@ -106,29 +106,29 @@
         </template>
 
         <hr class="border-gray-300 m-5">
-        <input type="radio" name="type" value="inhouse" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+        <input type="radio" name="type" value="in_house" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
         <label class="font-medium ml-2 text-lg">In House Maintenance</label>
 
-        <template x-if="workorder_type === 'inhouse'">
+        <template x-if="workorder_type === 'in_house'">
           <div>
             <div class="form-row items-start mt-2">
               <x-page-label for="employee_1">Assigned Maintenance Crew(s)</x-page-label>
               <div class="flex flex-col md:flex-row gap-4 md:gap-10">
                 <div class="flex flex-col">
-                  <span class="text-xs text-gray-400 mb-1">Crew 1</span>
+                  <span class="text-xs text-gray-400 mb-1">Crew 1<span><span class="text-base text-red-600 tooltip tooltip-right" data-tip="Required">*</span></span></span>
                   <x-page-select name="employee_1" class="w-80">
                     <option value="" disabled selected>--Select Maintenance Crew--</option>
                     @foreach ($employees as $id=>$name)
-                      <option value="{{ $id }}">{{ $name }}</option>
+                      <option value="{{ $id }}" {{ old('employee_1', $workorder->assignedEmployees->get(0)?->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                   </x-page-select>
                 </div>
                 <div class="flex flex-col">
                   <span class="text-xs text-gray-400 mb-1">Crew 2 (Optional)</span>
                   <x-page-select name="employee_2" class="w-80">
-                    <option value="" disabled selected>--Select Maintenance Crew--</option>
+                    <option value="" selected>--Select Maintenance Crew--</option>
                     @foreach ($employees as $id=>$name)
-                      <option value="{{ $id }}">{{ $name }}</option>
+                      <option value="{{ $id }}" {{ old('employee_1', $workorder->assignedEmployees->get(1)?->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                   </x-page-select>
                 </div>

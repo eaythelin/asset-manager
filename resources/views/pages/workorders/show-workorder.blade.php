@@ -53,18 +53,18 @@
     </div>
 
     <hr class="border-gray-300 m-5">
-    <div x-data="{ is_subcontractor: {{ $workorder->is_subcontractor ? 'true' : 'false' }} }">
-      <input type="checkbox" id="is_subcontractor" name="is_subcontractor" x-model="is_subcontractor" class="checkbox checkbox-primary checkbox-sm">
-      <label for="is_subcontractor" class="font-medium ml-2 text-lg">Repair by Subcontractor</label>
+    <div x-data="{ workorder_type: '{{ $workorder->type }}'}">
+      <input type="radio" name="type" value="subcontractor" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+      <label class="font-medium ml-2 text-lg">Repair by Subcontractor</label>
 
-      <template x-if="is_subcontractor">
+      <template x-if="workorder_type === 'subcontractor'">
         <div>
           <p class="font-medium text-gray-600 mb-2 mt-5">Subcontractor Details: </p>
           <div class = "flex flex-col sm:flex-row gap-6 mt-2">
             <div class = "flex flex-col flex-1 gap-4">
               <div class="form-row">
                 <x-page-label for="sub_name" :required="true">Name/Company</x-page-label>
-                <x-page-input value="{{ $workorder->sub_name }}" name="sub_name" id="sub_name" readonly/>
+                <x-page-input value="{{ $workorder->sub_name }}" name="sub_name" id="sub_name" readonly />
               </div>
 
               <div class="form-row">
@@ -90,48 +90,56 @@
               </div>
 
               <div class="form-row">
-                <x-page-label for="sub_date_returned" :required="true">Date Returned</x-page-label>
+                <x-page-label for="date_returned" :required="true">Date Returned</x-page-label>
                 <x-page-input value="{{ $workorder->sub_date_returned?->format('Y-m-d') }}" name="sub_date_returned" id="sub_date_returned" type="date" readonly/>
               </div>
             </div>
           </div>
         </div>
       </template>
-    </div>
 
-    <hr class="border-gray-300 m-5">
-    <div x-data="{ is_inhouse: {{ $workorder->is_inhouse ? 'true' : 'false' }} }">
-      <input type="checkbox" id="is_inhouse" name="is_inhouse" x-model="is_inhouse" class="checkbox checkbox-primary checkbox-sm">
-      <label for="is_inhouse" class="font-medium ml-2 text-lg">In House Maintenance</label>
+      <hr class="border-gray-300 m-5">
+      <input type="radio" name="type" value="in_house" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+      <label class="font-medium ml-2 text-lg">In House Maintenance</label>
 
-      <template x-if="is_inhouse">
-        <div class = "flex flex-col sm:flex-row gap-6 mt-5">
-          <div class = "flex flex-col flex-1 gap-4">
-            <div class="form-row">
-              <x-page-label for="employees" :required="true">Assigned Maintenance Crew(s)</x-page-label>
-              <x-page-input value="{{ old('employees', $workorder->employees) }}" readonly/>
-            </div>
-
-            <div class="form-row">
-              <x-page-label for="priority_level" :required="true">Priority Level</x-page-label>
-              <x-page-input value="{{ $workorder->priority_level?->label() }}" readonly/>
-            </div>
-
-            <div class="form-row">
-              <x-page-label for="instructions">Instructions</x-page-label>
-              <x-page-textarea name="instructions" id="instructions">{{ $workorder->instructions }}</x-page-textarea>
+      <template x-if="workorder_type === 'in_house'">
+        <div>
+          <div class="form-row items-start mt-2">
+            <x-page-label for="employee_1">Assigned Maintenance Crew(s)</x-page-label>
+            <div class="flex flex-col md:flex-row gap-4 md:gap-10">
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-400 mb-1">Crew 1<span><span class="text-base text-red-600 tooltip tooltip-right" data-tip="Required">*</span></span></span>
+                <input name="employee_1" value="{{ $workorder->assignedEmployees->get(0)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-xs text-gray-400 mb-1">Crew 2 (Optional)</span>
+                <input name="employee_1" value="{{ $workorder->assignedEmployees->get(1)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
+              </div>
             </div>
           </div>
+          <div class = "flex flex-col sm:flex-row gap-6 mt-5">
+            <div class = "flex flex-col flex-1 gap-4">
+              <div class="form-row">
+                <x-page-label for="priority_level" :required="true">Priority Level</x-page-label>
+                <x-page-input value="{{ $workorder->priority_level?->label() }}" readonly/>
+              </div>
 
-          <div class = "flex flex-col flex-1 gap-4">
-            <div class="form-row">
-              <x-page-label for="estimated_duration" :required="true">Estimated Day(s) Hour(s)</x-page-label>
-              <x-page-input value="{{ $workorder->estimated_duration }}" name="estimated_duration" id="estimated_duration"/>
+              <div class="form-row">
+                <x-page-label for="instructions">Instructions</x-page-label>
+                <x-page-textarea name="instructions" id="instructions" readonly>{{ $workorder->instructions }}</x-page-textarea>
+              </div>
             </div>
 
-            <div class="form-row">
-              <x-page-label for="inhouse_cost" :required="true">Cost</x-page-label>
-              <x-page-input value="{{ $workorder->inhouse_cost }}" name="inhouse_cost" id="inhouse_cost" type="number"/>
+            <div class = "flex flex-col flex-1 gap-4">
+              <div class="form-row">
+                <x-page-label for="estimated_duration" :required="true">Estimated Day(s) Hour(s)</x-page-label>
+                <x-page-input value="{{ $workorder->estimated_duration }}" name="estimated_duration" id="estimated_duration" readonly/>
+              </div>
+
+              <div class="form-row">
+                <x-page-label for="inhouse_cost" :required="true">Cost</x-page-label>
+                <x-page-input value="{{ $workorder->inhouse_cost }}" name="inhouse_cost" id="inhouse_cost" type="number" readonly/>
+              </div>
             </div>
           </div>
         </div>
@@ -194,7 +202,7 @@
 
     <div class="form-row mt-5">
       <x-page-label for="accomplishment_details">Details (if nay)</x-page-label>
-      <textarea name="accomplishment_details" id="accomplishment_details" class="textarea w-full md:mx-10 border-2 border-gray-400">{{ old('accomplishment_details', $workorder->accomplishment_details) }}</textarea>
+      <textarea name="accomplishment_details" id="accomplishment_details" class="textarea w-full md:mx-10 border-2 border-gray-400" readonly>{{ $workorder->accomplishment_details }}</textarea>
     </div>
 
     <hr class="border-gray-300 m-5">

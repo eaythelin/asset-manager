@@ -157,12 +157,13 @@
           <h3 class="text-lg font-semibold">Request Asset History</h3>
         </div>
         @if(!$history->isEmpty())
-          <x-tables :columnNames="$columns" :centeredColumns="[0,1,5]">
+          <x-tables :columnNames="$columns" :centeredColumns="[0,1,6]">
             <tbody class = "divide-y divide-gray-400">
               @foreach($history as $workorder)
                 <tr>
                   <th class="p-3 text-center">{{ $workorder->workorder_code }}</th>
                   <x-td class="text-center">{{ $workorder->request->control_number }}</x-td>
+                  <x-td>{{ $workorder->type->label() }}</x-td>
                   <x-td>{{ $workorder->started_at?->format('M d, Y h:i A') }}</x-td>
                   <x-td>{{ $workorder->finished_at?->format('M d, Y h:i A') }}</x-td>
                   <x-td>{{ $workorder->completedBy?->name }}</x-td>

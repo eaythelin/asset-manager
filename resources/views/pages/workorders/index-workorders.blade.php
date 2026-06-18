@@ -23,7 +23,7 @@
             <tr>
               <th class = "p-3 text-center">{{ $workorder->workorder_code }}</th>
               <x-td class="text-center">{{ $workorder->request->control_number}}</x-td>
-              <x-td>{{ $workorder->type }}</x-td>
+              <x-td>{{ $workorder->type->label() }}</x-td>
               <x-td>{{ $workorder->started_at?->format('M d, Y h:i A') }}</x-td>
               <x-td>{{ $workorder->finished_at?->format('M d, Y h:i A') }}</x-td>
               <x-td class="text-center">

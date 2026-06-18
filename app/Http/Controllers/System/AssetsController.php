@@ -64,7 +64,7 @@ class AssetsController extends Controller
         $asset = Asset::withTrashed()->with(['category', 'custodian', 'department', 'subCategory', 'supplier', 'requests'])->findOrFail($id);
         $disposalMethods = DisposalMethods::cases();
         $history = $asset->workorders()->with('completedBy')->where('workorders.status', WorkorderStatus::COMPLETED)->get();
-        $columns = ["Workorder Code", "Control No.", "Start Date", "Date Finished", "Handled By" ,"Actions"];
+        $columns = ["Workorder Code", "Control No.", "Type" ,"Start Date", "Date Finished", "Handled By" ,"Actions"];
 
         return view('pages.assets.show-asset', compact('asset','columns','history', 'disposalMethods'));
     }

@@ -42,57 +42,72 @@ class WorkordersController extends Controller
         $validated = $request->validated();
         $workorder = Workorder::findOrFail($id);
 
-        $data = $validated;
+        try {
+            DB::transaction(function() use($validated, $workorder){
+                $data = $validated;
+                unset($data['employee_1'], $data['employee_2']);
 
-        if(!$validated['has_vehicle']){
-            $data = array_merge($data, [
-                'has_minor' => false,
-                'vehicle_minor_details' => null,
-                'has_major' => false,
-                'vehicle_major_details' => null,
-                'has_change_oil' => false,
-                'last_change_oil_date' => null,
-                'meter_reading' => null,
-                'has_insurance' => false,
-                'insurance_date' => null,
-                'has_registration' => false,
-                'registration_date' => null,
-                'has_other' => false,
-                'other_details' => null,
-            ]);
+                if(!$validated['has_vehicle']){
+                    $data = array_merge($data, [
+                        'has_minor' => false,
+                        'vehicle_minor_details' => null,
+                        'has_major' => false,
+                        'vehicle_major_details' => null,
+                        'has_change_oil' => false,
+                        'last_change_oil_date' => null,
+                        'meter_reading' => null,
+                        'has_insurance' => false,
+                        'insurance_date' => null,
+                        'has_registration' => false,
+                        'registration_date' => null,
+                        'has_other' => false,
+                        'other_details' => null,
+                    ]);
+                }
+
+                if($validated['type'] !== WorkorderType::SUBCONTRACTOR->value){
+                    $data = array_merge($data, [
+                        'sub_name' => null,
+                        'sub_document' => null,
+                        'sub_details' => null,
+                        'sub_cost' => null,
+                        'sub_date_released' => null,
+                        'sub_date_returned' => null,
+                    ]);
+                }
+
+                if($validated['type'] !== WorkorderType::IN_HOUSE->value){
+                    $data = array_merge($data, [
+                        'priority_level' => null,
+                        'inhouse_cost' => null,
+                        'estimated_duration' => null,
+                        'instructions' => null,
+                    ]);
+                }
+
+                //vehicle + spare parts false checker wipe
+                $data['spare_parts'] = $validated['has_spare_parts'] ? ($validated['spare_parts'] ?? null) : null;
+                $data['vehicle_minor_details'] = $validated['has_minor'] ? $validated['vehicle_minor_details'] : null;
+                $data['vehicle_major_details'] = $validated['has_major'] ? $validated['vehicle_major_details'] : null;
+                $data['last_change_oil_date'] = $validated['has_change_oil'] ? $validated['last_change_oil_date'] : null;
+                $data['meter_reading'] = $validated['has_change_oil'] ? $validated['meter_reading'] : null;
+                $data['insurance_date'] = $validated['has_insurance'] ? $validated['insurance_date'] : null;
+                $data['registration_date'] = $validated['has_registration'] ? $validated['registration_date'] : null;
+                $data['other_details'] = $validated['has_other'] ? $validated['other_details'] : null;
+
+                $workorder->update($data);
+
+                $employees = array_filter([
+                    $validated['employee_1'] ?? null,
+                    $validated['employee_2'] ?? null
+                ]);
+
+                $workorder->assignedEmployees()->sync($employees);
+            });
+        }catch(Exception $e){
+            return redirect()->route("workorders.edit", $workorder->id)->with('error', 'Something went wrong!');
         }
 
-        if($validated['type'] !== WorkorderType::SUBCONTRACTOR->value){
-            $data = array_merge($data, [
-                'sub_name' => null,
-                'sub_document' => null,
-                'sub_details' => null,
-                'sub_cost' => null,
-                'sub_date_released' => null,
-                'sub_date_returned' => null,
-            ]);
-        }
-
-        if($validated['type'] !== WorkorderType::IN_HOUSE->value){
-            $data = array_merge($data, [
-                'priority_level' => null,
-                'inhouse_cost' => null,
-                'estimated_duration' => null,
-                'instructions' => null,
-            ]);
-        }
-
-        //vehicle + spare parts false checker wipe
-        $data['spare_parts'] = $validated['has_spare_parts'] ? ($validated['spare_parts'] ?? null) : null;
-        $data['vehicle_minor_details'] = $validated['has_minor'] ? $validated['vehicle_minor_details'] : null;
-        $data['vehicle_major_details'] = $validated['has_major'] ? $validated['vehicle_major_details'] : null;
-        $data['last_change_oil_date'] = $validated['has_change_oil'] ? $validated['last_change_oil_date'] : null;
-        $data['meter_reading'] = $validated['has_change_oil'] ? $validated['meter_reading'] : null;
-        $data['insurance_date'] = $validated['has_insurance'] ? $validated['insurance_date'] : null;
-        $data['registration_date'] = $validated['has_registration'] ? $validated['registration_date'] : null;
-        $data['other_details'] = $validated['has_other'] ? $validated['other_details'] : null;
-
-        $workorder->update($data);
 
         return redirect()->route("workorders.index")->with("success","Workorder edited successfully!");
     }
@@ -132,20 +147,24 @@ class WorkordersController extends Controller
     public function completeWO($id){
         $workorder = Workorder::findOrFail($id);
 
-        if($workorder->is_subcontractor){
+        if($workorder->type !== WorkorderType::IN_HOUSE && $workorder->type !== WorkorderType::SUBCONTRACTOR){
+            return back()->with('error', 'Please select In-House or Subcontractor before completing!');
+        }
+
+        if($workorder->type === WorkorderType::SUBCONTRACTOR->value){
             if(!$workorder->sub_name || !$workorder->sub_document || !$workorder->sub_cost || !$workorder->sub_date_released || !$workorder->sub_date_returned){
                 return redirect()->back()->with('error','Please fill in required Subcontractor fields before completing!');
             }
         }
 
-        if($workorder->is_inhouse){
+        if($workorder->type === WorkorderType::IN_HOUSE->value){
             if(!$workorder->priority_level || !$workorder->estimated_duration || !$workorder->inhouse_cost){
                 return back()->with('error', 'Please fill in required In-House fields before completing!');
             }
-        }
 
-        if(!$workorder->is_inhouse && !$workorder->is_subcontractor){
-            return back()->with('error', 'Please select In-House or Subcontractor before completing!');
+            if($workorder->assignedEmployees->isEmpty()){
+                return back()->with('error', 'Please assigned at least one maintenance crew before completing!');
+            }
         }
 
         if($workorder->has_spare_parts){

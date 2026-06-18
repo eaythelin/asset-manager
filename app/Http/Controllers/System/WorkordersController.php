@@ -151,13 +151,13 @@ class WorkordersController extends Controller
             return back()->with('error', 'Please select In-House or Subcontractor before completing!');
         }
 
-        if($workorder->type === WorkorderType::SUBCONTRACTOR->value){
+        if($workorder->type === WorkorderType::SUBCONTRACTOR){
             if(!$workorder->sub_name || !$workorder->sub_document || !$workorder->sub_cost || !$workorder->sub_date_released || !$workorder->sub_date_returned){
                 return redirect()->back()->with('error','Please fill in required Subcontractor fields before completing!');
             }
         }
 
-        if($workorder->type === WorkorderType::IN_HOUSE->value){
+        if($workorder->type === WorkorderType::IN_HOUSE){
             if(!$workorder->priority_level || !$workorder->estimated_duration || !$workorder->inhouse_cost){
                 return back()->with('error', 'Please fill in required In-House fields before completing!');
             }

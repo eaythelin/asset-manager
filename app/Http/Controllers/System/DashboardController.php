@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Asset;
 use App\Models\Workorder;
 use App\Models\Request as RequestModel;
+use App\Enums\AssetStatus;
 
 class DashboardController extends Controller
 {
@@ -22,33 +23,35 @@ class DashboardController extends Controller
 
         $gridNumber = $role === "Department Head" ? "md:grid-cols-2" : "md:grid-cols-3";
         $toggleTable = $role === "Department Head" ? "hidden" : "block";
-        $cardGridNumber = $role === 'System Supervisor' ? 'md:grid-cols-4' : 'md:grid-cols-5';
+        $cardGridNumber = $role === 'System Supervisor' ? 'md:grid-cols-3' : 'md:grid-cols-3';
 
         //Get Departments
         $departments = Department::with("assets")->get();
         $categories = Category::orderBy('name')->pluck('name', 'id');
-        
+
         //asset numbers for the cards
         $activeAssetQuery = Asset::where('status', 'active');
         $disposeAssetsQuery = Asset::withTrashed()->where('status', 'disposed');
-        $serviceAssetQuery = Asset::where('status','under_service');
         $expiredAssetQuery = Asset::where('status','expired');
+        $maintenanceAssetsQuery = Asset::where('status', AssetStatus::MAINTENANCE);
+        $repairAssetsQuery = Asset::where('status', AssetStatus::REPAIR);
+        $fabricationAssetsQuery = Asset::where('status', AssetStatus::FABRICATION);
 
         if(auth()->user()->getRoleNames()->contains('Department Head')){
             $activeAssetQuery->where('department_id', $userDepartment);
             $disposeAssetsQuery->where('department_id', $userDepartment);
-            $serviceAssetQuery->where('department_id', $userDepartment);
             $expiredAssetQuery->where('department_id', $userDepartment);
+            $maintenanceAssetsQuery->where('department_id', $userDepartment);
+            $repairAssetsQuery->where('department_id', $userDepartment);
+            $fabricationAssetsQuery->where('department_id', $userDepartment);
         }
 
         $activeAssets = $activeAssetQuery->count();
         $disposedAssets = $disposeAssetsQuery->count();
-        $serviceAssets = $serviceAssetQuery->count();
         $expiredAssets = $expiredAssetQuery->count();
-        $pendingWO = Workorder::where('status', 'pending')->count();
-        $inProgWO = Workorder::where('status', 'in_progress')->count();
-        $overdueWO = Workorder::where('status','overdue')->count();
-        $completedWO = Workorder::where('status', 'completed')->count();
+        $maintenanceAssets = $maintenanceAssetsQuery->count();
+        $repairAssets = $repairAssetsQuery->count();
+        $fabricationAssets = $fabricationAssetsQuery->count();
 
         $requestCount = RequestModel::where('status', 'pending');
         if(auth()->user()->getRoleNames()->contains('General Manager')){
@@ -64,9 +67,8 @@ class DashboardController extends Controller
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
-                                                            "activeAssets", "disposedAssets","role", 'pendingWO', 'cardGridNumber',
-                                                            "serviceAssets", "expiredAssets", 'inProgWO', 'overdueWO', 'completedWO',
-                                                            "requestCount"));
+                                                            "activeAssets", "disposedAssets","role", 'cardGridNumber',"expiredAssets",
+                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets"));
     }
 
     public function getSubcategoryCount(Category $category){

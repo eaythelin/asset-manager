@@ -82,6 +82,38 @@
     </x-tables>
   </div>
 </div>
+
+@can('view activitylogs')
+  <div class="m-4">
+    <div class="bg-white p-4 rounded-2xl shadow-xl">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
+        <h3 class="font-bold text-lg text-gray-800">Recent Activity Logs</h3>
+
+        <a>
+          <x-buttons class="w-full sm:w-auto">
+            <x-heroicon-s-eye class="size-4 sm:size-5"/>
+            View All
+          </x-buttons>
+        </a>
+      </div>
+
+      <x-tables :columnNames="$activityColumns" :centeredColumns="[0]">
+        <tbody class="divide-y divide-gray-400">
+          @foreach($activityLogs as $log)
+            <tr>
+              <th class="p-3 text-center">{{ $log->created_at->format('M d, Y h:i A') }}</th>
+              <x-td>{{ $log->user->name }}</x-td>
+              <x-td>{{ $log->module->label() }}</x-td>
+              <x-td>{{ $log->action->label() }}</x-td>
+              <x-td>{{ $log->description }}</x-td>
+            </tr>
+          @endforeach
+        </tbody>
+      </x-tables>
+    </div>
+  </div>
+@endcan
+
 @endsection
 
 @section('scripts')

@@ -54,16 +54,12 @@ class Employee extends Model
 
     // Optional: employee may have a user account
     public function user(){
-        return $this->hasOne(User::class);
+        return $this->hasOne(User::class, 'employee_id');
     }
 
     //one employee can have many assets
     public function assets(){
         return $this->hasMany(Asset::class, 'custodian_id');
-    }
-
-    public function serviceWorkorder(){
-        return $this->hasMany(ServiceWorkorder::class,'assigned_to');
     }
 
     protected static function booted(){

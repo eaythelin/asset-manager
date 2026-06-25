@@ -20,6 +20,16 @@ class EmployeeSeeder extends Seeder
         ]);
 
         Employee::create([
+            "name"=> "Monika Monique",
+            "department_id"=>2
+        ]);
+
+        Employee::create([
+            "name"=> "Janna Guerrero",
+            "department_id"=>1
+        ]);
+
+         Employee::create([
             "name"=> "James Venom",
             "department_id"=>3,
             'is_maintenance' => true
@@ -29,16 +39,6 @@ class EmployeeSeeder extends Seeder
             "name"=> "Victor Chill",
             "department_id"=>3,
             'is_maintenance' => true
-        ]);
-
-        Employee::create([
-            "name"=> "Monika Monique",
-            "department_id"=>2
-        ]);
-
-        Employee::create([
-            "name"=> "Janna Guerrero",
-            "department_id"=>1
         ]);
     }
 }

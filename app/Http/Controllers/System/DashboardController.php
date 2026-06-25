@@ -8,7 +8,7 @@ use Auth;
 use App\Models\Department;
 use App\Models\Category;
 use App\Models\Asset;
-use App\Models\Workorder;
+use App\Models\ActivityLog;
 use App\Models\Request as RequestModel;
 use App\Enums\AssetStatus;
 
@@ -62,13 +62,18 @@ class DashboardController extends Controller
             $requestCount = 0;
         }
 
+        //activity log table
+        $activityLogs = ActivityLog::latest()->take(5)->get();
+
+        $activityColumns = ["Date", "User", "Module", "Action", "Description"];
+
         //Column names for Filter Subcategory by Category and Assets per Department
         $subcategoryFilterColumns = ["", "Subcategory", "Count"];
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'cardGridNumber',"expiredAssets",
-                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets"));
+                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs"));
     }
 
     public function getSubcategoryCount(Category $category){

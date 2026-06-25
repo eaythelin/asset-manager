@@ -62,8 +62,8 @@ class RequestsController extends Controller
     public function getCreateRequest(){
         $year = now()->year;
         $latest = RequestModel::whereYear('created_at', $year)->latest()->first();
-        $count = $latest ? (int) substr($latest->control_number, -4) + 1 : 1;
-        $controlNumber = $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $count = $latest ? (int) substr($latest->control_number, -3) + 1 : 1;
+        $controlNumber = $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
 
         $requestTypes = RequestTypes::cases();
         $departments = Department::orderBy('name')->pluck('name', 'id');
@@ -138,8 +138,8 @@ class RequestsController extends Controller
 
                 $year = now()->year;
                 $latest = Workorder::whereYear('created_at', $year)->latest()->first();
-                $count = $latest ? (int) substr($latest->workorder_code, -4) + 1 : 1;
-                $nextCode = 'WO-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+                $count = $latest ? (int) substr($latest->workorder_code, -3) + 1 : 1;
+                $nextCode = 'WO-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
 
                 Workorder::create([
                     "workorder_code" => $nextCode,

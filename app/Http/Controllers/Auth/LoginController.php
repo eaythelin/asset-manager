@@ -6,7 +6,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
-use App\Models\User;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class LoginController extends Controller
 {
@@ -25,7 +27,7 @@ class LoginController extends Controller
 
         //laravel will compare records in the DB and return true if the record matches
         if(Auth::attempt($credentials)){
-            
+
             $user = Auth::user();
             if(! $user->is_active){
                 Auth::logout();
@@ -34,13 +36,16 @@ class LoginController extends Controller
 
             //regenerate session token to prevent session hijacking and fixation
             $request -> session() -> regenerate();
+
+            ActivityLog::log(ActivityModule::USER, ActivityAction::LOGIN, "Logged In");
+
             return redirect() -> route("dashboard.index") ->with('success', "Welcome to Asset Manager!");
         }
 
         //if auth failed, redirect with an error message and only return email
 
         return back()->withErrors([
-            'email' => "The provided credentials do not match our records."  
+            'email' => "The provided credentials do not match our records."
         ]) -> onlyInput("email");
     }
 }

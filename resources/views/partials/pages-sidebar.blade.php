@@ -52,9 +52,14 @@
       <ul>
         <!--System Users-->
         @can("view users")
-        <li><x-navlinks routeName="users.index" title="Users">
-          <x-heroicon-s-user class="size-5 mr-2"/>
-        </x-navlinks></li>
+          <li><x-navlinks routeName="users.index" title="Users">
+            <x-heroicon-s-user class="size-5 mr-2"/>
+          </x-navlinks></li>
+        @endcan
+        @can('view activitylogs')
+          <li><x-navlinks routeName="activitylog.index" title="Activity Logs">
+            <x-heroicon-s-clock class="size-5 mr-2"/>
+          </x-navlinks></li>
         @endcan
         @can("view configs")
         <li>
@@ -98,8 +103,8 @@
         <li>
           <form class="w-full group hover:bg-yellow-700/20" method = "POST" action="{{ route("logoutUser") }}">
             @csrf
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               class="flex items-center group-hover:text-yellow-400 rounded text-base text-white w-full text-left appearance-none bg-transparent border-none cursor-pointer p-1"
             >
               <x-heroicon-o-arrow-left-on-rectangle class="size-5 mr-4.5 mt-0.5" />

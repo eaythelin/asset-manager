@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Rules\NotSameAsOldPassword;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class ResetPasswordController extends Controller
 {
@@ -28,13 +31,15 @@ class ResetPasswordController extends Controller
             "password" => ["required", "min:8", "string", "confirmed", new NotSameAsOldPassword]
         ]);
 
-        $status = Password::reset($validated, 
+        $status = Password::reset($validated,
             function(User $user, string $password){
                 $user->forceFill([
                     "password" => Hash::make($password)
                 ])->setRememberToken(Str::random(60));
 
                 $user->save();
+
+                ActivityLog::log(ActivityModule::USER, ActivityAction::UPDATED, "Reset their password");
 
                 event(new PasswordReset($user));
             });

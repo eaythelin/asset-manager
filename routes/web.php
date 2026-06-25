@@ -12,6 +12,7 @@ use App\Http\Controllers\System\SuppliersController;
 use App\Http\Controllers\System\UsersController;
 use App\Http\Controllers\System\DashboardController;
 use App\Http\Controllers\System\WorkordersController;
+use App\Http\Controllers\System\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -183,6 +184,10 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}/force-delete', [UsersController::class, 'forceDelete'])->name('users.force-delete');
       });
     });
+
+    Route::get('/activitylogs', [ActivityLogController::class, 'getActivityLogPage'])
+        ->middleware('check.permission:view activitylogs')
+        ->name('activitylog.index');
 
     //logout
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logoutUser');

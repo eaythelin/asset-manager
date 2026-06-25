@@ -21,7 +21,7 @@ class RolePermissionSeeder extends Seeder
 
         //Permission list [to be expanded on!]
         $crudPermissions = [
-            'manage assets', 
+            'manage assets',
             'manage departments',
             'manage users',
             'manage employees',
@@ -53,7 +53,8 @@ class RolePermissionSeeder extends Seeder
             'view suppliers',
             'view reports',
             'view requests',
-            'view workorders'
+            'view workorders',
+            'view activitylogs'
         ];
 
         foreach($crudPermissions as $crudPermission){
@@ -70,7 +71,7 @@ class RolePermissionSeeder extends Seeder
 
         //Assigning permissions
         $systemSupervisorPerms = [
-            'manage assets', 
+            'manage assets',
             'manage departments',
             'manage users',
             'manage employees',
@@ -91,7 +92,8 @@ class RolePermissionSeeder extends Seeder
             'view suppliers',
             'view reports',
             'view requests',
-            'view workorders'
+            'view workorders',
+            'view activitylogs'
         ];
 
         foreach($systemSupervisorPerms as $perms){

@@ -128,6 +128,10 @@ class User extends Authenticatable
         return $this->hasMany(AssetStatusLog::class, 'changed_by');
     }
 
+    public function activityLogs(){
+        return $this->hasMany(ActivityLog::class, 'user_id');
+    }
+
     public function scopeSearch($query, $search){
         if (!$search) return $query;
 

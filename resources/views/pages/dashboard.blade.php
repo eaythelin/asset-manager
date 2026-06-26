@@ -89,7 +89,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
         <h3 class="font-bold text-lg text-gray-800">Recent Activity Logs</h3>
 
-        <a>
+        <a href="{{ route('activitylog.index') }}" class="w-full sm:w-auto flex justify-center">
           <x-buttons class="w-full sm:w-auto">
             <x-heroicon-s-eye class="size-4 sm:size-5"/>
             View All

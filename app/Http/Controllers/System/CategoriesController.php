@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Validation\Rule;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
+
 
 class CategoriesController extends Controller
 {
@@ -23,6 +27,7 @@ class CategoriesController extends Controller
         ]);
 
         Category::create($validated);
+        ActivityLog::log(ActivityModule::CATEGORY, ActivityAction::CREATED, "Created category: " . $validated['name']);
 
         return back()->with('success', 'New Category successfully created!');
     }
@@ -35,6 +40,7 @@ class CategoriesController extends Controller
 
         $category = Category::findOrFail($id);
         $category->update($validated);
+        ActivityLog::log(ActivityModule::CATEGORY, ActivityAction::UPDATED, "Updated category: " . $validated['name']);
 
         return back()->with('success', 'Category edited successfully!');
     }
@@ -46,7 +52,9 @@ class CategoriesController extends Controller
             return back()->with('error', 'Category is linked to an existing Subcategory!');
         }
 
+        ActivityLog::log(ActivityModule::CATEGORY, ActivityAction::DELETED, "Deleted category: " . $category->name);
         $category->delete();
+
         return redirect()->route('category.index')->with('success', 'Category successfully deleted!');
     }
 
@@ -56,6 +64,7 @@ class CategoriesController extends Controller
         ]);
 
         $category = Category::create(['name' => $validated['name']]);
+        ActivityLog::log(ActivityModule::CATEGORY, ActivityAction::CREATED, "Quick created category: " . $validated['name']);
 
         return response()->json([
             'id' => $category->id,

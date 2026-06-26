@@ -5,13 +5,26 @@ namespace App\Http\Controllers\System;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ActivityLog;
+use App\Enums\ActivityModule;
 
 class ActivityLogController extends Controller
 {
-    public function getActivityLogPage(){
+    public function getActivityLogPage(Request $request){
         $query = ActivityLog::query();
-        $activityLogs = $query->latest()->paginate(10);
+        $activityModules = ActivityModule::cases();
 
-        return view('pages.activitylogs', compact('activityLogs'));
+        if(request('module')){
+          $query->where('module', request('module'));
+        }
+
+        if(request('expand')){
+          $activityLogs = $query->latest()->paginate(20);
+        }else{
+          $activityLogs = $query->latest()->paginate(10);
+        }
+
+        $columns = ["Date", "User", "Module", "Action", "Description"];
+
+        return view('pages.activitylogs', compact('activityLogs', 'columns', 'activityModules'));
     }
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\System;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class SuppliersController extends Controller
 {
@@ -25,6 +28,7 @@ class SuppliersController extends Controller
         ]);
 
         Supplier::create($validated);
+        ActivityLog::log(ActivityModule::SUPPLIER, ActivityAction::CREATED, "Created supplier: " . $validated['name']);
 
         return back()->with("success", "Supplier successfully created!");
     }
@@ -40,6 +44,7 @@ class SuppliersController extends Controller
 
         $supplier = Supplier::findOrFail($id);
         $supplier->update($validated);
+        ActivityLog::log(ActivityModule::SUPPLIER, ActivityAction::UPDATED, "Updated supplier: " . $validated['name']);
 
         return back()->with("success", "Supplier updated successfully!");
     }
@@ -47,6 +52,7 @@ class SuppliersController extends Controller
     public function deleteSupplier($id){
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
+        ActivityLog::log(ActivityModule::SUPPLIER, ActivityAction::DELETED, "Deleted supplier: " . $supplier->name);
 
         return redirect()->route('suppliers.index')->with("success", "Supplier deleted successfully!");
     }
@@ -57,6 +63,7 @@ class SuppliersController extends Controller
         ]);
 
         $supplier = Supplier::create(['name' => $validated['name']]);
+        ActivityLog::log(ActivityModule::SUPPLIER, ActivityAction::CREATED, "Quick created supplier: " . $validated['name']);
 
         return response()->json([
             'id' => $supplier->id,

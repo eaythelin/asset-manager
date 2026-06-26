@@ -7,6 +7,9 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class SubCategoriesController extends Controller
 {
@@ -36,6 +39,8 @@ class SubCategoriesController extends Controller
             'description' => $validated['description']
         ]);
 
+        ActivityLog::log(ActivityModule::SUBCATEGORY, ActivityAction::CREATED, "Created subcategory: " . $validated['name']);
+
         return back()->with('success', 'Subcategory successfully created!');
     }
 
@@ -53,12 +58,16 @@ class SubCategoriesController extends Controller
             'description' => $validated['description']
         ]);
 
+        ActivityLog::log(ActivityModule::SUBCATEGORY, ActivityAction::UPDATED, "Updated subcategory: " . $validated['name']);
+
         return back()->with('success', 'Subcategory successfully updated!');
     }
 
     public function deleteSubCategory($id){
         $subCategory = SubCategory::findOrFail($id);
         $subCategory->delete();
+
+        ActivityLog::log(ActivityModule::SUBCATEGORY, ActivityAction::DELETED, "Deleted subcategory: " . $subCategory->name);
 
         return redirect()->route('subcategory.index')->with('success', 'Subcategory successfully deleted!');
     }
@@ -73,6 +82,8 @@ class SubCategoriesController extends Controller
             "name" => $validated["name"],
             "category_id" => $validated["category_id"]
         ]);
+
+        ActivityLog::log(ActivityModule::SUBCATEGORY, ActivityAction::CREATED, "Quick created subcategory: " . $validated['name']);
 
         return response()->json([
             'id' => $subcategory->id,

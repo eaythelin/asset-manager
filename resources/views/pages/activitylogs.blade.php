@@ -47,6 +47,9 @@
           @endforeach
         </tbody>
     </x-tables>
+    <div class = "text-base-content">
+      {{ $activityLogs->links() }}
+    </div>
   </div>
 </div>
 @endsection

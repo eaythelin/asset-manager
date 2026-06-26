@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use Illuminate\Validation\Rule;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class DepartmentsController extends Controller
 {
@@ -26,6 +29,7 @@ class DepartmentsController extends Controller
         ]);
         //create the department if all the rules pass
         Department::create($validated);
+        ActivityLog::log(ActivityModule::DEPARTMENT, ActivityAction::CREATED, "Created department: " . $validated['name']);
 
         return redirect()->route('department.index')->with('success','Department successfully created!');
     }
@@ -39,6 +43,7 @@ class DepartmentsController extends Controller
 
         $department = Department::findOrFail($id);
         $department->update($validated);
+        ActivityLog::log(ActivityModule::DEPARTMENT, ActivityAction::UPDATED, "Updated department: " . $validated['name']);
 
         return redirect()->route('department.index')->with('success', 'Department edited successfully!');
     }
@@ -51,6 +56,7 @@ class DepartmentsController extends Controller
         }
 
         $department->delete();
+        ActivityLog::log(ActivityModule::DEPARTMENT, ActivityAction::DELETED, "Deleted department: " . $department->name);
 
         return redirect()->route('department.index')->with('success', 'Department deleted successfully!');
     }
@@ -61,6 +67,7 @@ class DepartmentsController extends Controller
         ]);
 
         $department = Department::create(['name' => $validated['name']]);
+        ActivityLog::log(ActivityModule::DEPARTMENT, ActivityAction::CREATED, "Quick created department: " . $validated['name']);
 
         return response()->json([
             'id' => $department->id,

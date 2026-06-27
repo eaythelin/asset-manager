@@ -14,14 +14,14 @@
     <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 mx-2">
       <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <x-search-bar route="users.index" placeholder="Search users..."/>
-    
+
         @can('manage users')
           <form method="GET" action="{{ route('users.index') }}">
             <input type="hidden" name="search" value="{{ request('search') }}">
             <label class="flex mt-3 items-center gap-2 cursor-pointer">
-              <input 
-                type="checkbox" 
-                name="show_deleted" 
+              <input
+                type="checkbox"
+                name="show_deleted"
                 class="checkbox checkbox-sm"
                 {{ request('show_deleted') ? 'checked' : '' }}
                 onchange="this.form.submit()"
@@ -78,7 +78,7 @@
                       aria-label="Edit User"
                       data-user="{{ json_encode([
                         'employee_id'=> $user->employee_id,
-                        'employee_name'=> $user->employee->first_name . ' ' . $user->employee->last_name,
+                        'employee_name'=> $user->employee->name,
                         'role_id'=> $user->roles->first()->id ?? null,
                         'email'=> $user->email,
                         'route'=> route('users.update', $user->id )]) }}">

@@ -37,7 +37,7 @@
         </x-buttons>
       @endcan
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[3,4]">
+    <x-tables :columnNames="$columns" :centeredColumns="[3,4,5]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($employees as $employee)
             <tr>

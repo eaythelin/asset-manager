@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class EmployeesController extends Controller
 {
@@ -64,6 +67,8 @@ class EmployeesController extends Controller
             'is_maintenance' => $validated['is_maintenance'],
         ]);
 
+        ActivityLog::log(ActivityModule::EMPLOYEE, ActivityAction::CREATED, "Created employee: " . $validated['name']);
+
         return redirect()->route('employees.index')->with('success', 'Employee successfully created!');
     }
 
@@ -83,6 +88,8 @@ class EmployeesController extends Controller
             'is_maintenance' => $validated['is_maintenance'],
         ]);
 
+        ActivityLog::log(ActivityModule::EMPLOYEE, ActivityAction::UPDATED, "Updated employee: " . $validated['name']);
+
         return redirect()->route('employees.index')->with('success', 'Employee edited successfully!');
     }
 
@@ -93,6 +100,8 @@ class EmployeesController extends Controller
             return redirect()->back()->with('error', 'Employee has assigned assets. Please unassign them first.');
         }
 
+        ActivityLog::log(ActivityModule::EMPLOYEE, ActivityAction::ARCHIVED, "Archived employee: " . $employee->name);
+
         $employee->delete();
         return redirect()->route('employees.index')->with('success', 'Employee archived successfully!');
     }
@@ -100,6 +109,8 @@ class EmployeesController extends Controller
     public function restoreEmployee($id){
         $employee = Employee::withTrashed()->findOrFail($id);
         $employee->restore();
+
+        ActivityLog::log(ActivityModule::EMPLOYEE, ActivityAction::RESTORED, "Restored employee: " . $employee->name);
 
         return redirect()->back()->with('success', 'Employee restored successfully!');
     }

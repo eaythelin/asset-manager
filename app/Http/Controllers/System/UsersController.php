@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rule;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class UsersController extends Controller
 {
@@ -66,6 +69,8 @@ class UsersController extends Controller
 
         $user->assignRole($role->name);
 
+        ActivityLog::log(ActivityModule::USER, ActivityAction::CREATED, "Created system user: " . $user->name);
+
         return redirect()->route('users.index')->with('success', 'System User successfully created!');
     }
 
@@ -78,8 +83,10 @@ class UsersController extends Controller
         ]);
 
         $user = User::findOrFail($id);
+        $employee = Employee::findOrFail($validated['employee']);
 
         $user->update([
+            'name' => $employee->name,
             'email' => $validated['email'],
             'employee_id' => $validated['employee'],
         ]);
@@ -100,6 +107,8 @@ class UsersController extends Controller
         $role = Role::findOrFail($validated['role']);
         $user->syncRoles($role->name);
 
+        ActivityLog::log(ActivityModule::USER, ActivityAction::UPDATED, "Updated system user: " . $user->name);
+
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
 
@@ -113,6 +122,12 @@ class UsersController extends Controller
         $user->is_active = !$user->is_active;
         $user->save();
 
+        ActivityLog::log(
+            ActivityModule::USER,
+            ActivityAction::UPDATED,
+            ($user->is_active ? "Activated" : "Deactivated") . " user: " . $user->name
+        );
+
         return back()->with('success', 'User status updated!');
     }
 
@@ -121,6 +136,8 @@ class UsersController extends Controller
         $user->update(['is_active' => true]);
         $user->restore();
         $user->employee()->restore();
+
+        ActivityLog::log(ActivityModule::USER, ActivityAction::RESTORED, "Restored system user: " . $user->name);
 
         return back()->with('success', 'User restored!');
     }
@@ -134,6 +151,7 @@ class UsersController extends Controller
 
         $user->update(['is_active' => false]);
         $user->delete();
+        ActivityLog::log(ActivityModule::USER, ActivityAction::DELETED, "Soft deleted system user: " . $user->name);
 
         return redirect()->route('users.index')->with('success', 'User has been successfully deleted!');
     }
@@ -151,6 +169,7 @@ class UsersController extends Controller
         }
 
         $user->forceDelete();
+        ActivityLog::log(ActivityModule::USER, ActivityAction::DELETED, "Permanently deleted system user: " . $user->name);
 
         return redirect()->route('users.index')->with('success', 'User record has been deleted!');
     }

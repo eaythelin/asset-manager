@@ -14,6 +14,8 @@ enum ActivityAction : string
     case CANCELLED = 'cancelled';
     case STARTED = 'started';
     case LOGIN = 'login';
+    case ARCHIVED = 'archived';
+    case RESTORED = 'restored';
 
     public function label():string
     {
@@ -27,7 +29,9 @@ enum ActivityAction : string
             self::COMPLETED => "Completed",
             self::CANCELLED => "Cancelled",
             self::STARTED => "Started",
-            self::LOGIN => "Login"
+            self::LOGIN => "Login",
+            self::ARCHIVED => "Archived",
+            self::RESTORED => "Restored"
         };
     }
 }

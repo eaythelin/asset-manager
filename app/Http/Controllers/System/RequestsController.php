@@ -115,7 +115,8 @@ class RequestsController extends Controller
 
     public function getPageRequest($id){
         $requestModel = RequestModel::with(['asset','department', 'requestedBy', 'approvedBy'])->findOrFail($id);
-        return view('pages.requests.show-request', compact('requestModel'));
+        $requestTypes = RequestTypes::cases();
+        return view('pages.requests.show-request', compact('requestModel', 'requestTypes'));
     }
 
     public function cancelRequest($id){

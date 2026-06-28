@@ -44,14 +44,16 @@
                 </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
-                <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.show', $request->id) }}">
-                  <x-buttons
-                    class="viewBtn tooltip tooltip-top"
-                    data-tip="View"
-                    aria-label="View Request">
-                    <x-heroicon-s-eye class="size-4 sm:size-5" />
-                  </x-buttons>
-                </a>
+                @if(in_array($request->status->value, ['approved', 'declined', 'pending']))
+                  <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.show', $request->id) }}">
+                    <x-buttons
+                      class="viewBtn tooltip tooltip-top"
+                      data-tip="View"
+                      aria-label="View Request">
+                      <x-heroicon-s-eye class="size-4 sm:size-5" />
+                    </x-buttons>
+                  </a>
+                @endif
                 @if(auth()->user()->can('create requests') && $request->status->value === "pending")
                   <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.edit', $request->id) }}">
                     <x-buttons

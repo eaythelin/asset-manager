@@ -21,12 +21,7 @@
       <div class = "flex flex-col sm:flex-row gap-6">
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
-            <x-page-label for="control_number">Control Number</x-page-label>
-            <x-page-input value="{{ $requestModel->control_number }}" name="control_number" id="control_number" readonly/>
-          </div>
-
-          <div class="form-row">
-            <x-page-label for="requisitioner">Requisitioner</x-page-label>
+            <x-page-label for="requisitioner">Requisitioner's name</x-page-label>
             <input value="{{ $requestModel->requestedBy->id }}" name="requisitioner" id="requisitioner" hidden>
             <x-page-input value="{{ $requestModel->requestedBy->name }}" readonly/>
           </div>
@@ -47,14 +42,19 @@
           </div>
 
           <div class="form-row">
-            <x-page-label for="description" :required="true">Description/Plate No.</x-page-label>
+            <x-page-label for="description" :required="true">Request Description/Plate No.</x-page-label>
             <x-page-textarea name="description" id="description">{{ old('description', $requestModel->description) }}</x-page-textarea>
           </div>
         </div>
 
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
-            <x-page-label for="department" :required="true">Department</x-page-label>
+            <x-page-label for="control_number">Control Number</x-page-label>
+            <x-page-input value="{{ $requestModel->control_number }}" name="control_number" id="control_number" readonly/>
+          </div>
+
+          <div class="form-row">
+            <x-page-label for="department" :required="true">Sec/Dept</x-page-label>
             <x-page-select name="department" id="department">
               <option value="" disabled selected>--Select Department--</option>
               @foreach($departments as $id=>$name)
@@ -69,14 +69,30 @@
           </div>
 
           <div class="form-row">
-            <x-page-label for="request_type" :required="true">Request Type</x-page-label>
-            <x-page-select name="request_type" id="request_type">
-              <option value="" disabled selected>--Select Request Type--</option>
+            <x-page-label :required="true" for="request_type">Type of Request</x-page-label>
+            <div class="flex gap-6">
               @foreach ($requestTypes as $type)
-                <option value="{{ $type->value }}" {{ old('request_type', $requestModel->request_type->value) == $type->value ? 'selected' : '' }}>{{ $type->label() }}</option>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="request_type" value="{{ $type->value }}"
+                    {{ old('request_type', $requestModel->request_type->value) == $type->value ? 'checked' : '' }}
+                    class="checkbox rounded-none checkbox-sm checkbox-primary">
+                  {{ $type->label() }}
+                </label>
               @endforeach
-            </x-page-select>
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-6 mt-10">
+        <div class="form-row flex-1">
+          <x-page-label for="requested_by">Requested By</x-page-label>
+          <x-page-input value="{{ $requestModel->requestedBy->name }}" name="requested_by" id="requested_by" disabled/>
+        </div>
+
+        <div class="form-row flex-1">
+          <x-page-label for="approved_by">Request Approved By</x-page-label>
+          <x-page-input value="" name="approved_by" id="approved_by" disabled/>
         </div>
       </div>
 

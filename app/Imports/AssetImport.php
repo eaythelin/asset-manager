@@ -40,10 +40,10 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
         $endOfLifeDate = ($acquisitionDate && $usefulLife > 0)
             ? (clone $acquisitionDate)->modify("+{$usefulLife} years")
             : null;
-        
+
         $count = Asset::withTrashed()->count();
         $nextCode = 'AST-'.($count + 1);
-        
+
         return new Asset([
             'asset_code' => $nextCode,
             'name' => $row['asset_name'],
@@ -55,11 +55,11 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
             'useful_life_in_years' => $usefulLife,
             'is_depreciable' => $row['is_depreciable'] ?? false,
             'acquisition_date' => $acquisitionDate,
-            'end_of_life_date' => $endOfLifeDate, 
+            'end_of_life_date' => $endOfLifeDate,
             'category_id' => Category::where('name', trim($row['category']))->first()?->id,
             'sub_category_id' => SubCategory::where('name', trim($row['subcategory']))->first()?->id,
             'department_id' => Department::where('name', trim($row['department']))->first()?->id,
-            'custodian_id' => Employee::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [$row['custodian']])->first()?->id,
+            'custodian_id' => Employee::where('name', trim($row['custodian']))->first()?->id,
             'supplier_id' => Supplier::where('name', trim($row['supplier']))->first()?->id,
         ]);
     }
@@ -74,13 +74,7 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
             "subcategory" => ["nullable", Rule::exists('sub_categories', 'name')],
             "description" => ["nullable", "string", "max:255"],
             "department" => ["required", Rule::exists('departments', 'name')],
-            "custodian" => ["nullable",
-                function($attribute, $value, $fail){
-                    $exists = Employee::whereRaw("CONCAT(first_name, ' ', last_name) = ?", [trim($value)])->exists();
-                    if (!$exists) {
-                        $fail("Custodian \"{$value}\" not found in employees.");
-                    }
-                }],
+            "custodian" => ["required", Rule::exists('employees', 'name')],
             "is_depreciable" => ["nullable", "boolean"],
             "cost" => ["required_if:is_depreciable,true", "nullable", "numeric"],
             "salvage_value" => ["required_if:is_depreciable,true", "nullable", "numeric"],
@@ -96,7 +90,7 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
         }
         $data['category'] = isset($data['category']) ? trim($data['category']) : null;
         $data['subcategory'] = isset($data['subcategory']) ? trim($data['subcategory']) : null;
-        $data['department'] = isset($data['department']) ? trim($data['department']) : null; 
+        $data['department'] = isset($data['department']) ? trim($data['department']) : null;
         $data['supplier'] = isset($data['supplier']) ? trim($data['supplier']) : null;
         $data['custodian'] = isset($data['custodian']) ? trim($data['custodian']) : null;
         $data['is_depreciable'] = str_starts_with(strtolower($data['is_depreciable_yesno'] ?? 'n'), 'y');

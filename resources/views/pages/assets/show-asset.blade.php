@@ -108,7 +108,7 @@
           </div>
           <div class="space-y-3">
             <x-detail-item label="Department" :value="$asset->department->name"/>
-            <x-detail-item label="Custodian" :value="$asset->custodian?->full_name"/>
+            <x-detail-item label="Custodian" :value="$asset->custodian?->name"/>
           </div>
         </div>
       </div>

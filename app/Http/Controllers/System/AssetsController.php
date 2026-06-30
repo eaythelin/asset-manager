@@ -24,6 +24,9 @@ use App\Exports\AssetTemplateExport;
 use App\Imports\AssetImport;
 use Maatwebsite\Excel\Validators\ValidationException;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class AssetsController extends Controller
 {
@@ -132,6 +135,8 @@ class AssetsController extends Controller
             "supplier_id" => $validated['supplier'] ?? null,
         ]);
 
+        ActivityLog::log(ActivityModule::ASSET, ActivityAction::CREATED, "Created asset: " . $validated['asset_name']);
+
         return redirect()->route('assets.index')->with('success', 'Asset successfully created!');
     }
 
@@ -174,6 +179,8 @@ class AssetsController extends Controller
             "supplier_id" => $validated['supplier'] ?? null,
         ]);
 
+        ActivityLog::log(ActivityModule::ASSET, ActivityAction::UPDATED, "Updated asset: " . $validated['asset_name']);
+
         return redirect()->route('assets.index')->with('success', 'Asset edited successfully!');
     }
 
@@ -214,9 +221,11 @@ class AssetsController extends Controller
                     $asset->quantity = $remaining;
                     $asset->save();
                 }
+
+                ActivityLog::log(ActivityModule::ASSET, ActivityAction::DISPOSED, "Disposed asset: " . $asset->name . ", Quantity Disposed: " . $validated['quantity']);
             });
         }catch(\Exception $e){
-            // dd($e->getMessage());
+            dd($e->getMessage());
             return redirect()->route("assets.index")->with('error', 'Something went wrong!');
         }
 
@@ -234,8 +243,12 @@ class AssetsController extends Controller
 
         try {
             Excel::import(new AssetImport, $request->file('file_import'));
+
+            ActivityLog::log(ActivityModule::ASSET, ActivityAction::CREATED, "Successfully imported assets");
+
             return redirect()->back()->with('success', 'Assets imported successfully!');
         } catch(ValidationException $e) {
+            dd($e->failures());
             $failures = $e->failures();
 
             $errors = [];
@@ -266,6 +279,8 @@ class AssetsController extends Controller
           'to_status' => $validated['status'],
           'notes' => $validated['notes'],
         ]);
+
+        ActivityLog::log(ActivityModule::ASSET, ActivityAction::UPDATED, "Changed asset status of " . $asset->name . " to " . $asset->status->label());
 
         return redirect()->back()->with('success','Asset status updated successfully!');
     }

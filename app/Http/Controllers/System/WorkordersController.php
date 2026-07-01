@@ -6,6 +6,7 @@ use App\Enums\PriorityLevel;
 use App\Enums\WorkorderStatus;
 use App\Enums\WorkorderType;
 use App\Enums\AssetStatus;
+use App\Enums\RequestTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\WorkorderValidation;
 use Illuminate\Http\Request;
@@ -33,9 +34,10 @@ class WorkordersController extends Controller
     public function getEditWorkorder($id){
         $workorder = Workorder::with('request')->findOrFail($id);
         $priorities = PriorityLevel::cases();
+        $requestTypes = RequestTypes::cases();
         $employees = Employee::where('is_maintenance', true)->orderBy('name')->pluck('name','id');
 
-        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities', 'employees'));
+        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities', 'employees','requestTypes'));
     }
 
     public function updateWorkorder(WorkorderValidation $request, $id){

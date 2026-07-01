@@ -33,7 +33,7 @@
           <x-page-label for="control_number">Control Number</x-page-label>
           <x-page-input value="{{ $requestModel->control_number }}" name="control_number" id="control_number" readonly/>
         </div>
-        
+
         <div class="form-row">
           <x-page-label for="department" :required="true">Sec/Dept</x-page-label>
           <x-page-input value="{{ $requestModel->department->name }}" id="department" name="department" readonly/>
@@ -41,7 +41,7 @@
 
         <div class="form-row">
           <x-page-label for="date">Date</x-page-label>
-          <x-page-input value="{{ now()->format('M d, Y') }}" name="date" id="date" disabled/>
+          <x-page-input value="{{ now()->format('M d, Y') }}" name="date" id="date" readonly/>
         </div>
 
         <div class="form-row">
@@ -51,7 +51,7 @@
               <label class="flex items-center gap-2 cursor-pointer">
                 <input type="radio" name="request_type" value="{{ $type->value }}"
                   {{ old('request_type', $requestModel->request_type->value) == $type->value ? 'checked' : '' }}
-                  class="checkbox rounded-none checkbox-sm checkbox-primary">
+                  class="checkbox rounded-none checkbox-sm checkbox-primary" readonly>
                 {{ $type->label() }}
               </label>
             @endforeach

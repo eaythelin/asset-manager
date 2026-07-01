@@ -14,6 +14,9 @@ use App\Models\Workorder;
 use App\Enums\RequestStatus;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\RequestValidation;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class RequestsController extends Controller
 {
@@ -31,7 +34,8 @@ class RequestsController extends Controller
         if($role === 'Department Head'){
             $query->where('requested_by', auth()->id());
         } elseif($role === 'General Manager'){
-            $query->orderByRaw("FIELD(status, 'pending', 'approved', 'rejected', 'cancelled')");
+            $query->where('status', '!=', 'cancelled');
+            $query->orderByRaw("FIELD(status, 'pending', 'approved', 'rejected')");
         }
 
         $query->latest('created_at');
@@ -85,6 +89,8 @@ class RequestsController extends Controller
             "department_id" => $validated["department"],
         ]);
 
+        ActivityLog::log(ActivityModule::REQUEST, ActivityAction::CREATED, "Created request: " . $validated['control_number']);
+
         return redirect()->route("requests.index")->with("success","Request successfully created!");
     }
 
@@ -110,6 +116,8 @@ class RequestsController extends Controller
             "department_id" => $validated["department"],
         ]);
 
+        ActivityLog::log(ActivityModule::REQUEST, ActivityAction::UPDATED, "Updated request: " . $validated['control_number']);
+
         return redirect()->route("requests.index")->with("success","Request successfully edited!");
     }
 
@@ -123,6 +131,8 @@ class RequestsController extends Controller
         $requestModel = RequestModel::findOrFail($id);
         $requestModel->status = RequestStatus::CANCELLED;
         $requestModel->save();
+
+        ActivityLog::log(ActivityModule::REQUEST, ActivityAction::CANCELLED, "Cancelled request: " . $requestModel->control_number);
 
         return redirect()->route('requests.index')->with('success', 'Request cancelled!');
     }
@@ -150,6 +160,9 @@ class RequestsController extends Controller
                 Asset::findOrFail($requestModel->asset_id)->update([
                     'status' => $requestModel->request_type->value
                 ]);
+
+                ActivityLog::log(ActivityModule::REQUEST, ActivityAction::APPROVED, "Approved request: " . $requestModel->control_number);
+                ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::CREATED, "Created workorder for " . $requestModel->control_number);
             });
 
             return redirect()->route('requests.index')->with('success', 'Request Successfully Approved!');
@@ -164,6 +177,8 @@ class RequestsController extends Controller
         $requestModel->update([
             "status" => RequestStatus::REJECTED,
         ]);
+
+        ActivityLog::log(ActivityModule::REQUEST, ActivityAction::REJECTED, "Rejected request: " . $requestModel->control_number);
 
         return redirect()->route('requests.index')->with('success', 'Request Successfully Declined!');
     }

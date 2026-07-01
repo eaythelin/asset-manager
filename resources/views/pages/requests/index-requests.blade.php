@@ -44,7 +44,7 @@
                 </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
-                @if(in_array($request->status->value, ['approved', 'declined', 'pending']))
+                @if(in_array($request->status->value, ['approved', 'pending', 'rejected', 'cancelled']))
                   <a class="w-full sm:w-auto flex justify-center" href="{{ route('requests.show', $request->id) }}">
                     <x-buttons
                       class="viewBtn tooltip tooltip-top"

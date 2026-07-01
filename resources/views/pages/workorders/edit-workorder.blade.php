@@ -26,7 +26,7 @@
           </div>
 
           <div class="form-row">
-            <x-page-label for="requisitioner">Requisitioner</x-page-label>
+            <x-page-label for="requisitioner">Requisitioner's name</x-page-label>
             <x-page-input value="{{ $workorder->request->requestedBy->name }}" name="requisitioner" id="requisitioner" disabled/>
           </div>
 
@@ -36,14 +36,14 @@
           </div>
 
           <div class="form-row">
-            <x-page-label for="description">Description/Plate No.</x-page-label>
+            <x-page-label for="description">Request Description/Plate No.</x-page-label>
             <x-page-textarea name="description" id="description" disabled>{{ old('description', $workorder->request->description) }}</x-page-textarea>
           </div>
         </div>
 
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
-            <x-page-label for="department">Department</x-page-label>
+            <x-page-label for="department">Sec/Dept</x-page-label>
             <x-page-input value="{{ $workorder->request->department->name }}" name="department" id="department" disabled/>
           </div>
 
@@ -53,15 +53,36 @@
           </div>
 
           <div class="form-row">
-            <x-page-label for="request_type">Request Type</x-page-label>
-            <x-page-input value="{{ $workorder->request->request_type->label() }}" name="request_type" id="request_type" disabled/>
+            <x-page-label for="request_type">Type of Request</x-page-label>
+            <div class="flex gap-6">
+              @foreach ($requestTypes as $type)
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="request_type" value="{{ $type->value }}"
+                    {{ old('request_type', $workorder->request->request_type->value) == $type->value ? 'checked' : '' }}
+                    class="checkbox rounded-none checkbox-sm checkbox-primary" disabled>
+                  {{ $type->label() }}
+                </label>
+              @endforeach
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-6 mt-10">
+        <div class="form-row flex-1">
+          <x-page-label for="requested_by">Requested By</x-page-label>
+          <x-page-input value="{{ $workorder->request->requestedBy->name }}" name="requested_by" id="requested_by" disabled/>
+        </div>
+
+        <div class="form-row flex-1">
+          <x-page-label for="approved_by">Request Approved By</x-page-label>
+          <x-page-input value="{{ $workorder->request->approvedBy?->name }}" name="approved_by" id="approved_by" disabled/>
         </div>
       </div>
 
       <hr class="border-gray-300 m-5">
       <div x-data="{ workorder_type: '{{ old('type', $workorder->type) }}'}">
-        <input type="radio" name="type" value="subcontractor" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+        <input type="radio" name="type" value="subcontractor" x-model="workorder_type" class="checkbox rounded-none checkbox-sm checkbox-primary">
         <label class="font-medium ml-2 text-lg">Repair by Subcontractor</label>
 
         <template x-if="workorder_type === 'subcontractor'">
@@ -106,7 +127,7 @@
         </template>
 
         <hr class="border-gray-300 m-5">
-        <input type="radio" name="type" value="in_house" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+        <input type="radio" name="type" value="in_house" x-model="workorder_type" class="checkbox rounded-none checkbox-sm checkbox-primary">
         <label class="font-medium ml-2 text-lg">In House Maintenance</label>
 
         <template x-if="workorder_type === 'in_house'">
@@ -124,7 +145,7 @@
                   </x-page-select>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-xs text-gray-400 mb-1">Crew 2 (Optional)</span>
+                  <span class="text-xs text-gray-400 mb-1 sm:mt-2">Crew 2 (Optional)</span>
                   <x-page-select name="employee_2" class="w-80">
                     <option value="" selected>--Select Maintenance Crew--</option>
                     @foreach ($employees as $id=>$name)
@@ -170,7 +191,7 @@
 
       <hr class="border-gray-300 m-5">
       <div x-data="{ has_spare_parts: {{ old('has_spare_parts', $workorder->has_spare_parts) ? 'true' : 'false' }} }">
-        <input type="checkbox" id="has_spare_parts" name="has_spare_parts" x-model="has_spare_parts" class="checkbox checkbox-primary checkbox-sm">
+        <input type="checkbox" id="has_spare_parts" name="has_spare_parts" x-model="has_spare_parts" class="checkbox rounded-none checkbox-sm checkbox-primary">
         <label for="has_spare_parts" class="font-medium ml-2 text-lg">Requested Spare Parts</label>
 
         <template x-if="has_spare_parts">
@@ -229,14 +250,14 @@
 
       <hr class="border-gray-300 m-5">
       <div x-data="{ has_vehicle: {{ old('has_vehicle', $workorder->has_vehicle) ? 'true' : 'false' }} }">
-        <input type="checkbox" id="has_vehicle" name="has_vehicle" x-model="has_vehicle" class="checkbox checkbox-primary checkbox-sm">
+        <input type="checkbox" id="has_vehicle" name="has_vehicle" x-model="has_vehicle" class="checkbox rounded-none checkbox-sm checkbox-primary">
         <label for="has_vehicle" class="font-medium ml-2 text-lg">Vehicle Repairs and Maintenance</label>
 
         <template x-if="has_vehicle">
           <div class = "flex flex-col sm:flex-row gap-6 mt-5">
             <div class = "flex flex-col flex-1 gap-4" x-data="{has_change_oil : {{ old('has_change_oil', $workorder->has_change_oil) ? 'true' : 'false' }} }">
               <div class="form-row" x-data="{has_minor: {{ old('has_minor', $workorder->has_minor) ? 'true' : 'false' }} }">
-                <input type="checkbox" x-model="has_minor" name="has_minor" class="checkbox checkbox-sm checkbox-primary">
+                <input type="checkbox" x-model="has_minor" name="has_minor" class="checkbox rounded-none checkbox-sm checkbox-primary">
                 <x-page-label for="vehicle_minor_details">Minor</x-page-label>
                 <input :disabled="!has_minor" name="vehicle_minor_details" :class="!has_minor ? 'opacity-50' : ''"
                 class="input max-w-xs border-2 border-gray-400 rounded-lg" id="vehicle_minor_details"
@@ -244,7 +265,7 @@
               </div>
 
               <div class="form-row" x-data="{has_major: {{ old('has_major', $workorder->has_major) ? 'true' : 'false' }} }">
-                <input type="checkbox" x-model="has_major" name="has_major" class="checkbox checkbox-sm checkbox-primary">
+                <input type="checkbox" x-model="has_major" name="has_major" class="checkbox checkbox-sm checkbox-primary rounded-none">
                 <x-page-label for="vehicle_major_details">Major</x-page-label>
                 <input :disabled="!has_major" name="vehicle_major_details" :class="!has_major ? 'opacity-50' : ''"
                 class="input max-w-xs border-2 border-gray-400 rounded-lg" id="vehicle_major_details"
@@ -252,7 +273,7 @@
               </div>
 
               <div class="form-row">
-                <input type="checkbox" x-model="has_change_oil" name="has_change_oil" id="has_change_oil" class="checkbox checkbox-sm checkbox-primary">
+                <input type="checkbox" x-model="has_change_oil" name="has_change_oil" id="has_change_oil" class="checkbox checkbox-sm checkbox-primary rounded-none">
                 <x-page-label for="has_change_oil">Change Oil</x-page-label>
               </div>
 
@@ -273,7 +294,7 @@
 
             <div class = "flex flex-col flex-1 gap-4">
               <div class="form-row" x-data="{ has_insurance: {{ old('has_insurance', $workorder->has_insurance) ? 'true' : 'false' }} }">
-                  <input type="checkbox" x-model="has_insurance" name="has_insurance" class="checkbox checkbox-sm checkbox-primary">
+                  <input type="checkbox" x-model="has_insurance" name="has_insurance" class="checkbox checkbox-sm checkbox-primary rounded-none">
                   <x-page-label for="insurance_date">Insurance</x-page-label>
                   <span class="text-sm text-gray-500">Expiry Date:</span>
                   <input type="date" :disabled="!has_insurance" name="insurance_date"
@@ -283,7 +304,7 @@
               </div>
 
               <div class="form-row" x-data="{ has_registration: {{ old('has_registration', $workorder->has_registration) ? 'true' : 'false' }} }">
-                  <input type="checkbox" x-model="has_registration" name="has_registration" class="checkbox checkbox-sm checkbox-primary">
+                  <input type="checkbox" x-model="has_registration" name="has_registration" class="checkbox checkbox-sm checkbox-primary rounded-none">
                   <x-page-label for="registration_date">Registration</x-page-label>
                   <span class="text-sm text-gray-500">Expiry Date:</span>
                   <input type="date" :disabled="!has_registration" name="registration_date"
@@ -293,7 +314,7 @@
               </div>
 
               <div class="form-row" x-data="{has_other: {{ old('has_other', $workorder->has_other) ? 'true' : 'false' }} }">
-                <input type="checkbox" x-model="has_other" name="has_other" class="checkbox checkbox-sm checkbox-primary">
+                <input type="checkbox" x-model="has_other" name="has_other" class="checkbox checkbox-sm checkbox-primary rounded-none">
                 <x-page-label for="other_details">Other</x-page-label>
                 <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400">{{ old('other_details', $workorder->other_details) }}</textarea>
             </div>

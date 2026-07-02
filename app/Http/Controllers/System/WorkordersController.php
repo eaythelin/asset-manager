@@ -146,7 +146,7 @@ class WorkordersController extends Controller
                 ]);
             });
 
-            ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::DELETED, "Started workorder: " . $workorder->request->control_number);
+            ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::CANCELLED, "Cancelled workorder: " . $workorder->request->control_number);
 
             return redirect()->route("workorders.index")->with('success', 'Workorder cancelled successfully!');
 

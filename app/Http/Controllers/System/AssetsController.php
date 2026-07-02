@@ -27,6 +27,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Activitylog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
+use App\Enums\RequestTypes;
 
 class AssetsController extends Controller
 {
@@ -289,6 +290,8 @@ class AssetsController extends Controller
         $workorder = Workorder::with('request')->findOrFail($id);
         $backRoute = 'assets.show';
         $backLabel = 'Asset';
-        return view('pages.workorders.show-workorder', compact('workorder', 'backRoute', 'backLabel'));
+        $requestTypes = RequestTypes::cases();
+
+        return view('pages.workorders.show-workorder', compact('workorder', 'backRoute', 'backLabel', 'requestTypes'));
     }
 }

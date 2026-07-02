@@ -14,6 +14,9 @@ use App\Models\Workorder;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Models\Activitylog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class WorkordersController extends Controller
 {
@@ -105,6 +108,8 @@ class WorkordersController extends Controller
                 ]);
 
                 $workorder->assignedEmployees()->sync($employees);
+
+                ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::UPDATED, "Updated workorder: " . $workorder->request->control_number);
             });
         }catch(Exception $e){
             return redirect()->route("workorders.edit", $workorder->id)->with('error', 'Something went wrong!');
@@ -122,13 +127,15 @@ class WorkordersController extends Controller
             "status" => WorkorderStatus::IN_PROGRESS->value
         ]);
 
+        ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::STARTED, "Started workorder: " . $workorder->request->control_number);
+
         return back()->with('success','Workorder status changed successfully!');
     }
 
     public function cancelWO($id){
+      $workorder = Workorder::findOrFail($id);
         try{
-            DB::transaction(function () use ($id){
-                $workorder = Workorder::findOrFail($id);
+            DB::transaction(function () use ($workorder){
                 $workorder->update([
                     'status' => WorkorderStatus::CANCELLED
                 ]);
@@ -138,6 +145,8 @@ class WorkordersController extends Controller
                     'status' => AssetStatus::ACTIVE->value
                 ]);
             });
+
+            ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::DELETED, "Started workorder: " . $workorder->request->control_number);
 
             return redirect()->route("workorders.index")->with('success', 'Workorder cancelled successfully!');
 
@@ -175,24 +184,34 @@ class WorkordersController extends Controller
             }
         }
 
-        $workorder->update([
-            'finished_at' => now(),
-            'status' => WorkorderStatus::COMPLETED,
-            'completed_by' => auth()->user()->id
-        ]);
+        try {
+            DB::transaction(function() use($workorder){
+                $workorder->update([
+                    'finished_at' => now(),
+                    'status' => WorkorderStatus::COMPLETED,
+                    'completed_by' => auth()->user()->id
+                ]);
 
-        $workorder->request->asset->update([
-            'status' => AssetStatus::ACTIVE->value
-        ]);
+                $workorder->request->asset->update([
+                    'status' => AssetStatus::ACTIVE->value
+                ]);
 
-        return redirect()->route("workorders.index")->with('success', 'Workorder completed successfully!');
+                ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::COMPLETED, "Completed workorder: " . $workorder->request->control_number);
+            });
+
+            return redirect()->route("workorders.index")->with('success', 'Workorder completed successfully!');
+
+        }catch (Exception $e){
+            return redirect()->route("workorders.index")->with('error', 'Something went wrong!');
+        }
     }
 
     public function getWOPage($id){
         $workorder = Workorder::with('request')->findOrFail($id);
         $backRoute = 'workorders.index';
         $backLabel = 'Workorders';
+        $requestTypes = RequestTypes::cases();
 
-        return view('pages.workorders.show-workorder', compact('workorder', 'backLabel', 'backRoute'));
+        return view('pages.workorders.show-workorder', compact('workorder', 'backLabel', 'backRoute', 'requestTypes'));
     }
 }

@@ -195,8 +195,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/placeholder', [PlaceholderController::class, 'getPlaceholder'])->name('placeholder');
 });
 
-Route::get('/debug-permissions', function() {
-    return auth()->user()->getAllPermissions()->pluck('name');
-});
-
 require __DIR__.'/auth.php';

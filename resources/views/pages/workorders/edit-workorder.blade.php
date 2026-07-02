@@ -21,11 +21,6 @@
       <div class = "flex flex-col sm:flex-row gap-6">
         <div class = "flex flex-col flex-1 gap-4">
           <div class="form-row">
-            <x-page-label for="control_number">Control Number</x-page-label>
-            <x-page-input value="{{ $workorder->request->control_number }}" name="control_number" id="control_number" disabled/>
-          </div>
-
-          <div class="form-row">
             <x-page-label for="requisitioner">Requisitioner's name</x-page-label>
             <x-page-input value="{{ $workorder->request->requestedBy->name }}" name="requisitioner" id="requisitioner" disabled/>
           </div>
@@ -42,6 +37,11 @@
         </div>
 
         <div class = "flex flex-col flex-1 gap-4">
+          <div class="form-row">
+            <x-page-label for="control_number">Control Number</x-page-label>
+            <x-page-input value="{{ $workorder->request->control_number }}" name="control_number" id="control_number" disabled/>
+          </div>
+
           <div class="form-row">
             <x-page-label for="department">Sec/Dept</x-page-label>
             <x-page-input value="{{ $workorder->request->department->name }}" name="department" id="department" disabled/>
@@ -200,7 +200,7 @@
               <thead>
                 <tr>
                   <th>Parts/Supplies</th>
-                  <th>Description & Specification</th>
+                  <th>Description & Specification <span class="text-xs">(Brand names,size,code number, etc.)</span></th>
                   <th>Quantity</th>
                   <th></th>
                 </tr>
@@ -244,8 +244,20 @@
       </div>
 
       <div class="form-row mt-5">
-        <x-page-label for="accomplishment_details">Details (if nay)</x-page-label>
+        <x-page-label for="accomplishment_details">Details (if any)</x-page-label>
         <textarea name="accomplishment_details" id="accomplishment_details" class="textarea w-full md:mx-10 border-2 border-gray-400">{{ old('accomplishment_details', $workorder->accomplishment_details) }}</textarea>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-6 mt-5">
+        <div class="form-row flex-1">
+          <x-page-label for="inspected_by">Inspected By</x-page-label>
+          <x-page-input name="inspected_by" id="inspected_by" disabled/>
+        </div>
+
+        <div class="form-row flex-1">
+          <x-page-label for="accepted_by">Accepted By</x-page-label>
+          <x-page-input name="accepted_by" id="accepted_by" disabled/>
+        </div>
       </div>
 
       <hr class="border-gray-300 m-5">

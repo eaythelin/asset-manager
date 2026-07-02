@@ -14,11 +14,6 @@
     <div class = "flex flex-col sm:flex-row gap-6">
       <div class = "flex flex-col flex-1 gap-4">
         <div class="form-row">
-          <x-page-label for="control_number">Control Number</x-page-label>
-          <x-page-input value="{{ $workorder->request->control_number }}" name="control_number" id="control_number" readonly/>
-        </div>
-
-        <div class="form-row">
           <x-page-label for="requisitioner">Requisitioner</x-page-label>
           <x-page-input value="{{ $workorder->request->requestedBy->name }}" name="requisitioner" id="requisitioner" readonly/>
         </div>
@@ -36,6 +31,10 @@
 
       <div class = "flex flex-col flex-1 gap-4">
         <div class="form-row">
+          <x-page-label for="control_number">Control Number</x-page-label>
+          <x-page-input value="{{ $workorder->request->control_number }}" name="control_number" id="control_number" readonly/>
+        </div>
+        <div class="form-row">
           <x-page-label for="department">Department</x-page-label>
           <x-page-input value="{{ $workorder->request->department->name }}" name="department" id="department" readonly/>
         </div>
@@ -46,15 +45,36 @@
         </div>
 
         <div class="form-row">
-          <x-page-label for="request_type">Request Type</x-page-label>
-          <x-page-input value="{{ $workorder->request->request_type->label() }}" name="request_type" id="request_type" readonly/>
+          <x-page-label for="request_type">Type of Request</x-page-label>
+          <div class="flex gap-6">
+            @foreach ($requestTypes as $type)
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="request_type" value="{{ $type->value }}"
+                  {{ old('request_type', $workorder->request->request_type->value) == $type->value ? 'checked' : '' }}
+                  class="checkbox rounded-none checkbox-sm checkbox-primary" disabled>
+                {{ $type->label() }}
+              </label>
+            @endforeach
+          </div>
         </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-6 mt-10">
+      <div class="form-row flex-1">
+        <x-page-label for="requested_by">Requested By</x-page-label>
+        <x-page-input value="{{ $workorder->request->requestedBy->name }}" name="requested_by" id="requested_by" readonly/>
+      </div>
+
+      <div class="form-row flex-1">
+        <x-page-label for="approved_by">Request Approved By</x-page-label>
+        <x-page-input value="{{ $workorder->request->approvedBy?->name }}" name="approved_by" id="approved_by" readonly/>
       </div>
     </div>
 
     <hr class="border-gray-300 m-5">
     <div x-data="{ workorder_type: '{{ $workorder->type }}'}">
-      <input type="radio" name="type" value="subcontractor" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+      <input type="radio" name="type" value="subcontractor" x-model="workorder_type" class="checkbox checkbox-primary rounded-none checkbox-sm">
       <label class="font-medium ml-2 text-lg">Repair by Subcontractor</label>
 
       <template x-if="workorder_type === 'subcontractor'">
@@ -99,7 +119,7 @@
       </template>
 
       <hr class="border-gray-300 m-5">
-      <input type="radio" name="type" value="in_house" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm">
+      <input type="radio" name="type" value="in_house" x-model="workorder_type" class="checkbox checkbox-primary checkbox-sm rounded-none">
       <label class="font-medium ml-2 text-lg">In House Maintenance</label>
 
       <template x-if="workorder_type === 'in_house'">
@@ -112,7 +132,7 @@
                 <input name="employee_1" value="{{ $workorder->assignedEmployees->get(0)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
               </div>
               <div class="flex flex-col">
-                <span class="text-xs text-gray-400 mb-1">Crew 2 (Optional)</span>
+                <span class="text-xs text-gray-400 mb-1 sm:mt-2">Crew 2 (Optional)</span>
                 <input name="employee_1" value="{{ $workorder->assignedEmployees->get(1)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
               </div>
             </div>
@@ -148,7 +168,7 @@
 
     <hr class="border-gray-300 m-5">
     <div x-data="{ has_spare_parts: {{ $workorder->has_spare_parts ? 'true' : 'false' }} }">
-      <input type="checkbox" id="has_spare_parts" name="has_spare_parts" x-model="has_spare_parts" class="checkbox checkbox-primary checkbox-sm">
+      <input type="checkbox" id="has_spare_parts" name="has_spare_parts" x-model="has_spare_parts" class="checkbox checkbox-primary checkbox-sm rounded-none">
       <label for="has_spare_parts" class="font-medium ml-2 text-lg">Requested Spare Parts</label>
 
       <template x-if="has_spare_parts">
@@ -157,7 +177,7 @@
             <thead>
               <tr>
                 <th>Parts/Supplies</th>
-                <th>Description & Specification</th>
+                <th>Description & Specification <span class="text-xs">(Brand names,size,code number, etc.)</span></th>
                 <th>Quantity</th>
                 <th></th>
               </tr>
@@ -165,17 +185,13 @@
             <tbody>
               <template x-for="(row, index) in rows" :key="index">
                 <tr class="hover:bg-base-300">
-                  <td><input type="text" x-model="row.part" :name="`spare_parts[${index}][part]`" class="input input-sm w-full"></td>
-                  <td><input type="text" x-model="row.description" :name="`spare_parts[${index}][description]`" class="input input-sm w-full"></td>
-                  <td><input type="number" x-model="row.quantity" :name="`spare_parts[${index}][quantity]`" class="input input-sm w-full"></td>
-                  <td><button type="button" @click="rows.splice(index, 1)" class="btn btn-error btn-sm text-white">Remove</button></td>
+                  <td><input type="text" x-model="row.part" :name="`spare_parts[${index}][part]`" class="input input-sm w-full" readonly></td>
+                  <td><input type="text" x-model="row.description" :name="`spare_parts[${index}][description]`" class="input input-sm w-full" readonly></td>
+                  <td><input type="number" x-model="row.quantity" :name="`spare_parts[${index}][quantity]`" class="input input-sm w-full" readonly></td>
                 </tr>
               </template>
             </tbody>
           </table>
-          <button type="button" @click="rows.push({part: '', description: '', quantity: 1})" class="btn btn-primary btn-sm mt-2 ml-2">
-            + Add Row
-          </button>
         </div>
       </template>
     </div>
@@ -201,8 +217,20 @@
     </div>
 
     <div class="form-row mt-5">
-      <x-page-label for="accomplishment_details">Details (if nay)</x-page-label>
+      <x-page-label for="accomplishment_details">Details (if any)</x-page-label>
       <textarea name="accomplishment_details" id="accomplishment_details" class="textarea w-full md:mx-10 border-2 border-gray-400" readonly>{{ $workorder->accomplishment_details }}</textarea>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-6 mt-5">
+      <div class="form-row flex-1">
+        <x-page-label for="inspected_by">Inspected By</x-page-label>
+        <x-page-input name="inspected_by" id="inspected_by" value="{{ $workorder->completedBy->name }}" readonly/>
+      </div>
+
+      <div class="form-row flex-1">
+        <x-page-label for="accepted_by">Accepted By</x-page-label>
+        <x-page-input name="accepted_by" id="accepted_by" value="{{ $workorder->request->requestedBy->name }}" readonly/>
+      </div>
     </div>
 
     <hr class="border-gray-300 m-5">
@@ -214,23 +242,23 @@
         <div class = "flex flex-col sm:flex-row gap-6 mt-5">
           <div class = "flex flex-col flex-1 gap-4" x-data="{{ $workorder->has_change_oil ? 'true' : 'false'  }} }">
             <div class="form-row" x-data="{has_minor: {{ $workorder->has_minor ? 'true' : 'false' }} }">
-              <input type="checkbox" x-model="has_minor" name="has_minor" class="checkbox checkbox-sm checkbox-primary">
+              <input type="checkbox" x-model="has_minor" name="has_minor" class="checkbox checkbox-sm checkbox-primary rounded-none" disabled>
               <x-page-label for="vehicle_minor_details">Minor</x-page-label>
               <input :disabled="!has_minor" name="vehicle_minor_details" :class="!has_minor ? 'opacity-50' : ''"
               class="input max-w-xs border-2 border-gray-400 rounded-lg" id="vehicle_minor_details"
-              value="{{ $workorder->vehicle_minor_details }}">
+              value="{{ $workorder->vehicle_minor_details }}" readonly>
             </div>
 
             <div class="form-row" x-data="{has_major: {{ $workorder->has_major ? 'true' : 'false' }} }">
-              <input type="checkbox" x-model="has_major" name="has_major" class="checkbox checkbox-sm checkbox-primary">
+              <input type="checkbox" x-model="has_major" name="has_major" class="checkbox checkbox-sm checkbox-primary rounded-none" disabled>
               <x-page-label for="vehicle_major_details">Major</x-page-label>
               <input :disabled="!has_major" name="vehicle_major_details" :class="!has_major ? 'opacity-50' : ''"
               class="input max-w-xs border-2 border-gray-400 rounded-lg" id="vehicle_major_details"
-              value="{{ $workorder->vehicle_major_details }}">
+              value="{{ $workorder->vehicle_major_details }}" readonly>
             </div>
 
             <div class="form-row">
-              <input type="checkbox" x-model="has_change_oil" name="has_change_oil" id="has_change_oil" class="checkbox checkbox-sm checkbox-primary">
+              <input type="checkbox" x-model="has_change_oil" name="has_change_oil" id="has_change_oil" class="checkbox checkbox-sm checkbox-primary rounded-none" disabled>
               <x-page-label for="has_change_oil">Change Oil</x-page-label>
             </div>
 
@@ -238,42 +266,42 @@
               <x-page-label for="last_change_oil_date">Last Change Oil Date</x-page-label>
               <input type="date" :disabled="!has_change_oil" name="last_change_oil_date" :class="!has_change_oil ? 'opacity-50' : ''"
               class="input max-w-xs border-2 border-gray-400 rounded-lg" id="last_change_oil_date"
-              value="{{ $workorder->last_change_oil_date?->format('Y-m-d') }}">
+              value="{{ $workorder->last_change_oil_date?->format('Y-m-d') }}" readonly>
             </div>
 
             <div class="form-row md:ml-8">
               <x-page-label for="meter_reading">Meter Reading</x-page-label>
               <input :disabled="!has_change_oil" name="meter_reading" :class="!has_change_oil ? 'opacity-50' : ''"
                 class="input max-w-xs border-2 border-gray-400 rounded-lg" id="meter_reading"
-                value="{{ $workorder->meter_reading }}">
+                value="{{ $workorder->meter_reading }}" readonly>
             </div>
           </div>
 
           <div class = "flex flex-col flex-1 gap-4">
             <div class="form-row" x-data="{ has_insurance: {{ $workorder->has_insurance ? 'true' : 'false' }} }">
-                <input type="checkbox" x-model="has_insurance" name="has_insurance" class="checkbox checkbox-sm checkbox-primary">
+                <input type="checkbox" x-model="has_insurance" name="has_insurance" class="checkbox checkbox-sm checkbox-primary rounded-none" disabled>
                 <x-page-label for="insurance_date">Insurance</x-page-label>
                 <span class="text-sm text-gray-500">Expiry Date:</span>
                 <input type="date" :disabled="!has_insurance" name="insurance_date"
                   :class="!has_insurance ? 'opacity-50' : ''"
                   class="input border-2 border-gray-400 rounded-lg" id="insurance_date"
-                  value="{{ $workorder->insurance_date?->format('Y-m-d') }}">
+                  value="{{ $workorder->insurance_date?->format('Y-m-d') }}" readonly>
             </div>
 
             <div class="form-row" x-data="{ has_registration: {{ $workorder->has_registration ? 'true' : 'false' }} }">
-                <input type="checkbox" x-model="has_registration" name="has_registration" class="checkbox checkbox-sm checkbox-primary">
+                <input type="checkbox" x-model="has_registration" name="has_registration" class="checkbox checkbox-sm checkbox-primary rounded-none" disabled>
                 <x-page-label for="registration_date">Registration</x-page-label>
                 <span class="text-sm text-gray-500">Expiry Date:</span>
                 <input type="date" :disabled="!has_registration" name="registration_date"
                   :class="!has_registration ? 'opacity-50' : ''"
                   class="input border-2 border-gray-400 rounded-lg" id="registration_date"
-                  value="{{ $workorder->registration_date?->format('Y-m-d') }}">
+                  value="{{ $workorder->registration_date?->format('Y-m-d') }}" readonly>
             </div>
 
             <div class="form-row" x-data="{has_other: {{ $workorder->has_other ? 'true' : 'false' }} }">
-              <input type="checkbox" x-model="has_other" name="has_other" class="checkbox checkbox-sm checkbox-primary">
+              <input type="checkbox" x-model="has_other" name="has_other" class="checkbox checkbox-sm checkbox-primary rounded-none" disabled>
               <x-page-label for="other_details">Other</x-page-label>
-              <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400">{{ $workorder->other_details }}</textarea>
+              <textarea :disabled="!has_other" name="other_details" id="other_details" :class="!has_other ? 'opacity-50' : ''" class="textarea max-w-xs border-2 border-gray-400" readonly>{{ $workorder->other_details }}</textarea>
             </div>
           </div>
         </div>

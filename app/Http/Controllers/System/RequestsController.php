@@ -33,7 +33,7 @@ class RequestsController extends Controller
 
         if($role === 'Department Head'){
             $query->where('requested_by', auth()->id());
-        } elseif($role === 'General Manager'){
+        } elseif($role === 'General Manager' || $role === 'System Supervisor'){
             $query->where('status', '!=', 'cancelled');
             $query->orderByRaw("FIELD(status, 'pending', 'approved', 'rejected')");
         }

@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Models\Activitylog;
+use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
 

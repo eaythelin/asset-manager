@@ -14,7 +14,7 @@ use App\Models\Workorder;
 use App\Enums\RequestStatus;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\RequestValidation;
-use App\Models\Activitylog;
+use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
 

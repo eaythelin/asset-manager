@@ -24,7 +24,7 @@ use App\Exports\AssetTemplateExport;
 use App\Imports\AssetImport;
 use Maatwebsite\Excel\Validators\ValidationException;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Models\Activitylog;
+use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
 use App\Enums\RequestTypes;

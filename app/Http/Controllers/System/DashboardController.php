@@ -63,7 +63,7 @@ class DashboardController extends Controller
         }
 
         //activity log table
-        $activityLogs = ActivityLog::latest()->take(5)->get();
+        $ActivityLogs = ActivityLog::latest()->take(5)->get();
 
         $activityColumns = ["Date", "User", "Module", "Action", "Description"];
 
@@ -73,7 +73,7 @@ class DashboardController extends Controller
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'cardGridNumber',"expiredAssets",
-                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs"));
+                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "ActivityLogs"));
     }
 
     public function getSubcategoryCount(Category $category){

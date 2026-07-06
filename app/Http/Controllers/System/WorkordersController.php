@@ -14,7 +14,7 @@ use App\Models\Workorder;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Exception;
-use App\Models\Activitylog;
+use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
 

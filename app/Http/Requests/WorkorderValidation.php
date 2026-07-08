@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use App\Enums\PriorityLevel;
 use App\Enums\WorkorderType;
+use Illuminate\Validation\Rule;
+use App\Models\Workorder;
+use Illuminate\Support\Carbon;
 
 class WorkorderValidation extends FormRequest
 {
@@ -54,7 +57,23 @@ class WorkorderValidation extends FormRequest
             "sub_document" => ["nullable","string", "max:100"],
             "sub_details" => ["nullable","string", "max:100"],
             "sub_cost" => ["nullable", "numeric", "min:1"],
-            "sub_date_released" => ["nullable", "date"],
+            "sub_date_released" => ["nullable", "date",
+                Rule::excludeIf(function () use ($id){
+                    if($this->isMethod('PUT') || $this->isMethod('PATCH')){
+                        $currentDate = Workorder::where('id', $id)->value('sub_date_released');
+                        //if no date in DB, dont exclude validation
+                        if (!$currentDate || !$this->input('sub_date_released')) {
+                            return false;
+                        }
+
+                        // Parse both to Carbon objects so they are compared purely as dates
+                        return Carbon::parse($this->input('sub_date_released'))
+                            ->isSameDay(Carbon::parse($currentDate));
+                    }
+                    return false;
+                }), 'after_or_equal:today',
+                    'before_or_equal:+2months'
+            ],
             "sub_date_returned" => ["nullable", "date", "after_or_equal:sub_date_released"],
 
             "has_vehicle" => ["boolean"],
@@ -63,12 +82,12 @@ class WorkorderValidation extends FormRequest
             "has_major" => ["boolean"],
             "vehicle_major_details" => ["nullable","string", "max:100"],
             "has_change_oil" => ["boolean"],
-            "last_change_oil_date" => ["nullable", "date"],
+            "last_change_oil_date" => ["nullable", "date", "before_or_equal:today"],
             "meter_reading" => ["nullable", "string", "max:100"],
             "has_insurance" => ["boolean"],
-            "insurance_date" => ["nullable", "date"],
+            "insurance_date" => ["nullable", "date", "after_or_equal:today"],
             "has_registration" => ["boolean"],
-            "registration_date" => ["nullable", "date"],
+            "registration_date" => ["nullable", "date", "after_or_equal:today"],
             "has_other" => ["boolean"],
             "other_details" => ["nullable", "string", "max:255"],
 

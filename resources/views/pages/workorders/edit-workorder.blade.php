@@ -5,7 +5,7 @@
   <x-session-error />
 
   <div class="mb-4">
-      <x-back-link route="workorders.index">Return to Workorders</x-back-link>
+      <x-back-link route="workorders.index">Return to Work Orders</x-back-link>
   </div>
 
   <x-validation-error />

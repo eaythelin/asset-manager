@@ -30,7 +30,7 @@
         @endcan
         @can("view workorders")
         <li>
-          <x-navlinks routeName="workorders.index" title="Workorders">
+          <x-navlinks routeName="workorders.index" title="Work Orders">
             <x-heroicon-s-clipboard-document class="size-5 mr-2" />
           </x-navlinks>
         </li>

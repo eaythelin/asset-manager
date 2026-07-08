@@ -19,7 +19,7 @@ enum ActivityModule : string
         return match($this) {
             self::ASSET => 'Asset',
             self::REQUEST => 'Request',
-            self::WORKORDER => 'Workorder',
+            self::WORKORDER => 'Work Order',
             self::USER => 'User',
             self::EMPLOYEE => 'Employee',
             self::DEPARTMENT => 'Department',

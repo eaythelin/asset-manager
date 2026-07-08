@@ -16,7 +16,7 @@
               <select name="module" class="select border-2 border-gray-300">
                 <option value="">All Modules</option>
                 @foreach($activityModules as $module)
-                  <option value="{{ $module->value }}" {{ request('module') == $module->value ? 'selected' : '' }}>{{ ucfirst($module->value) }}</option>
+                  <option value="{{ $module->value }}" {{ request('module') == $module->value ? 'selected' : '' }}>{{ $module->label() }}</option>
                 @endforeach
               </select>
               <x-buttons type="submit">Search</x-buttons>

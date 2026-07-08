@@ -235,7 +235,7 @@
 
     <hr class="border-gray-300 m-5">
     <div x-data="{ has_vehicle: {{ $workorder->has_vehicle ? 'true' : 'false' }} }">
-      <input type="checkbox" id="has_vehicle" name="has_vehicle" x-model="has_vehicle" class="checkbox checkbox-primary checkbox-sm">
+      <input type="checkbox" id="has_vehicle" name="has_vehicle" x-model="has_vehicle" class="checkbox checkbox-primary checkbox-sm rounded-none">
       <label for="has_vehicle" class="font-medium ml-2 text-lg">Vehicle Repairs and Maintenance</label>
 
       <template x-if="has_vehicle">

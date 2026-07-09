@@ -9,7 +9,7 @@
 <div class="divider"></div>
 
 <table>
-    <thead>     
+    <thead>
         <tr>
             <th>Asset Code</th>
             <th>Asset Name</th>
@@ -30,8 +30,8 @@
             <td>{{ $asset->name }}</td>
             <td>{{ $asset->quantity }}</td>
             <td>{{ $asset->serial_name ?? 'N/A'}}</td>
-            <td>{{ $asset->department->name }}</td>    
-            <td>{{ $asset->custodian?->first_name}} {{ $asset->custodian?->last_name}}</td>
+            <td>{{ $asset->department->name }}</td>
+            <td>{{ $asset->custodian?->name}}</td>
             <td>{{ $asset->category->name }}</td>
             <td>{{ $asset->status->label() }}</td>
             <td>{{ $asset->acquisition_date?->format('F j, Y') }}</td>

@@ -9,31 +9,51 @@
 <x-session-error />
 
 <!--Cards-->
-<div class ="grid grid-cols-2 {{ $cardGridNumber }} gap-4 md:mx-6 p-3 bg-white rounded-2xl shadow-xl">
-  <x-dashboard-cards bgColor="bg-green-500" title="Active Assets" :number="$activeAssets">
-    <x-heroicon-s-clipboard-document-check class="size-8 md:size-10"/>
-  </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-red-500" title="Disposed Assets" :number="$disposedAssets">
-    <x-heroicon-s-trash class="size-8 md:size-10"/>
-  </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-orange-500" title="Expired Assets" :number="$expiredAssets">
-    <x-heroicon-s-exclamation-triangle class="size-8 md:size-10" />
-  </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-gray-500" title="Under Maintenance" :number="$maintenanceAssets">
-    <x-heroicon-s-wrench-screwdriver class="size-8 md:size-10" />
-  </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-gray-700" title="Under Repair" :number="$repairAssets">
-    <x-heroicon-s-wrench class="size-8 md:size-10" />
-  </x-dashboard-cards>
-  <x-dashboard-cards bgColor="bg-gray-900" title="Under Fabrication" :number="$fabricationAssets">
-    <x-heroicon-s-cog class="size-8 md:size-10" />
-  </x-dashboard-cards>
-  @if($role === "Department Head")
-    <x-dashboard-cards class="col-span-2 md:col-span-3" bgColor="bg-blue-500" title="Pending Request" :number="$requestCount">
-      <x-heroicon-s-clipboard-document-list class="size-8 md:size-10" />
+<div class="bg-white rounded-2xl shadow-xl md:mx-4 p-3">
+  <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">Assets Summary</h2>
+  <div class="grid grid-cols-2 {{ $cardGridNumber }} gap-4">
+    <x-dashboard-cards bgColor="bg-green-500" title="Active" :number="$activeAssets">
+      <x-heroicon-s-clipboard-document-check class="size-8 md:size-10"/>
     </x-dashboard-cards>
-  @endif
+    <x-dashboard-cards bgColor="bg-red-500" title="Disposed" :number="$disposedAssets">
+      <x-heroicon-s-trash class="size-8 md:size-10"/>
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-orange-500" title="Expired" :number="$expiredAssets">
+      <x-heroicon-s-exclamation-triangle class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-gray-500" title="Under Maintenance" :number="$maintenanceAssets">
+      <x-heroicon-s-wrench-screwdriver class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-gray-700" title="Under Repair" :number="$repairAssets">
+      <x-heroicon-s-wrench class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    <x-dashboard-cards bgColor="bg-gray-900" title="Under Fabrication" :number="$fabricationAssets">
+      <x-heroicon-s-cog class="size-8 md:size-10" />
+    </x-dashboard-cards>
+    @if($role === "Department Head")
+      <x-dashboard-cards class="col-span-2 md:col-span-3" bgColor="bg-blue-500" title="Pending Request" :number="$requestCount">
+        <x-heroicon-s-clipboard-document-list class="size-8 md:size-10" />
+      </x-dashboard-cards>
+    @endif
+  </div>
 </div>
+
+@can('view workorders')
+  <div class="bg-white rounded-2xl shadow-xl mt-6 md:mx-4 p-3">
+    <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">Work Orders Summary</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <x-dashboard-cards bgColor="bg-amber-500" title="Pending" :number="$pendingWO">
+        <x-heroicon-s-clock class="size-8 md:size-10" />
+      </x-dashboard-cards>
+      <x-dashboard-cards bgColor="bg-blue-600" title="In-Progress" :number="$inProgWO">
+        <x-heroicon-s-play class="size-8 md:size-10" />
+      </x-dashboard-cards>
+      <x-dashboard-cards bgColor="bg-emerald-600" title="Completed" :number="$completedWO">
+        <x-heroicon-s-check-circle class="size-8 md:size-10" />
+      </x-dashboard-cards>
+    </div>
+  </div>
+@endcan
 
 <!--The Assets per department are hidden if role = Department Head-->
 <!--Middle Charts-->

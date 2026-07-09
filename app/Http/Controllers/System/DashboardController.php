@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\System;
 
+use App\Enums\WorkorderStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
@@ -9,6 +10,7 @@ use App\Models\Department;
 use App\Models\Category;
 use App\Models\Asset;
 use App\Models\ActivityLog;
+use App\Models\Workorder;
 use App\Models\Request as RequestModel;
 use App\Enums\AssetStatus;
 
@@ -67,13 +69,18 @@ class DashboardController extends Controller
 
         $activityColumns = ["Date", "User", "Module", "Action", "Description"];
 
+        $pendingWO = Workorder::where('status', WorkorderStatus::PENDING->value)->count();
+        $inProgWO = Workorder::where('status', WorkorderStatus::IN_PROGRESS->value)->count();
+        $completedWO = Workorder::where('status', WorkorderStatus::COMPLETED->value)->count();
+
         //Column names for Filter Subcategory by Category and Assets per Department
         $subcategoryFilterColumns = ["", "Subcategory", "Count"];
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'cardGridNumber',"expiredAssets",
-                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs"));
+                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs",
+                                                            "pendingWO", "inProgWO", "completedWO"));
     }
 
     public function getSubcategoryCount(Category $category){

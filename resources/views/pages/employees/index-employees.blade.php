@@ -37,11 +37,11 @@
         </x-buttons>
       @endcan
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[3,4,5]">
+    <x-tables :columnNames="$columns" :centeredColumns="[0,3,4,5]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($employees as $employee)
             <tr>
-              <th class = "p-3 text-center">{{ $employee-> id}}</th>
+              <th class="p-3 text-center">{{ $employee->employee_no }}</th>
               <x-td>{{ $employee->name}}</x-td>
               <x-td>{{ $employee->department->name}}</x-td>
               <x-td class="text-center">

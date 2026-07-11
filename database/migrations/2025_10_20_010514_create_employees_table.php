@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
+            $table->string('employee_no')->unique();
             $table->string('name');
             $table->boolean('is_maintenance')->default(false);
             $table->foreignId('department_id')->constrained('departments')->onDelete('restrict'); //prevents deletion of department if employee exist in that department

@@ -39,9 +39,12 @@ class EmployeesController extends Controller
 
         $employees = $query->paginate(5);
         $departments = Department::orderBy('name')->pluck('name', 'id');
+        $latest = Employee::orderByDesc('employee_no')->first();
+        $count = $latest ? (int) substr($latest->employee_no, -4) + 1 : 1;
+        $employeeNo = 'EMP-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-        $columns = ["","Name", "Department", "Custodian", "Maintenance Crew" ,"Actions"];
-        return view("pages.employees.index-employees", compact('employees', 'columns', 'departments', 'desc'));
+        $columns = ["Employee No." ,"Name", "Department", "Custodian", "Maintenance Crew" ,"Actions"];
+        return view("pages.employees.index-employees", compact('employees', 'columns', 'departments', 'desc', 'employeeNo'));
     }
 
     public function getEmployee($id){

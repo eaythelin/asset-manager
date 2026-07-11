@@ -3,6 +3,8 @@
     <div class = "flex flex-col gap-3 px-2 sm:px-4">
       @csrf
       @method('PUT')
+      <label class="font-medium" for="edit_emp_no">Employee No.</label>
+      <x-modal-input-box id="edit_emp_no" name="employee_no" readonly/>
       <x-label for="edit_name" :required="true">Name</x-label>
       <x-modal-input-box id="edit_name" name="name" autocomplete="given_name"/>
       <x-label for="edit_selectDepartment" :required="true">Department </x-label>

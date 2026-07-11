@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
+use Illuminate\Validation\Rule;
 
 class EmployeesController extends Controller
 {
@@ -39,7 +40,7 @@ class EmployeesController extends Controller
 
         $employees = $query->paginate(5);
         $departments = Department::orderBy('name')->pluck('name', 'id');
-        $latest = Employee::orderByDesc('employee_no')->first();
+        $latest = Employee::withTrashed()->orderByDesc('employee_no')->first();
         $count = $latest ? (int) substr($latest->employee_no, -4) + 1 : 1;
         $employeeNo = 'EMP-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
@@ -61,10 +62,12 @@ class EmployeesController extends Controller
         $validated = $request->validate([
             "name"=> ["required", "max:100", "string"],
             "department"=> ["required", "exists:departments,id"],
-            "is_maintenance" => ["required", "boolean"]
+            "is_maintenance" => ["required", "boolean"],
+            "employee_no" => ["required", "unique:employees"]
         ]);
 
         Employee::create([
+            'employee_no' => $validated['employee_no'],
             'name' => $validated['name'],
             'department_id' => $validated['department'],
             'is_maintenance' => $validated['is_maintenance'],
@@ -81,7 +84,8 @@ class EmployeesController extends Controller
         $validated = $request->validate([
             "name"=> ["required", "max:100", "string"],
             "department"=> ["required", "exists:departments,id"],
-            "is_maintenance" => ["required", "boolean"]
+            "is_maintenance" => ["required", "boolean"],
+            "employee_no" => ["required", Rule::unique("employees", "employee_no")->ignore($id)]
         ]);
 
         $employee = Employee::findOrFail($id);

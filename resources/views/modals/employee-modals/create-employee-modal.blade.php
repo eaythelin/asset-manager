@@ -2,8 +2,8 @@
   <form method = "POST" action="{{ route('employees.store') }}">
     <div class = "flex flex-col gap-3 px-2 sm:px-4">
       @csrf
-      <x-label for="create_emp_no" :required="true">Employee No.<span class="text-xs text-gray-500 align-super tooltip tooltip-info" data-tip="Must be unique">?</span></x-label>
-      <x-modal-input-box id="create_emp_no" name="employee_no" placeholder="EMP-0001" value="{{ $employeeNo }}"/>
+      <label class="font-medium" for="create_emp_no">Employee No.</label>
+      <x-modal-input-box id="create_emp_no" name="employee_no" value="{{ $employeeNo }}" readonly/>
       <x-label for="create_name" :required="true">Name </x-label>
       <x-modal-input-box id="create_name" name="name" autocomplete="given-name"/>
       <x-label for="create_selectDepartment" :required="true">Department </x-label>

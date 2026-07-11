@@ -87,7 +87,8 @@
                       data-name="{{ $employee->name }}"
                       data-department="{{ $employee->department->id }}"
                       data-maintenance="{{ $employee->is_maintenance }}"
-                      data-route="{{ route('employees.update', $employee->id ) }}">
+                      data-route="{{ route('employees.update', $employee->id ) }}"
+                      data-empno="{{ $employee->employee_no }}">
                       <x-heroicon-o-pencil-square class="size-4 sm:size-5" />
                     </x-buttons>
                     <x-buttons onclick="archiveEmployee.showModal()"

@@ -13,6 +13,7 @@ enum ActivityModule : string
     case CATEGORY = "category";
     case SUBCATEGORY = "subcategory";
     case SUPPLIER = "supplier";
+    case REPORT = "report";
 
     public function label():string
     {
@@ -25,7 +26,8 @@ enum ActivityModule : string
             self::DEPARTMENT => 'Department',
             self::CATEGORY => 'Category',
             self::SUBCATEGORY => 'Subcategory',
-            self::SUPPLIER => 'Supplier'
+            self::SUPPLIER => 'Supplier',
+            self::REPORT => 'Report'
         };
     }
 }

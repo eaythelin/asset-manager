@@ -4,25 +4,21 @@ namespace App\Http\Controllers\System;
 
 use App\Enums\AssetStatus;
 use App\Enums\DisposalMethods;
-use App\Enums\MaintenanceType;
-use App\Enums\ServiceTypes;
-use App\Enums\WorkorderStatus;
-use App\Enums\WorkorderType;
 use App\Http\Controllers\Controller;
 use App\Models\AssetDisposalLog;
-use App\Models\RequisitionWorkorder;
-use App\Models\ServiceWorkorder;
 use Illuminate\Http\Request;
 use App\Models\Report;
 use App\Models\Employee;
 use App\Models\Asset;
 use App\Models\Department;
-use App\Models\DisposalWorkorder;
 use App\Models\Category;
 use App\Models\Supplier;
 use App\Enums\ReportType;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Requests\ReportValidation;
+use App\Models\ActivityLog;
+use App\Enums\ActivityAction;
+use App\Enums\ActivityModule;
 
 class ReportsController extends Controller
 {
@@ -49,95 +45,107 @@ class ReportsController extends Controller
     public function generateReport(ReportValidation $request){
         $validated = $request->validated();
 
-        $query = Asset::query();
+        try {
+            $query = Asset::query();
 
-        if($validated['category_id'] ?? null){
-            $query->where('category_id', $validated['category_id']);
+            if($validated['category_id'] ?? null){
+                $query->where('category_id', $validated['category_id']);
+            }
+            if($validated['department_id'] ?? null){
+                $query->where('department_id', $validated['department_id']);
+            }
+
+            if($validated['status'] ?? null){
+                if($validated['status'] === 'disposed'){
+                    $query->withTrashed();
+                    $query->where('status', $validated['status']);
+                }else{
+                    $query->where('status', $validated['status']);
+                }
+            }
+
+            if($validated['report_type'] === 'asset'){
+                if($validated['date_from'] && $validated ['date_to']){
+                    $query->whereBetween('acquisition_date', [$validated['date_from'], $validated['date_to']]);
+                }
+
+                if($validated['custodian_id'] ?? null){
+                    $query->where('custodian_id', $validated['custodian_id']);
+                }
+
+                $data = $query->get();
+                $pdf = Pdf::loadView('reports.asset-report', compact('data'))->setPaper('a4', 'landscape');
+
+                $filename = 'RPT-'.time().'.pdf';
+                $pdf->save(storage_path('app/public/reports/' . $filename));
+                $count = (Report::count() ?? 0) + 1;
+
+                $report = Report::create([
+                    'report_code' => 'RPT-'.($count),
+                    'report_type' => $validated['report_type'],
+                    'generated_by' => auth()->user()->id,
+                    'file_path' => $filename
+                ]);
+
+                ActivityLog::log(ActivityModule::REPORT, ActivityAction::CREATED, "Generated " . $report->report_type->label() . " report");
+
+                return $pdf->stream('asset-report.pdf');
+            }elseif($validated['report_type'] === 'depreciation'){
+                $data = $query->get();
+                $pdf = Pdf::loadView('reports.depreciation-report', compact('data'))->setPaper('a4', 'landscape');
+
+                $filename = 'RPT-'.time().'.pdf';
+                $pdf->save(storage_path('app/public/reports/' . $filename));
+                $count = (Report::count() ?? 0) + 1;
+
+                $report = Report::create([
+                    'report_code' => 'RPT-'.($count),
+                    'report_type' => $validated['report_type'],
+                    'generated_by' => auth()->user()->id,
+                    'file_path' => $filename
+                ]);
+
+                ActivityLog::log(ActivityModule::REPORT, ActivityAction::CREATED, "Generated " . $report->report_type->label() . " report");
+
+                return $pdf->stream('depreciation-report.pdf');
+            }elseif($validated['report_type'] === ReportType::DISPOSAL->value){
+                $logQuery = AssetDisposalLog::query();
+
+                if($validated['asset'] ?? null){
+                    $logQuery->where('asset_id', $validated['asset']);
+                }
+
+                if($validated['disposal_date_from'] ?? null && $validated ['disposal_date_to'] ?? null){
+                    $logQuery->whereBetween('disposal_date', [$validated['disposal_date_from'], $validated['disposal_date_to']]);
+                }
+
+                if($validated['disposal_method'] ?? null){
+                    $logQuery->where('disposal_method', $validated['disposal_method']);
+                }
+
+                $data = $logQuery->get();
+                $pdf = Pdf::loadView('reports.disposal-report', compact('data'))->setPaper('a4', 'landscape');
+
+                $filename = 'RPT-'.time().'.pdf';
+                $pdf->save(storage_path('app/public/reports/' . $filename));
+                $count = (Report::count() ?? 0) + 1;
+
+                $report = Report::create([
+                    'report_code' => 'RPT-'.($count),
+                    'report_type' => $validated['report_type'],
+                    'generated_by' => auth()->user()->id,
+                    'file_path' => $filename
+                ]);
+
+                ActivityLog::log(ActivityModule::REPORT, ActivityAction::CREATED, "Generated " . $report->report_type->label() . " report");
+
+                return $pdf->stream('disposal-report.pdf');
+            }
+        }catch(\Exception $e) {
+            return redirect()->route("reports.index")->with('error', 'Something went wrong!');
         }
-        if($validated['department_id'] ?? null){
-            $query->where('department_id', $validated['department_id']);
-        }
 
-        if($validated['status'] ?? null){
-            if($validated['status'] === 'disposed'){
-                $query->withTrashed();
-                $query->where('status', $validated['status']);
-            }else{
-                $query->where('status', $validated['status']);
-            }
-        }
 
-        if($validated['report_type'] === 'asset'){
-            if($validated['date_from'] && $validated ['date_to']){
-                $query->whereBetween('acquisition_date', [$validated['date_from'], $validated['date_to']]);
-            }
-
-            if($validated['custodian_id'] ?? null){
-                $query->where('custodian_id', $validated['custodian_id']);
-            }
-
-            $data = $query->get();
-            $pdf = Pdf::loadView('reports.asset-report', compact('data'))->setPaper('a4', 'landscape');
-
-            $filename = 'RPT-'.time().'.pdf';
-            $pdf->save(storage_path('app/public/reports/' . $filename));
-            $count = (Report::count() ?? 0) + 1;
-
-            Report::create([
-                'report_code' => 'RPT-'.($count),
-                'report_type' => $validated['report_type'],
-                'generated_by' => auth()->user()->id,
-                'file_path' => $filename
-            ]);
-
-            return $pdf->stream('asset-report.pdf');
-        }elseif($validated['report_type'] === 'depreciation'){
-            $data = $query->get();
-            $pdf = Pdf::loadView('reports.depreciation-report', compact('data'))->setPaper('a4', 'landscape');
-
-            $filename = 'RPT-'.time().'.pdf';
-            $pdf->save(storage_path('app/public/reports/' . $filename));
-            $count = (Report::count() ?? 0) + 1;
-
-            Report::create([
-                'report_code' => 'RPT-'.($count),
-                'report_type' => $validated['report_type'],
-                'generated_by' => auth()->user()->id,
-                'file_path' => $filename
-            ]);
-
-            return $pdf->stream('depreciation-report.pdf');
-        }elseif($validated['report_type'] === ReportType::DISPOSAL->value){
-            $logQuery = AssetDisposalLog::query();
-
-            if($validated['asset'] ?? null){
-                $logQuery->where('asset_id', $validated['asset']);
-            }
-
-            if($validated['disposal_date_from'] ?? null && $validated ['disposal_date_to'] ?? null){
-                $logQuery->whereBetween('disposal_date', [$validated['disposal_date_from'], $validated['disposal_date_to']]);
-            }
-
-            if($validated['disposal_method'] ?? null){
-                $logQuery->where('disposal_method', $validated['disposal_method']);
-            }
-
-            $data = $logQuery->get();
-            $pdf = Pdf::loadView('reports.disposal-report', compact('data'))->setPaper('a4', 'landscape');
-
-            $filename = 'RPT-'.time().'.pdf';
-            $pdf->save(storage_path('app/public/reports/' . $filename));
-            $count = (Report::count() ?? 0) + 1;
-
-            Report::create([
-                'report_code' => 'RPT-'.($count),
-                'report_type' => $validated['report_type'],
-                'generated_by' => auth()->user()->id,
-                'file_path' => $filename
-            ]);
-
-            return $pdf->stream('disposal-report.pdf');
-        }
     }
 
     public function deleteReport($id){

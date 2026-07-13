@@ -56,7 +56,7 @@
     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Assigned Assets</h3>
     @if($employee->assets->count() > 0)
     <!-- if assets assigned -->
-      <x-tables :columnNames="$columns" :centeredColumns="[0,6]">
+      <x-tables :columnNames="$columns" :centeredColumns="[0,7]">
         <tbody class = "divide-y divide-gray-400">
           @foreach($employee->assets as $asset)
           <tr>

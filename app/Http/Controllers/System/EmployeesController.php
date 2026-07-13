@@ -51,7 +51,7 @@ class EmployeesController extends Controller
     public function getEmployee($id){
         $employee = Employee::withTrashed()->with('department', 'assets')->findOrFail($id);
 
-        $columns = ["Asset Code", "Asset Name", "Serial Name", "Department", "Category", "Subcategory", "Status"];
+        $columns = ["Asset Code", "Asset Name", "Quantity" ,"Serial Name", "Department", "Category", "Subcategory", "Status"];
 
         return view('pages.employees.show-employee', compact('employee', 'columns'));
     }

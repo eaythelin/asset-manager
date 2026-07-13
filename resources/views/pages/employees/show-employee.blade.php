@@ -62,6 +62,7 @@
           <tr>
             <th class = "p-3 text-center">{{ $asset->asset_code}}</th>
             <x-td>{{ $asset->name}}</x-td>
+            <x-td>{{ $asset->quantity }}</x-td>
             <x-td>{{ $asset->serial_name}}</x-td>
             <x-td>{{ $asset->department->name}}</x-td>
             <x-td>{{ $asset->category->name }}</x-td>

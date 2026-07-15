@@ -249,7 +249,6 @@ class AssetsController extends Controller
 
             return redirect()->back()->with('success', 'Assets imported successfully!');
         } catch(ValidationException $e) {
-            dd($e->failures());
             $failures = $e->failures();
 
             $errors = [];

@@ -17,12 +17,6 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 
 class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartRow
 {
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-
     public function startRow(): int
     {
         return 3;
@@ -74,7 +68,7 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
             "subcategory" => ["nullable", Rule::exists('sub_categories', 'name')],
             "description" => ["nullable", "string", "max:255"],
             "department" => ["required", Rule::exists('departments', 'name')],
-            "custodian" => ["required", Rule::exists('employees', 'name')],
+            "custodian" => ["nullable", Rule::exists('employees', 'name')],
             "is_depreciable" => ["nullable", "boolean"],
             "cost" => ["required_if:is_depreciable,true", "nullable", "numeric"],
             "salvage_value" => ["required_if:is_depreciable,true", "nullable", "numeric"],
@@ -82,6 +76,36 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
             "useful_life" => ["required_if:is_depreciable,true", "nullable", "integer"],
             "supplier" => ["nullable", Rule::exists('suppliers', 'name')]
         ];
+    }
+
+    //to check if subcategory belongs to that category
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            foreach ($validator->getData() as $key => $row) {
+                $categoryName = trim($row['category'] ?? '');
+                $subcategoryName = trim($row['subcategory'] ?? '');
+
+                //only perform relationship check if both fields are populated
+                if (!empty($categoryName) && !empty($subcategoryName)) {
+
+                    //look up whether the relationship actually matches in the database
+                    $isValidRelation = SubCategory::where('name', $subcategoryName)
+                        ->whereHas('category', function ($query) use ($categoryName) {
+                            $query->where('name', $categoryName);
+                        })
+                        ->exists();
+
+                    if (!$isValidRelation) {
+                        //dynamically inject a failure tied exactly to that specific row's subcategory field!
+                        $validator->errors()->add(
+                            "{$key}.subcategory",
+                            "The subcategory '{$subcategoryName}' does not belong to the selected category '{$categoryName}'."
+                        );
+                    }
+                }
+            }
+        });
     }
 
     public function prepareForValidation($data){

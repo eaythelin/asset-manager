@@ -69,29 +69,9 @@
               <x-td>{{ $asset->custodian?->name}}</x-td>
               <x-td>{{ $asset->category->name}}</x-td>
               <x-td class="text-center">
-                @can('manage assets')
-                  @if(!in_array($asset->status->value, ['disposed']))
-                    <button onclick="changeStatus.showModal()"
-                      class="changeBtn cursor-pointer tooltip tooltip-top"
-                      data-tip="Change Status"
-                      aria-label="Change Asset Status"
-                      data-status="{{ $asset->status->value }}"
-                      data-route="{{ route('assets.changeStatus', $asset->id) }}">
-                      <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap
-                        transition-all duration-200 hover:shadow-lg hover:brightness-110 hover:scale-105">
-                        {{ $asset->status->label() }}
-                      </span>
-                    </button>
-                  @else
-                    <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap">
-                      {{ $asset->status->label() }}
-                    </span>
-                  @endif
-                @else
-                  <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap">
-                    {{ $asset->status->label() }}
-                  </span>
-                @endcan
+                <span class="badge {{ $asset->status->badgeColor() }} text-white font-medium text-sm p-3 whitespace-nowrap">
+                  {{ $asset->status->label() }}
+                </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-3 justify-center">
                 @can("view assets")

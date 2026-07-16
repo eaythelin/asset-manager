@@ -7,7 +7,7 @@
   </div>
 
   <x-validation-error />
-  <form method="POST" action="{{ route("assets.store") }}" enctype="multipart/form-data">
+  <form method="POST" action="{{ route("assets.store") }}" enctype="multipart/form-data" id="createAssetForm">
     @csrf
     <div class="bg-white p-4 rounded-2xl shadow-2xl mt-4">
       <x-page-section-header title="General Details">
@@ -169,6 +169,9 @@
     </div>
   </form>
 </div>
+
+@include('modals.assets-modals.create-duplicate-asset-modal')
+
 @endsection
 
 @section('scripts')
@@ -176,4 +179,5 @@
   @vite('resources/js/assets/endOfLifeCalc.js')
   @vite('resources/js/assets/filepond-asset.js')
   @vite('resources/js/assets/assetTomSelect.js')
+  @vite('resources/js/assets/create-asset/checkDuplicate.js')
 @endsection

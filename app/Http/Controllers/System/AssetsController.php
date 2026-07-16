@@ -293,4 +293,16 @@ class AssetsController extends Controller
 
         return view('pages.workorders.show-workorder', compact('workorder', 'backRoute', 'backLabel', 'requestTypes'));
     }
+
+    public function checkDuplicate(Request $request){
+        $existing = Asset::where('name', $request->asset_name)
+            ->where('serial_name', $request->serial_name)
+            ->where('department_id', $request->department)
+            ->first();
+
+        return response()->json([
+            'duplicate' => $existing ? true : false,
+            'existing_asset' => $existing
+        ]);
+    }
 }

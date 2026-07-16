@@ -37,11 +37,13 @@ Route::middleware(['auth'])->group(function () {
       Route::group(["prefix" => "/create", "middleware" => "check.permission:manage assets"], function(){
         Route::get('/', [AssetsController::class, 'getCreateAsset'])->name('assets.create');
         Route::post('/store', [AssetsController::class, "storeAsset"])->name("assets.store");
+        Route::post('/check-duplicate', [AssetsController::class, "checkDuplicate"])->name("assets.checkDuplicate.create");
       });
 
       Route::group(["prefix" => "/edit", "middleware" => "check.permission:manage assets"], function(){
         Route::get('/{id}', [AssetsController::class, 'getEditAsset'])->name('assets.edit');
         Route::put('/{id}/update', [AssetsController::class, 'updateAsset'])->name('assets.update');
+        Route::post('/check-duplicate', [AssetsController::class, "checkDuplicateOnEdit"])->name("assets.checkDuplicate.edit");
       });
 
       Route::middleware("check.permission:manage assets")->group(function(){

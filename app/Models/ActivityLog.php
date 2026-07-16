@@ -32,4 +32,19 @@ class ActivityLog extends Model
             'description' => $description
         ]);
     }
+
+    public function scopeSearch($query, $search){
+        if(!$search) return $query;
+
+        return $query->where(function($q) use ($search){
+            $q->whereRaw("DATE_FORMAT(created_at, '%b %d, %Y %h:%i %p') LIKE ?", ["%{$search}%"])
+            ->orWhereRaw("DATE_FORMAT(created_at, '%M %d, %Y %h:%i %p') LIKE ?", ["%{$search}%"])
+            ->orWhereHas('user', function($q2) use ($search) {
+                $q2->where('name', 'LIKE', "%{$search}%");
+            })
+            ->orWhere('module', 'LIKE', "%{$search}%")
+            ->orWhere('action', 'LIKE', "%{$search}%")
+            ->orWhere('description', 'LIKE', "%{$search}%");
+        });
+    }
 }

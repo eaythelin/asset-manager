@@ -17,6 +17,11 @@ class ActivityLogController extends Controller
           $query->where('module', request('module'));
         }
 
+        if(request('search')){
+            $search = $request->input('search');
+            $query->search($search);
+        }
+
         if(request('expand')){
           $activityLogs = $query->latest()->paginate(20);
         }else{

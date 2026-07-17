@@ -9,6 +9,8 @@
   <x-validation-error />
   <form method="POST" action="{{ route("assets.store") }}" enctype="multipart/form-data" id="createAssetForm">
     @csrf
+    <input type="hidden" name="confirm_merge" id="confirm_merge" value="0">
+
     <div class="bg-white p-4 rounded-2xl shadow-2xl mt-4">
       <x-page-section-header title="General Details">
         <x-heroicon-s-information-circle class="size-6 text-blue-700"/>
@@ -165,7 +167,6 @@
       </div>
 
       <x-page-create-submit-button>Submit</x-page-create-submit-button>
-
     </div>
   </form>
 </div>

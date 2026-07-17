@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function (){
   });
 
   confirmBtn.addEventListener('click', function(){
+    document.getElementById('confirm_merge').value = '1';
     duplicateModal.close();
     form.submit();
   })

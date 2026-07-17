@@ -107,6 +107,22 @@ class AssetsController extends Controller
 
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
+        
+        //store if duplicate
+        $existing = Asset::where('name', $validated['asset_name'])
+            ->where('serial_name', $validated['serial_name'])
+            ->where('department_id', $validated['department'])
+            ->first();
+
+        if($existing && $request->confirm_merge == '1'){
+            $existing->quantity += $validated['quantity'];
+            $existing->save();
+
+            ActivityLog::log(ActivityModule::ASSET, ActivityAction::UPDATED, "Merged asset: " . $validated['asset_name']);
+
+            return redirect()->route('assets.index')->with('success', 'Asset merged successfully!');
+        }
+
 
         $imagePath = null;
         //store the image in the public folder if uploaded!

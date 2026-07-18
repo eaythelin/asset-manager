@@ -107,7 +107,7 @@ class AssetsController extends Controller
 
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
-        
+
         //store if duplicate
         $existing = Asset::where('name', $validated['asset_name'])
             ->where('serial_name', $validated['serial_name'])
@@ -314,6 +314,19 @@ class AssetsController extends Controller
         $existing = Asset::where('name', $request->asset_name)
             ->where('serial_name', $request->serial_name)
             ->where('department_id', $request->department)
+            ->first();
+
+        return response()->json([
+            'duplicate' => $existing ? true : false,
+            'existing_asset' => $existing
+        ]);
+    }
+
+    public function checkDuplicateOnEdit(Request $request, $id){
+        $existing = Asset::where('name', $request->asset_name)
+            ->where('serial_name', $request->serial_name)
+            ->where('department_id', $request->department)
+            ->where('id', '!=', $id)
             ->first();
 
         return response()->json([

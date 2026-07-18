@@ -9,9 +9,12 @@
   </div>
 
   <x-validation-error />
-  <form method="POST" action="{{ route("assets.update", $asset->id) }}" enctype="multipart/form-data">
+  <form method="POST" action="{{ route("assets.update", $asset->id) }}" enctype="multipart/form-data" data-check-url="{{ route('assets.checkDuplicate.edit', $asset->id) }}" id="editAssetForm">
     @csrf
     @method('PUT')
+
+    <input type="hidden" name="confirm_merge" id="confirm_merge" value="0">
+
     <div class="bg-white p-4 rounded-2xl shadow-2xl mt-4">
       <x-page-section-header title="General Details">
         <x-heroicon-s-information-circle class="size-6 text-blue-700"/>
@@ -178,6 +181,9 @@
     </div>
   </form>
 </div>
+
+@include('modals.assets-modals.duplicate-asset-modal')
+
 @endsection
 
 @section('scripts')
@@ -185,4 +191,5 @@
   @vite('resources/js/assets/endOfLifeCalc.js')
   @vite('resources/js/assets/filepond-asset.js')
   @vite('resources/js/assets/assetTomSelect.js')
+  @vite('resources/js/assets/edit-asset/editCheckDuplicate.js')
 @endsection

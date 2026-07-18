@@ -171,7 +171,7 @@
   </form>
 </div>
 
-@include('modals.assets-modals.create-duplicate-asset-modal')
+@include('modals.assets-modals.duplicate-asset-modal')
 
 @endsection
 

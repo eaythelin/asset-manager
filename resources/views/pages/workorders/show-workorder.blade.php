@@ -224,12 +224,12 @@
     <div class="flex flex-col sm:flex-row gap-6 mt-5">
       <div class="form-row flex-1">
         <x-page-label for="inspected_by">Inspected By</x-page-label>
-        <x-page-input name="inspected_by" id="inspected_by" value="{{ $workorder->completedBy->name }}" readonly/>
+        <x-page-input name="inspected_by" id="inspected_by" value="{{ $workorder->completedBy?->name }}" readonly/>
       </div>
 
       <div class="form-row flex-1">
         <x-page-label for="accepted_by">Accepted By</x-page-label>
-        <x-page-input name="accepted_by" id="accepted_by" value="{{ $workorder->request->requestedBy->name }}" readonly/>
+        <x-page-input name="accepted_by" id="accepted_by" value="{{ $workorder->status->value === 'cancelled' ? '' : $workorder->request->requestedBy->name }}" readonly/>
       </div>
     </div>
 

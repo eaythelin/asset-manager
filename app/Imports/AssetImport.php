@@ -14,8 +14,9 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
-class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartRow
+class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartRow, SkipsEmptyRows
 {
     public function startRow(): int
     {
@@ -25,6 +26,19 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
     public function model(array $row)
     {
         if (!isset($row['asset_name'])) {
+            return null;
+        }
+
+        $departmentId = Department::where('name', trim($row['department']))->first()?->id;
+
+        $existing = Asset::where('name', $row['asset_name'])
+            ->where('serial_name', $row['serial_name'])
+            ->where('department_id', $departmentId)
+            ->first();
+
+        if ($existing) {
+            $existing->quantity += $row['quantity'];
+            $existing->save();
             return null;
         }
 
@@ -61,13 +75,13 @@ class AssetImport implements ToModel, WithHeadingRow, WithValidation, WithStartR
     public function rules(): array
     {
         return [
-            "asset_name" => ['required', 'string', 'max:100'],
+            "asset_name" => ['nullable', 'string', 'max:100'],
             "serial_name" => ["nullable", "string", "max:100"],
-            "category" => ["required", Rule::exists('categories', 'name')],
-            "quantity"=> ["required","integer", "min:1"],
+            "category" => ["required_with:asset_name", Rule::exists('categories', 'name')],
+            "quantity"=> ["required_with:asset_name","integer", "min:1"],
             "subcategory" => ["nullable", Rule::exists('sub_categories', 'name')],
             "description" => ["nullable", "string", "max:255"],
-            "department" => ["required", Rule::exists('departments', 'name')],
+            "department" => ["required_with:asset_name", Rule::exists('departments', 'name')],
             "custodian" => ["nullable", Rule::exists('employees', 'name')],
             "is_depreciable" => ["nullable", "boolean"],
             "cost" => ["required_if:is_depreciable,true", "nullable", "numeric"],

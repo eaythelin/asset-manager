@@ -21,7 +21,7 @@ class ActivityLog extends Model
     ];
 
     public function user(){
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public static function log($module, $action, $description){

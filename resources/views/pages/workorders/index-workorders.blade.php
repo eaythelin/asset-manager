@@ -33,7 +33,7 @@
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
                 @can("manage workorders")
-                  @if($workorder->status->value === 'completed')
+                  @if(in_array($workorder->status->value, ['completed', 'cancelled']))
                   <a class="w-full sm:w-auto flex justify-center" href="{{ route('workorders.view', $workorder->id) }}">
                     <x-buttons
                       class="viewBtn tooltip tooltip-top"

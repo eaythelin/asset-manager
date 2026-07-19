@@ -4,6 +4,7 @@ namespace App\Http\Controllers\System;
 
 use App\Enums\AssetStatus;
 use App\Enums\DisposalMethods;
+use App\Enums\RequestStatus;
 use App\Enums\WorkorderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssetValidation;
@@ -28,6 +29,7 @@ use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
 use App\Enums\RequestTypes;
+use App\Models\Request as RequestModel;
 
 class AssetsController extends Controller
 {
@@ -163,6 +165,35 @@ class AssetsController extends Controller
 
         //make the is_depreciable true/false!
         $validated['is_depreciable'] = $request->has('is_depreciable');
+
+        $existing = Asset::where('name', $request->asset_name)
+            ->where('serial_name', $request->serial_name)
+            ->where('department_id', $request->department)
+            ->where('id', '!=', $id)
+            ->first();
+
+        if($existing && $request->confirm_merge == '1'){
+            //check for existing request/workorders and cancel them all
+            RequestModel::where('asset_id', $asset->id)
+                ->whereNotIn('status', [RequestStatus::REJECTED->value, RequestStatus::CANCELLED->value])
+                ->update(['status' => RequestStatus::CANCELLED->value]);
+
+            Workorder::whereHas('request', function($q) use ($asset){
+                $q->where('asset_id', $asset->id);
+            })->whereNotIn('status', [WorkorderStatus::COMPLETED->value, WorkorderStatus::CANCELLED->value])
+            ->update(['status' => WorkorderStatus::CANCELLED->value]);
+
+            $existing->quantity += $asset->quantity;
+            $existing->save();
+
+            $asset->status = AssetStatus::DISPOSED->value;
+            $asset->save();
+            $asset->delete();
+
+            ActivityLog::log(ActivityModule::ASSET, ActivityAction::UPDATED, "Asset '{$asset->name}' merged into asset ID {$existing->asset_code} (marked as disposed)");
+
+            return redirect()->route('assets.index')->with('success', 'Asset merged successfully!');
+        }
 
         //store the image in the public folder if uploaded!
         if($request->hasFile('image_path')){

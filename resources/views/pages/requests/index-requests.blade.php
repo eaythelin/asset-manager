@@ -33,6 +33,7 @@
                 <x-td>{{ $request->requestedBy->name }}</x-td>
               @endif
               <x-td>{{ $request->asset->name }}</x-td>
+              <x-td>{{ $request->department->name }}</x-td>
               <x-td>{{ $request->request_type->label() }}</x-td>
               @if(!in_array(auth()->user()->getRoleNames()->first(), ['General Manager', 'System Supervisor']))
                 <x-td>{{ $request->description }}</x-td>

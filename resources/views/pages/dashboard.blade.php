@@ -30,11 +30,6 @@
     <x-dashboard-cards bgColor="bg-gray-900" title="Under Fabrication" :number="$fabricationAssets">
       <x-heroicon-s-cog class="size-8 md:size-10" />
     </x-dashboard-cards>
-    @if($role === "Department Head")
-      <x-dashboard-cards class="col-span-2 md:col-span-3" bgColor="bg-blue-500" title="Pending Request" :number="$requestCount">
-        <x-heroicon-s-clipboard-document-list class="size-8 md:size-10" />
-      </x-dashboard-cards>
-    @endif
   </div>
 </div>
 
@@ -54,6 +49,23 @@
     </div>
   </div>
 @endcan
+
+@hasanyrole('Department Head|General Manager')
+  <div class="bg-white rounded-2xl shadow-xl mt-6 md:mx-4 p-3">
+    <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">Requests Summary</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <x-dashboard-cards bgColor="bg-yellow-500" title="Pending" :number="$pendingCount">
+        <x-heroicon-s-clock class="size-8 md:size-10" />
+      </x-dashboard-cards>
+      <x-dashboard-cards bgColor="bg-green-500" title="Approved" :number="$approvedCount">
+        <x-heroicon-o-check-circle class="size-8 md:size-10" />
+      </x-dashboard-cards>
+      <x-dashboard-cards bgColor="bg-red-500" title="Rejected" :number="$declinedCount">
+        <x-heroicon-o-x-circle class="size-8 md:size-10" />
+      </x-dashboard-cards>
+    </div>
+  </div>
+@endrole
 
 <!--The Assets per department are hidden if role = Department Head-->
 <!--Middle Charts-->

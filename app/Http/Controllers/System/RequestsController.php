@@ -49,14 +49,14 @@ class RequestsController extends Controller
         };
 
         $columns = match($role) {
-            'Department Head' => ["Control No.", "Asset", "Type", "Description", "Date Requested", "Status", "Actions"],
-            'General Manager', 'System Supervisor' => ["Control No.", "Requested By", "Asset", "Type", "Date Requested", "Status", "Actions"],
+            'Department Head' => ["Control No.", "Asset", "Department", "Type", "Description", "Date Requested", "Status", "Actions"],
+            'General Manager', 'System Supervisor' => ["Control No.", "Requested By", "Asset", "Department", "Type", "Date Requested", "Status", "Actions"],
             default => [],
         };
 
         $centeredColumns = match($role){
-            'Department Head' => [0,5,6],
-            'General Manager', 'System Supervisor' => [0,5,6],
+            'Department Head' => [0,6,7],
+            'General Manager', 'System Supervisor' => [0,6,7],
             default => [],
         };
 

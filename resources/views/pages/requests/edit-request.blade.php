@@ -54,13 +54,9 @@
           </div>
 
           <div class="form-row">
-            <x-page-label for="department" :required="true">Sec/Dept</x-page-label>
-            <x-page-select name="department" id="department">
-              <option value="" disabled selected>--Select Department--</option>
-              @foreach($departments as $id=>$name)
-                <option value="{{ $id }}" {{ old('department', $requestModel->department->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
-              @endforeach
-            </x-page-select>
+            <x-page-label for="department">Sec/Dept</x-page-label>
+            <x-page-input value="{{ auth()->user()->employee->department->name }}" readonly/>
+            <input type="hidden" value="{{ auth()->user()->employee->department->id }}" name="department" id="department">
           </div>
 
           <div class="form-row">

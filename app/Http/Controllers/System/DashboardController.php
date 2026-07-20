@@ -55,14 +55,21 @@ class DashboardController extends Controller
         $repairAssets = $repairAssetsQuery->count();
         $fabricationAssets = $fabricationAssetsQuery->count();
 
-        $requestCount = RequestModel::where('status', 'pending');
-        if(auth()->user()->getRoleNames()->contains('General Manager')){
-            $requestCount = $requestCount->count();
-        }elseif(auth()->user()->getRoleNames()->contains('Department Head')){
-            $requestCount = $requestCount->where('department_id', $userDepartment)->count();
-        }else{
-            $requestCount = 0;
-        }
+        $getCount = function($status) use ($userDepartment) {
+            $query = RequestModel::where('status', $status);
+
+            if (auth()->user()->getRoleNames()->contains('General Manager')) {
+                return $query->count();
+            } elseif (auth()->user()->getRoleNames()->contains('Department Head')) {
+                return $query->where('department_id', $userDepartment)->count();
+            }
+
+            return 0;
+        };
+
+        $pendingCount = $getCount('pending');
+        $approvedCount = $getCount('approved');
+        $declinedCount = $getCount('rejected');
 
         //activity log table
         $activityLogs = ActivityLog::latest()->take(5)->get();
@@ -79,8 +86,8 @@ class DashboardController extends Controller
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'cardGridNumber',"expiredAssets",
-                                                            "requestCount", "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs",
-                                                            "pendingWO", "inProgWO", "completedWO"));
+                                                            "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs",
+                                                            "pendingWO", "inProgWO", "completedWO", "pendingCount", "approvedCount", "declinedCount"));
     }
 
     public function getSubcategoryCount(Category $category){

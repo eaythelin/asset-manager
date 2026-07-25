@@ -39,7 +39,9 @@ export default defineConfig({
                 'resources/js/reports/deleteReport.js',
                 'resources/js/assets/convertSVGtoPNG.js',
                 'resources/js/assets/assetTomSelect.js',
-                'resources/js/assets/changeStatus.js'
+                'resources/js/assets/changeStatus.js',
+                'resources/js/assets/create-asset/checkDuplicate.js',
+                'resources/js/assets/edit-asset/editCheckDuplicate.js'
             ],
             refresh: true,
         }),

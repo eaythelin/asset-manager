@@ -39,7 +39,7 @@ class ResetPasswordController extends Controller
 
                 $user->save();
 
-                ActivityLog::log(ActivityModule::USER, ActivityAction::UPDATED, "Reset their password");
+                ActivityLog::log(ActivityModule::USER, ActivityAction::UPDATED, "Reset their password", $user->id);
 
                 event(new PasswordReset($user));
             });

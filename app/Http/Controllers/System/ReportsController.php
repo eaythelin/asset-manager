@@ -142,6 +142,7 @@ class ReportsController extends Controller
                 return $pdf->stream('disposal-report.pdf');
             }
         }catch(\Exception $e) {
+            //  dd($e->getMessage());
             return redirect()->route("reports.index")->with('error', 'Something went wrong!');
         }
 

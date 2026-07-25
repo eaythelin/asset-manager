@@ -24,12 +24,12 @@ class ActivityLog extends Model
         return $this->belongsTo(User::class)->withTrashed();
     }
 
-    public static function log($module, $action, $description){
+    public static function log($module, $action, $description, $userId = null){
         static::create([
-            'user_id' => auth()->id(),
+            'user_id' => $userId ?? auth()->id(),
             'module' => $module->value,
             'action' => $action->value,
-            'description' => $description
+            'description' => $description,
         ]);
     }
 

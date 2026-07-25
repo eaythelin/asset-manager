@@ -38,7 +38,7 @@ class EmployeesController extends Controller
 
         $desc = $role === "System Supervisor" ? "View, add, and manage employees and their assets" : "View employees and their assigned assets";
 
-        $employees = $query->paginate(5);
+        $employees = $query->paginate(5)->withQueryString();
         $departments = Department::orderBy('name')->pluck('name', 'id');
         $latest = Employee::withTrashed()->orderByDesc('employee_no')->first();
         $count = $latest ? (int) substr($latest->employee_no, -4) + 1 : 1;

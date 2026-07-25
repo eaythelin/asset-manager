@@ -31,7 +31,7 @@ class UsersController extends Controller
             $query->search($search);
         }
 
-        $users = $query->paginate(5);
+        $users = $query->paginate(5)->withQueryString();
 
         $employees = Employee::whereDoesntHave('user', function($query){
           $query->withTrashed();

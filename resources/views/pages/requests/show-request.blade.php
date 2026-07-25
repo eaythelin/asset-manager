@@ -51,7 +51,7 @@
               <label class="flex items-center gap-2 cursor-pointer">
                 <input type="radio" name="request_type" value="{{ $type->value }}"
                   {{ old('request_type', $requestModel->request_type->value) == $type->value ? 'checked' : '' }}
-                  class="checkbox rounded-none checkbox-sm checkbox-primary" readonly>
+                  class="checkbox rounded-none checkbox-sm checkbox-primary" disabled>
                 {{ $type->label() }}
               </label>
             @endforeach

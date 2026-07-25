@@ -26,6 +26,7 @@
 
       <form method="GET" action="{{ route('activitylog.index') }}">
         <input type="hidden" name="search" value="{{ request('search') }}">
+        <input type="hidden" name="module" value="{{ request('module') }}">
         <label class="flex mt-3 items-center gap-2 cursor-pointer">
           <input type="checkbox" name="expand" class="checkbox" {{ request('expand') ? 'checked' : '' }}
             onchange="this.form.submit()">

@@ -86,11 +86,11 @@ class Request extends Model
         'approved_at' => 'date'
     ];
     public function requestedBy(){
-        return $this->belongsTo(User::class, 'requested_by');
+        return $this->belongsTo(User::class, 'requested_by')->withTrashed();
     }
 
     public function approvedBy(){
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'approved_by')->withTrashed();
     }
 
     public function asset(){

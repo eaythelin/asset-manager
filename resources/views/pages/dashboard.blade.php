@@ -40,7 +40,7 @@
       <x-dashboard-cards bgColor="bg-amber-500" title="Pending" :number="$pendingWO">
         <x-heroicon-s-clock class="size-8 md:size-10" />
       </x-dashboard-cards>
-      <x-dashboard-cards bgColor="bg-blue-600" title="In-Progress" :number="$inProgWO">
+      <x-dashboard-cards bgColor="bg-blue-600" title="In Progress" :number="$inProgWO">
         <x-heroicon-s-play class="size-8 md:size-10" />
       </x-dashboard-cards>
       <x-dashboard-cards bgColor="bg-emerald-600" title="Completed" :number="$completedWO">

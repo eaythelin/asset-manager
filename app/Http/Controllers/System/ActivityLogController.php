@@ -23,9 +23,9 @@ class ActivityLogController extends Controller
         }
 
         if(request('expand')){
-          $activityLogs = $query->latest()->paginate(20);
+          $activityLogs = $query->latest()->paginate(20)->withQueryString();
         }else{
-          $activityLogs = $query->latest()->paginate(10);
+          $activityLogs = $query->latest()->paginate(10)->withQueryString();
         }
 
         $columns = ["Date", "User", "Module", "Action", "Description"];

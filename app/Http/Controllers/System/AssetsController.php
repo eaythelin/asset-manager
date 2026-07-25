@@ -57,7 +57,7 @@ class AssetsController extends Controller
 
         $desc = $role === "System Supervisor" ? "View and manage assets" : "View assets information";
 
-        $assets = $query->paginate(5);
+        $assets = $query->paginate(5)->withQueryString();
         $columns = ["Asset Code", "Asset Name","Quantity","Serial Name","Department", "Custodian", "Category", "Status", "Actions"];
 
         return view('pages.assets.index-assets', ['desc' => $desc,

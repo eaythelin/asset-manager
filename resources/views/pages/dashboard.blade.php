@@ -18,7 +18,7 @@
     <x-dashboard-cards bgColor="bg-red-500" title="Disposed" :number="$disposedAssets">
       <x-heroicon-s-trash class="size-8 md:size-10"/>
     </x-dashboard-cards>
-    <x-dashboard-cards bgColor="bg-orange-500" title="Expired" :number="$expiredAssets">
+    <x-dashboard-cards bgColor="bg-orange-500" title="Obsolete" :number="$obsoleteAssets">
       <x-heroicon-s-exclamation-triangle class="size-8 md:size-10" />
     </x-dashboard-cards>
     <x-dashboard-cards bgColor="bg-gray-500" title="Under Maintenance" :number="$maintenanceAssets">

@@ -27,7 +27,7 @@ class CheckExpiredAssets extends Command
     public function handle()
     {
         $assets = Asset::with(['category'])->get();
-        $assets->each(fn($asset) => $asset->computed_status); 
-        $this->info('Done checking expired assets!');
+        $assets->each(fn($asset) => $asset->computed_status);
+        $this->info('Done checking obsolete assets!');
     }
 }

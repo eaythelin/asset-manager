@@ -34,7 +34,7 @@ class DashboardController extends Controller
         //asset numbers for the cards
         $activeAssetQuery = Asset::where('status', 'active');
         $disposeAssetsQuery = Asset::withTrashed()->where('status', 'disposed');
-        $expiredAssetQuery = Asset::where('status','expired');
+        $obsoleteAssetQuery = Asset::where('status','obsolete');
         $maintenanceAssetsQuery = Asset::where('status', AssetStatus::MAINTENANCE);
         $repairAssetsQuery = Asset::where('status', AssetStatus::REPAIR);
         $fabricationAssetsQuery = Asset::where('status', AssetStatus::FABRICATION);
@@ -42,7 +42,7 @@ class DashboardController extends Controller
         if(auth()->user()->getRoleNames()->contains('Department Head')){
             $activeAssetQuery->where('department_id', $userDepartment);
             $disposeAssetsQuery->where('department_id', $userDepartment);
-            $expiredAssetQuery->where('department_id', $userDepartment);
+            $obsoleteAssetQuery->where('department_id', $userDepartment);
             $maintenanceAssetsQuery->where('department_id', $userDepartment);
             $repairAssetsQuery->where('department_id', $userDepartment);
             $fabricationAssetsQuery->where('department_id', $userDepartment);
@@ -50,7 +50,7 @@ class DashboardController extends Controller
 
         $activeAssets = $activeAssetQuery->count();
         $disposedAssets = $disposeAssetsQuery->count();
-        $expiredAssets = $expiredAssetQuery->count();
+        $obsoleteAssets = $obsoleteAssetQuery->count();
         $maintenanceAssets = $maintenanceAssetsQuery->count();
         $repairAssets = $repairAssetsQuery->count();
         $fabricationAssets = $fabricationAssetsQuery->count();
@@ -85,7 +85,7 @@ class DashboardController extends Controller
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
-                                                            "activeAssets", "disposedAssets","role", 'cardGridNumber',"expiredAssets",
+                                                            "activeAssets", "disposedAssets","role", 'cardGridNumber',"obsoleteAssets",
                                                             "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs",
                                                             "pendingWO", "inProgWO", "completedWO", "pendingCount", "approvedCount", "declinedCount"));
     }

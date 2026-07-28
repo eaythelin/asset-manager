@@ -162,11 +162,10 @@ class Asset extends Model
             }
         }
 
-        $totalMonths = $totalMonths = $this->useful_life_in_years * 12;
-        $monthElapsed = $startDate->diffInMonths($endDate);
-        $monthsToDepreciate = min($monthElapsed, $totalMonths);
-        $monthlyDepreciation = ($this->cost - $this->salvage_value) / $totalMonths;
-        $accumulatedDepreciation = $monthlyDepreciation * $monthElapsed;
+        $yearsElapsed = (int) $startDate->diffInYears($endDate);
+        $yearsToDepreciate = min($yearsElapsed, $this->useful_life_in_years);
+        $annualDepreciation = ($this->cost - $this->salvage_value) / $this->useful_life_in_years;
+        $accumulatedDepreciation = $annualDepreciation * $yearsToDepreciate;
 
         $currentValue = max($this->cost - $accumulatedDepreciation, $this->salvage_value);
         return $currentValue;
@@ -188,36 +187,34 @@ class Asset extends Model
             }
         }
 
-        $totalMonths = $totalMonths = $this->useful_life_in_years * 12;
-        $monthElapsed = $startDate->diffInMonths($endDate);
-        $monthsToDepreciate = min($monthElapsed, $totalMonths);
-        $monthlyDepreciation = ($this->cost - $this->salvage_value) / $totalMonths;
-
-        return round($monthlyDepreciation * $monthsToDepreciate, 2);
+        $yearsElapsed = (int) $startDate->diffInYears($endDate);
+        $yearsToDepreciate = min($yearsElapsed, $this->useful_life_in_years);
+        $annualDepreciation = ($this->cost - $this->salvage_value) / $this->useful_life_in_years;
+        return round($annualDepreciation * $yearsToDepreciate, 2);
     }
 
     public function getComputedStatusAttribute(){
         if($this->is_depreciable && $this->end_of_life_date){
             if(now()->greaterThan($this->end_of_life_date)){
-                $protected = ['disposed', 'maintenance', 'repair', 'fabrication'];
+                $protected = [AssetStatus::DISPOSED->value, AssetStatus::MAINTENANCE->value, AssetStatus::REPAIR->value, AssetStatus::FABRICATION->value];
 
-                if(!in_array($this->status->value, $protected) && $this->status->value !== AssetStatus::EXPIRED->value){
+                if(!in_array($this->status->value, $protected) && $this->status->value !== AssetStatus::OBSOLETE->value){
                     $oldStatus = $this->status->value;
 
-                    $this->update(['status'=> AssetStatus::EXPIRED->value]);
+                    $this->update(['status'=> AssetStatus::OBSOLETE->value]);
 
                     AssetStatusLog::create([
                         'asset_id' => $this->id,
                         'changed_by' => null,
                         'from_status' => $oldStatus,
-                        'to_status' => AssetStatus::EXPIRED->value,
-                        'notes' => 'Asset status changed to expired due to reaching expiration date'
+                        'to_status' => AssetStatus::OBSOLETE->value,
+                        'notes' => 'Asset status changed to obsolete due to reaching its end of life span date'
                     ]);
 
                     $this->refresh();
                 }
 
-                return 'expired';
+                return AssetStatus::OBSOLETE->value;
             }
         }
 

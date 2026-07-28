@@ -7,7 +7,7 @@ enum AssetStatus:string
     case ACTIVE = 'active';
     case DISPOSED = 'disposed';
     case MAINTENANCE = 'maintenance';
-    case EXPIRED = 'expired';
+    case OBSOLETE = 'obsolete';
     case REPAIR = 'repair';
     case FABRICATION = 'fabrication';
 
@@ -19,7 +19,7 @@ enum AssetStatus:string
             self::MAINTENANCE => 'Maintenance',
             self::REPAIR => 'Repair',
             self::FABRICATION => 'Fabrication',
-            self::EXPIRED => 'Expired',
+            self::OBSOLETE => 'Obsolete',
         };
     }
 
@@ -27,7 +27,7 @@ enum AssetStatus:string
     {
         return match($this) {
             self::ACTIVE        => 'badge-success',
-            self::EXPIRED       => 'badge-warning',
+            self::OBSOLETE       => 'badge-warning',
             self::DISPOSED      => 'badge-error',
             self::MAINTENANCE => 'badge-info',
             self::REPAIR => 'badge-info',

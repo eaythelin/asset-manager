@@ -172,7 +172,7 @@
       <label for="has_spare_parts" class="font-medium ml-2 text-lg">Requested Spare Parts</label>
 
       <template x-if="has_spare_parts">
-        <div x-data="{ rows: {{ json_encode($workorder->spare_parts ?? []) }} }" class="overflow-x-auto mt-5">
+        <div x-data="{ rows: {{ json_encode(array_pad($workorder->spare_parts ?? [], 5, ['part' => '', 'description' => '', 'quantity' => ''])) }} }" class="overflow-x-auto mt-5">
           <table class="table">
             <thead>
               <tr>

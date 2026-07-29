@@ -91,7 +91,12 @@ class WorkordersController extends Controller
                 }
 
                 //vehicle + spare parts false checker wipe
-                $data['spare_parts'] = $validated['has_spare_parts'] ? ($validated['spare_parts'] ?? null) : null;
+                $data['spare_parts'] = $validated['has_spare_parts']
+                    ? collect($validated['spare_parts'] ?? [])
+                        ->filter(fn ($row) => !empty($row['part']) && !empty($row['quantity']))
+                        ->values()
+                        ->toArray()
+                    : null;
                 $data['vehicle_minor_details'] = $validated['has_minor'] ? $validated['vehicle_minor_details'] : null;
                 $data['vehicle_major_details'] = $validated['has_major'] ? $validated['vehicle_major_details'] : null;
                 $data['last_change_oil_date'] = $validated['has_change_oil'] ? $validated['last_change_oil_date'] : null;

@@ -109,7 +109,7 @@
               <div class = "flex flex-col flex-1 gap-4">
                 <div class="form-row">
                   <x-page-label for="sub_cost" :required="true">Cost</x-page-label>
-                  <x-page-input value="{{ old('sub_cost', $workorder->sub_cost) }}" name="sub_cost" id="sub_cost" type="number"/>
+                  <x-page-input value="{{ old('sub_cost', $workorder->sub_cost) }}" name="sub_cost" id="sub_cost" type="number" min="1"/>
                 </div>
 
                 <div class="form-row">
@@ -181,7 +181,7 @@
 
                 <div class="form-row">
                   <x-page-label for="inhouse_cost" :required="true">Cost</x-page-label>
-                  <x-page-input value="{{ old('inhouse_cost', $workorder->inhouse_cost) }}" name="inhouse_cost" id="inhouse_cost" type="number"/>
+                  <x-page-input value="{{ old('inhouse_cost', $workorder->inhouse_cost) }}" name="inhouse_cost" id="inhouse_cost" type="number" min="1"/>
                 </div>
               </div>
             </div>
@@ -195,30 +195,37 @@
         <label for="has_spare_parts" class="font-medium ml-2 text-lg">Requested Spare Parts</label>
 
         <template x-if="has_spare_parts">
-          <div x-data="{ rows: {{ json_encode(old('spare_parts', $workorder->spare_parts ?? [])) }} }" class="overflow-x-auto mt-5">
+          <div class="overflow-x-auto mt-5">
             <table class="table">
               <thead>
                 <tr>
                   <th>Parts/Supplies</th>
                   <th>Description & Specification <span class="text-xs">(Brand names,size,code number, etc.)</span></th>
                   <th>Quantity</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
-                <template x-for="(row, index) in rows" :key="index">
+                @for ($i = 0; $i < 5; $i++)
                   <tr class="hover:bg-base-300">
-                    <td><input type="text" x-model="row.part" :name="`spare_parts[${index}][part]`" class="input input-sm w-full"></td>
-                    <td><input type="text" x-model="row.description" :name="`spare_parts[${index}][description]`" class="input input-sm w-full"></td>
-                    <td><input type="number" x-model="row.quantity" :name="`spare_parts[${index}][quantity]`" class="input input-sm w-full"></td>
-                    <td><button type="button" @click="rows.splice(index, 1)" class="btn btn-error btn-sm text-white">Remove</button></td>
+                    <td>
+                      <input type="text" name="spare_parts[{{ $i }}][part]"
+                        value="{{ old("spare_parts.$i.part", $workorder->spare_parts[$i]['part'] ?? '') }}"
+                        class="input input-sm w-full">
+                    </td>
+                    <td>
+                      <input type="text" name="spare_parts[{{ $i }}][description]"
+                        value="{{ old("spare_parts.$i.description", $workorder->spare_parts[$i]['description'] ?? '') }}"
+                        class="input input-sm w-full">
+                    </td>
+                    <td>
+                      <input type="number" name="spare_parts[{{ $i }}][quantity]" min="1"
+                        value="{{ old("spare_parts.$i.quantity", $workorder->spare_parts[$i]['quantity'] ?? '') }}"
+                        class="input input-sm w-full">
+                    </td>
                   </tr>
-                </template>
+                @endfor
               </tbody>
             </table>
-            <button type="button" @click="rows.push({part: '', description: '', quantity: 1})" class="btn btn-primary btn-sm mt-2 ml-2">
-              + Add Row
-            </button>
           </div>
         </template>
       </div>

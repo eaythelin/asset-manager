@@ -33,6 +33,42 @@
   </div>
 </div>
 
+@can('manage assets')
+  <div class="bg-white rounded-2xl shadow-xl mt-6 md:mx-4 p-3" x-data="{ showBreakdown: false }">
+    <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">Asset Financial Summary</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <x-dashboard-cards bgColor="bg-indigo-500" title="Total Original Cost" :number="'₱' . $totalOriginalCost">
+        <x-heroicon-s-currency-dollar class="size-8 md:size-10" />
+      </x-dashboard-cards>
+      <x-dashboard-cards bgColor="bg-teal-600" title="Total Depreciated Value" :number="'₱' . $totalDepreciatedValue">
+        <x-heroicon-s-arrow-trending-down class="size-8 md:size-10" />
+      </x-dashboard-cards>
+    </div>
+    <div class="flex flex-col md:flex-row justify-center mt-3">
+      <x-buttons class="w-full" @click="showBreakdown = !showBreakdown">
+        <x-heroicon-s-eye class="size-4 sm:size-5"/>
+        <span x-text="showBreakdown ? 'Hide Breakdown' : 'Show Breakdown'"></span>
+      </x-buttons>
+    </div>
+
+    <div x-show="showBreakdown" x-cloak class="mt-3">
+      <x-tables :columnNames="$assetFinColumns" :centeredColumns="[0]">
+        <tbody class="divide-y divide-gray-400">
+          @foreach ($assetFinance as $asset)
+            <tr>
+              <th class="p-3 text-center">{{ $asset->asset_code}}</th>
+              <x-td>{{ $asset->name }}</x-td>
+              <x-td>{{ $asset->serial_name }}</x-td>
+              <x-td>₱{{ number_format($asset->cost, 2) }}</x-td>
+              <x-td>₱{{ number_format($asset->book_value, 2) }}</x-td>
+            </tr>
+          @endforeach
+        </tbody>
+      </x-tables>
+    </div>
+  </div>
+@endcan
+
 @can('view workorders')
   <div class="bg-white rounded-2xl shadow-xl mt-6 md:mx-4 p-3">
     <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">Work Orders Summary</h2>

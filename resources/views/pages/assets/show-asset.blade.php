@@ -27,7 +27,7 @@
         <div id="qr-container" style="display:none;">
           {!! QrCode::size(300)->generate(route('assets.show', $asset->id)) !!}
         </div>
-        <x-buttons class="btn-sm sm:btn-md" id="download-qr-btn" data-asset-name="{{ $asset->name }}">
+        <x-buttons class="btn-sm sm:btn-md" id="download-qr-btn" data-asset-name="{{ $asset->name }}" data-asset-code="{{ $asset->asset_code }}">
           <x-heroicon-o-qr-code class="size-4"/>
           Download QR
         </x-buttons>

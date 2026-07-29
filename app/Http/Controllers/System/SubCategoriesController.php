@@ -65,8 +65,12 @@ class SubCategoriesController extends Controller
 
     public function deleteSubCategory($id){
         $subCategory = SubCategory::findOrFail($id);
-        $subCategory->delete();
 
+        if($subCategory->assets()->exists()){
+            return back()->with('error', 'Subcategory is linked to an existing asset!');
+        }
+
+        $subCategory->delete();
         ActivityLog::log(ActivityModule::SUBCATEGORY, ActivityAction::DELETED, "Deleted subcategory: " . $subCategory->name);
 
         return redirect()->route('subcategory.index')->with('success', 'Subcategory successfully deleted!');

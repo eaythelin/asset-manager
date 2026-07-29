@@ -55,7 +55,7 @@
 
           <div class="form-row">
             <x-page-label for="quantity" :required="true">Quantity</x-page-label>
-            <x-page-input name="quantity" id="quantity" type="number" value="{{ old('quantity', 1) }}"/>
+            <x-page-input name="quantity" id="quantity" type="number" value="{{ old('quantity', 1) }}" min="1"/>
           </div>
 
           <div class = "form-row">
@@ -111,12 +111,12 @@
 
           <div class = "form-row">
             <x-page-label for="cost" required="isDepreciable">Cost</x-page-label>
-            <x-page-input type="number" name="cost" id="cost" value="{{ old('cost') }}"/>
+            <x-page-input type="number" name="cost" id="cost" value="{{ old('cost') }}" min="1"/>
           </div>
 
           <div class = "form-row">
             <x-page-label for="salvage_value" required="isDepreciable">Salvage Value</x-page-label>
-            <x-page-input type="number" name="salvage_value" id="salvage_value" value="{{ old('salvage_value') }}"/>
+            <x-page-input type="number" name="salvage_value" id="salvage_value" value="{{ old('salvage_value') }}" min="1"/>
           </div>
         </div>
 
@@ -129,7 +129,7 @@
 
           <div class = "form-row">
             <x-page-label for="useful_life_in_years" required="isDepreciable">Useful Life in Years</x-page-label>
-            <x-page-input name="useful_life_in_years" id="useful_life_in_years" value="{{ old('useful_life_in_years') }}" type="number"/>
+            <x-page-input name="useful_life_in_years" id="useful_life_in_years" value="{{ old('useful_life_in_years') }}" type="number" min="1"/>
           </div>
 
           <div class = "form-row">

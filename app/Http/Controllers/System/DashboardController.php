@@ -38,6 +38,7 @@ class DashboardController extends Controller
         $maintenanceAssetsQuery = Asset::where('status', AssetStatus::MAINTENANCE);
         $repairAssetsQuery = Asset::where('status', AssetStatus::REPAIR);
         $fabricationAssetsQuery = Asset::where('status', AssetStatus::FABRICATION);
+        $assetFinanceQuery = Asset::query();
 
         if(auth()->user()->getRoleNames()->contains('Department Head')){
             $activeAssetQuery->where('department_id', $userDepartment);
@@ -46,6 +47,7 @@ class DashboardController extends Controller
             $maintenanceAssetsQuery->where('department_id', $userDepartment);
             $repairAssetsQuery->where('department_id', $userDepartment);
             $fabricationAssetsQuery->where('department_id', $userDepartment);
+            $assetFinanceQuery->where('department_id', $userDepartment);
         }
 
         $activeAssets = $activeAssetQuery->count();
@@ -55,6 +57,10 @@ class DashboardController extends Controller
         $repairAssets = $repairAssetsQuery->count();
         $fabricationAssets = $fabricationAssetsQuery->count();
 
+        //finance stuff
+        $assetFinance = $assetFinanceQuery->get();
+        $totalOriginalCost = number_format($assetFinance->sum('cost'), 2);
+        $totalDepreciatedValue = number_format($assetFinance->sum('book_value'), 2);
         $getCount = function($status) use ($userDepartment) {
             $query = RequestModel::where('status', $status);
 
@@ -83,11 +89,15 @@ class DashboardController extends Controller
         //Column names for Filter Subcategory by Category and Assets per Department
         $subcategoryFilterColumns = ["", "Subcategory", "Count"];
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
+        $assetFinColumns = ["Asset Code", "Asset Name", "Serial Name", "Original Cost", "Current Value"];
+        $assetFinance = $assetFinanceQuery->get()->sortByDesc('book_value')->values();
+        
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'cardGridNumber',"obsoleteAssets",
                                                             "maintenanceAssets", "repairAssets", "fabricationAssets", "activityColumns", "activityLogs",
-                                                            "pendingWO", "inProgWO", "completedWO", "pendingCount", "approvedCount", "declinedCount"));
+                                                            "pendingWO", "inProgWO", "completedWO", "pendingCount", "approvedCount", "declinedCount",
+                                                            "assetFinColumns", "assetFinance", "totalOriginalCost", "totalDepreciatedValue"));
     }
 
     public function getSubcategoryCount(Category $category){

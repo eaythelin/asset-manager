@@ -93,9 +93,9 @@ class WorkorderValidation extends FormRequest
 
             'has_spare_parts' => ['boolean'],
             'spare_parts' => ['nullable', 'array'],
-            'spare_parts.*.part' => ['required', 'string'],
+            'spare_parts.*.part' => ['nullable', 'string', 'required_with:spare_parts.*.quantity'],
             'spare_parts.*.description' => ['nullable', 'string'],
-            'spare_parts.*.quantity' => ['required', 'integer', 'min:1'],
+            'spare_parts.*.quantity' => ['nullable', 'integer', 'min:1', 'required_with:spare_parts.*.part'],
 
             "accomplishment_details" => ["nullable", "string", "max:255"]
         ];

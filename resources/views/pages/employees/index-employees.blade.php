@@ -37,7 +37,7 @@
         </x-buttons>
       @endcan
     </div>
-    <x-tables :columnNames="$columns" :centeredColumns="[0,3,4,5]">
+    <x-tables :columnNames="$columns" :centeredColumns="[0,3,4]">
       <tbody class = "divide-y divide-gray-400">
           @foreach($employees as $employee)
             <tr>
@@ -46,13 +46,6 @@
               <x-td>{{ $employee->department->name}}</x-td>
               <x-td class="text-center">
                 @if($employee->assets->count() > 0)
-                  <span class="badge badge-success"><x-heroicon-m-check class="size-5"/></span>
-                @else
-                  <span class="badge badge-error"><x-heroicon-c-x-mark class="size-5"/></span>
-                @endif
-              </x-td>
-              <x-td class="text-center">
-                @if($employee->is_maintenance)
                   <span class="badge badge-success"><x-heroicon-m-check class="size-5"/></span>
                 @else
                   <span class="badge badge-error"><x-heroicon-c-x-mark class="size-5"/></span>

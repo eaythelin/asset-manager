@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("workorder_employees", function (Blueprint $table) {
+        Schema::create("workorder_users", function (Blueprint $table) {
             $table->id();
             $table->foreignId('workorder_id')->constrained('workorders')->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('restrict');
+            $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('workorder_employees');
+        Schema::dropIfExists("workorder_users");
     }
 };

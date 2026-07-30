@@ -16,7 +16,6 @@ class EmployeeSeeder extends Seeder
         Employee::create([
             "name"=> "Alice Wanda",
             "department_id"=>3,
-            'is_maintenance' => true,
             'employee_no' => 'EMP-0001'
         ]);
 
@@ -35,14 +34,12 @@ class EmployeeSeeder extends Seeder
          Employee::create([
             "name"=> "James Venom",
             "department_id"=>3,
-            'is_maintenance' => true,
             'employee_no' => 'EMP-0004'
         ]);
 
         Employee::create([
             "name"=> "Victor Chill",
             "department_id"=>3,
-            'is_maintenance' => true,
             'employee_no' => 'EMP-0005'
         ]);
     }

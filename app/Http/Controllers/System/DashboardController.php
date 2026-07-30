@@ -82,16 +82,26 @@ class DashboardController extends Controller
 
         $activityColumns = ["Date", "User", "Module", "Action", "Description"];
 
-        $pendingWO = Workorder::where('status', WorkorderStatus::PENDING->value)->count();
-        $inProgWO = Workorder::where('status', WorkorderStatus::IN_PROGRESS->value)->count();
-        $completedWO = Workorder::where('status', WorkorderStatus::COMPLETED->value)->count();
+        $pendingWOQuery = Workorder::where('status', WorkorderStatus::PENDING->value);
+        $inProgWOQuery = Workorder::where('status', WorkorderStatus::IN_PROGRESS->value);
+        $completedWOQuery = Workorder::where('status', WorkorderStatus::COMPLETED->value);
+
+        if(auth()->user()->hasRole('Maintenance Crew')){
+            $pendingWOQuery->whereHas('assignedMaintenanceCrew', fn($q) => $q->where('users.id', auth()->id()));
+            $inProgWOQuery->whereHas('assignedMaintenanceCrew', fn($q) => $q->where('users.id', auth()->id()));
+            $completedWOQuery->whereHas('assignedMaintenanceCrew', fn($q) => $q->where('users.id', auth()->id()));
+        }
+
+        $pendingWO = $pendingWOQuery->count();
+        $inProgWO = $inProgWOQuery->count();
+        $completedWO = $completedWOQuery->count();
 
         //Column names for Filter Subcategory by Category and Assets per Department
         $subcategoryFilterColumns = ["", "Subcategory", "Count"];
         $assetsPerDepartmentColumns = ["", "Department", "Count"];
         $assetFinColumns = ["Asset Code", "Asset Name", "Serial Name", "Original Cost", "Current Value"];
         $assetFinance = $assetFinanceQuery->get()->sortByDesc('book_value')->values();
-        
+
         return view("pages.dashboard", compact("gridNumber", "toggleTable", "departments",
                                                             "subcategoryFilterColumns", "assetsPerDepartmentColumns", "categories",
                                                             "activeAssets", "disposedAssets","role", 'cardGridNumber',"obsoleteAssets",

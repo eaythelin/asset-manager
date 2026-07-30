@@ -44,7 +44,7 @@ class EmployeesController extends Controller
         $count = $latest ? (int) substr($latest->employee_no, -4) + 1 : 1;
         $employeeNo = 'EMP-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-        $columns = ["Employee No." ,"Name", "Department", "Custodian", "Maintenance Crew" ,"Actions"];
+        $columns = ["Employee No." ,"Name", "Department", "Custodian","Actions"];
         return view("pages.employees.index-employees", compact('employees', 'columns', 'departments', 'desc', 'employeeNo'));
     }
 
@@ -57,12 +57,9 @@ class EmployeesController extends Controller
     }
 
     public function storeEmployees(Request $request){
-        $request->merge(['is_maintenance' => $request->has('is_maintenance')]);
-
         $validated = $request->validate([
             "name"=> ["required", "max:100", "string"],
             "department"=> ["required", "exists:departments,id"],
-            "is_maintenance" => ["required", "boolean"],
             "employee_no" => ["required", "unique:employees"]
         ]);
 
@@ -70,7 +67,6 @@ class EmployeesController extends Controller
             'employee_no' => $validated['employee_no'],
             'name' => $validated['name'],
             'department_id' => $validated['department'],
-            'is_maintenance' => $validated['is_maintenance'],
         ]);
 
         ActivityLog::log(ActivityModule::EMPLOYEE, ActivityAction::CREATED, "Created employee: " . $validated['name']);
@@ -79,12 +75,9 @@ class EmployeesController extends Controller
     }
 
     public function updateEmployee(Request $request, $id){
-        $request->merge(['is_maintenance' => $request->has('is_maintenance')]);
-
         $validated = $request->validate([
             "name"=> ["required", "max:100", "string"],
             "department"=> ["required", "exists:departments,id"],
-            "is_maintenance" => ["required", "boolean"],
             "employee_no" => ["required", Rule::unique("employees", "employee_no")->ignore($id)]
         ]);
 
@@ -92,7 +85,6 @@ class EmployeesController extends Controller
         $employee->update([
             'name' => $validated['name'],
             'department_id' => $validated['department'],
-            'is_maintenance' => $validated['is_maintenance'],
         ]);
 
         ActivityLog::log(ActivityModule::EMPLOYEE, ActivityAction::UPDATED, "Updated employee: " . $validated['name']);

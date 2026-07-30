@@ -44,7 +44,6 @@ class Employee extends Model
     protected $fillable = [
         'name',
         'department_id',
-        'is_maintenance',
         'employee_no'
     ];
 

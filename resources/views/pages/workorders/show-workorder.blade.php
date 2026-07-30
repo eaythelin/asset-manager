@@ -129,11 +129,11 @@
             <div class="flex flex-col md:flex-row gap-4 md:gap-10">
               <div class="flex flex-col">
                 <span class="text-xs text-gray-400 mb-1">Crew 1<span><span class="text-base text-red-600 tooltip tooltip-right" data-tip="Required">*</span></span></span>
-                <input name="employee_1" value="{{ $workorder->assignedEmployees->get(0)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
+                <input name="employee_1" value="{{ $workorder->assignedMaintenanceCrew->get(0)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
               </div>
               <div class="flex flex-col">
                 <span class="text-xs text-gray-400 mb-1 sm:mt-2">Crew 2 (Optional)</span>
-                <input name="employee_1" value="{{ $workorder->assignedEmployees->get(1)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
+                <input name="employee_1" value="{{ $workorder->assignedMaintenanceCrew->get(1)?->name }}" class="select border-2 border-gray-400 rounded-lg w-80" readonly/>
               </div>
             </div>
           </div>

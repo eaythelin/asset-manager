@@ -4,6 +4,7 @@ namespace App\Http\Controllers\System;
 
 
 use App\Enums\RequestTypes;
+use App\Enums\AssetStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use Illuminate\Http\Request;
@@ -72,6 +73,7 @@ class RequestsController extends Controller
         $requestTypes = RequestTypes::cases();
         $departments = Department::orderBy('name')->pluck('name', 'id');
         $assets = Asset::where('department_id', auth()->user()->employee->department_id)
+            ->where('status', AssetStatus::ACTIVE->value)
             ->orderBy('asset_code')
             ->get();
         return view('pages.requests.create-request', compact('controlNumber', 'requestTypes', 'assets', 'departments'));
@@ -99,6 +101,7 @@ class RequestsController extends Controller
         $requestTypes = RequestTypes::cases();
         $departments = Department::orderBy('name')->pluck('name', 'id');
         $assets = Asset::where('department_id', auth()->user()->employee->department_id)
+            ->where('status', AssetStatus::ACTIVE->value)
             ->orderBy('asset_code')
             ->get();
         return view('pages.requests.edit-request', compact('requestModel', 'requestTypes','assets', 'departments'));

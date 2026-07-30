@@ -139,8 +139,8 @@
                   <span class="text-xs text-gray-400 mb-1">Crew 1<span><span class="text-base text-red-600 tooltip tooltip-right" data-tip="Required">*</span></span></span>
                   <x-page-select name="employee_1" class="w-80">
                     <option value="" disabled selected>--Select Maintenance Crew--</option>
-                    @foreach ($employees as $id=>$name)
-                      <option value="{{ $id }}" {{ old('employee_1', $workorder->assignedEmployees->get(0)?->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    @foreach ($maintenanceCrew as $id=>$name)
+                      <option value="{{ $id }}" {{ old('employee_1', $workorder->assignedMaintenanceCrew->get(0)?->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                   </x-page-select>
                 </div>
@@ -148,8 +148,8 @@
                   <span class="text-xs text-gray-400 mb-1 sm:mt-2">Crew 2 (Optional)</span>
                   <x-page-select name="employee_2" class="w-80">
                     <option value="" selected>--Select Maintenance Crew--</option>
-                    @foreach ($employees as $id=>$name)
-                      <option value="{{ $id }}" {{ old('employee_1', $workorder->assignedEmployees->get(1)?->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    @foreach ($maintenanceCrew as $id=>$name)
+                      <option value="{{ $id }}" {{ old('employee_1', $workorder->assignedMaintenanceCrew->get(1)?->id) == $id ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                   </x-page-select>
                 </div>

@@ -18,6 +18,7 @@ class RolePermissionSeeder extends Seeder
         $systemSupervisorRole = Role::create(["name" => "System Supervisor"]);
         $deptHeadRole = Role::create(["name" => "Department Head"]);
         $generalManagerRole = Role::create(["name" => "General Manager"]);
+        $maintenanceCrewRole = Role::create(["name" => "Maintenance Crew"]);
 
         //Permission list [to be expanded on!]
         $crudPermissions = [
@@ -124,6 +125,16 @@ class RolePermissionSeeder extends Seeder
 
         foreach($generalManagerPerms as $perms){
             $generalManagerRole->givePermissionTo($perms);
+        }
+
+        $maintenanceCrewPerms = [
+            'view assets',
+            'view dashboard',
+            'view workorders',
+        ];
+
+        foreach($maintenanceCrewPerms as $perms){
+            $maintenanceCrewRole->givePermissionTo($perms);
         }
     }
 }

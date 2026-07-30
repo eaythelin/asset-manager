@@ -113,8 +113,8 @@ class Workorder extends Model
       return $this->belongsTo(User::class, 'completed_by');
     }
 
-    public function assignedEmployees(){
-        return $this->belongsToMany(Employee::class, 'workorder_employees');
+    public function assignedMaintenanceCrew(){
+        return $this->belongsToMany(User::class, 'workorder_users');
     }
 
     public function scopeSearch($query, $search){

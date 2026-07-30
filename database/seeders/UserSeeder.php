@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
         $systemSupervisorRole = Role::where('name', 'System Supervisor')->first();
         $deptHeadRole = Role::where('name', 'Department Head')->first();
         $generalManagerRole = Role::where('name', 'General Manager')->first();
+        $maintenanceCrewRole = Role::where('name', 'Maintenance Crew')->first();
 
         // Users (replace with test emails or env vars later)
         $users = [
@@ -38,6 +39,20 @@ class UserSeeder extends Seeder
                 "password" => Hash::make('password123'),
                 "employee_id" => 3,
                 "role" => $generalManagerRole,
+            ],
+            [
+                "name" => "James Venom",
+                "email" => "jamesvenom@example.com",
+                "password" => Hash::make('password123'),
+                "employee_id" => 4,
+                "role" => $maintenanceCrewRole,
+            ],
+            [
+                "name" => "Victor Chill",
+                "email" => "victorchill@example.com",
+                "password" => Hash::make('password123'),
+                "employee_id" => 5,
+                "role" => $maintenanceCrewRole,
             ],
         ];
 

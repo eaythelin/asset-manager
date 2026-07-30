@@ -32,16 +32,26 @@
                 </span>
               </x-td>
               <td class = "flex flex-row gap-2 sm:gap-4 justify-center">
-                @can("manage workorders")
-                  @if(in_array($workorder->status->value, ['completed', 'cancelled']))
+                @if(auth()->user()->hasRole('Maintenance Crew'))
                   <a class="w-full sm:w-auto flex justify-center" href="{{ route('workorders.view', $workorder->id) }}">
                     <x-buttons
-                      class="viewBtn tooltip tooltip-top"
-                      data-tip="View"
-                      aria-label="View Workorder">
-                      <x-heroicon-s-eye class="size-4 sm:size-5" />
+                    class="viewBtn tooltip tooltip-top"
+                    data-tip="View"
+                    aria-label="View Workorder">
+                    <x-heroicon-s-eye class="size-4 sm:size-5" />
                     </x-buttons>
                   </a>
+                @endif
+                @can("manage workorders")
+                  @if(in_array($workorder->status->value, ['completed', 'cancelled']))
+                    <a class="w-full sm:w-auto flex justify-center" href="{{ route('workorders.view', $workorder->id) }}">
+                        <x-buttons
+                        class="viewBtn tooltip tooltip-top"
+                        data-tip="View"
+                        aria-label="View Workorder">
+                        <x-heroicon-s-eye class="size-4 sm:size-5" />
+                        </x-buttons>
+                    </a>
                   @endif
                   @if($workorder->status->value === "pending")
                     <x-buttons onclick="startWorkorder.showModal()"
@@ -79,6 +89,13 @@
                     </x-buttons>
                   @endif
                 @endcan
+                <x-buttons
+                  class="downloadBtn tooltip tooltip-top"
+                  data-tip="Download PDF"
+                  aria-label="Download Workorder PDF"
+                  data-route="{{ route('workorders.cancel', $workorder->id ) }}">
+                  <x-heroicon-o-arrow-down-tray class="size-4 sm:size-5" />
+                </x-buttons>
               </td>
             </tr>
           @endforeach

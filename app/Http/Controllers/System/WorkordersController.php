@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\WorkorderValidation;
 use Illuminate\Http\Request;
 use App\Models\Workorder;
-use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Models\ActivityLog;
@@ -22,6 +22,12 @@ class WorkordersController extends Controller
 {
     public function getWorkOrders(Request $request){
         $query = Workorder::with('request');
+
+        if(auth()->user()->hasRole('Maintenance Crew')){
+            $query->whereHas('assignedMaintenanceCrew', function($q) {
+                $q->where('users.id', auth()->id());
+            });
+        }
 
         if($request->has('search')){
             $search = $request->input('search');
@@ -38,9 +44,9 @@ class WorkordersController extends Controller
         $workorder = Workorder::with('request')->findOrFail($id);
         $priorities = PriorityLevel::cases();
         $requestTypes = RequestTypes::cases();
-        $employees = Employee::where('is_maintenance', true)->orderBy('name')->pluck('name','id');
+        $maintenanceCrew = User::role('Maintenance Crew')->pluck('name', 'id');
 
-        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities', 'employees','requestTypes'));
+        return view('pages.workorders.edit-workorder', compact('workorder', 'priorities', 'maintenanceCrew','requestTypes'));
     }
 
     public function updateWorkorder(WorkorderValidation $request, $id){
@@ -112,11 +118,12 @@ class WorkordersController extends Controller
                     $validated['employee_2'] ?? null
                 ]);
 
-                $workorder->assignedEmployees()->sync($employees);
+                $workorder->assignedMaintenanceCrew()->sync($employees);
 
                 ActivityLog::log(ActivityModule::WORKORDER, ActivityAction::UPDATED, "Updated workorder: " . $workorder->request->control_number);
             });
         }catch(Exception $e){
+            dd($e->getMessage());
             return redirect()->route("workorders.edit", $workorder->id)->with('error', 'Something went wrong!');
         }
 

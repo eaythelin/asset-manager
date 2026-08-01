@@ -41,7 +41,7 @@
 
         <div class="form-row">
           <x-page-label for="date">Date</x-page-label>
-          <x-page-input value="{{ now()->format('M d, Y') }}" name="date" id="date" readonly/>
+          <x-page-input value="{{ $requestModel->created_at->format('M d, Y') }}" name="date" id="date" readonly/>
         </div>
 
         <div class="form-row">

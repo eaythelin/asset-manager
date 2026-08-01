@@ -90,10 +90,10 @@
                   @endif
                 @endcan
                 <x-buttons
-                  class="downloadBtn tooltip tooltip-top"
-                  data-tip="Download PDF"
-                  aria-label="Download Workorder PDF"
-                  data-route="{{ route('workorders.cancel', $workorder->id ) }}">
+                  class="downloadBtn tooltip tooltip-left"
+                  data-tip="Download Excel File"
+                  aria-label="Download Workorder Excel File"
+                  data-route="{{ route('workorders.download', $workorder->id ) }}">
                   <x-heroicon-o-arrow-down-tray class="size-4 sm:size-5" />
                 </x-buttons>
               </td>
@@ -117,4 +117,5 @@
   @vite('resources/js/workorder/startWorkorder.js')
   @vite('resources/js/workorder/completeWorkorder.js')
   @vite('resources/js/workorder/cancelWorkorder.js')
+  @vite('resources/js/workorder/downloadmaintenacepdf.js')
 @endsection

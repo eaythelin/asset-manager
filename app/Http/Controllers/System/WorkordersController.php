@@ -17,6 +17,9 @@ use Exception;
 use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
+use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf\Dompdf as PdfWriter;
 
 class WorkordersController extends Controller
 {
@@ -225,5 +228,36 @@ class WorkordersController extends Controller
         $requestTypes = RequestTypes::cases();
 
         return view('pages.workorders.show-workorder', compact('workorder', 'backLabel', 'backRoute', 'requestTypes'));
+    }
+
+    public function downloadPDF($id){
+        $workorder = Workorder::findOrFail($id);
+
+        $templatePath = storage_path('app/templates/rmrf_template_2.xlsx');
+        $spreadsheet = IOFactory::load($templatePath);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        //inserting data (Request Head)
+        $sheet->setCellValue('K4', $workorder->request->control_number);
+        $sheet->setCellValue('C6', $workorder->request->requestedBy->name);
+        $sheet->setCellValue('G6', $workorder->request->department->name);
+        $sheet->setCellValue('K6', $workorder->request->created_at->format('M d, Y'));
+        $sheet->setCellValue('C7', $workorder->request->asset->name);
+        $sheet->setCellValue('D8', $workorder->request->description);
+        $sheet->setCellValue('I11', $workorder->request->approvedBy->name);
+
+        //shrink to fit
+        $sheet->getStyle('K4')->getAlignment()->setShrinkToFit(true);
+        $sheet->getStyle('C6')->getAlignment()->setShrinkToFit(true);
+        $sheet->getStyle('C7')->getAlignment()->setShrinkToFit(true);
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'RMRF_Form.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }

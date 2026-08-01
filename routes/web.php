@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(["prefix" => "/workorders", "middleware" => "check.permission:view workorders"], function(){
       Route::get('/', [WorkordersController::class, 'getWorkOrders'])->name('workorders.index');
       Route::get('/view/{id}', [WorkordersController::class, 'getWOPage'])->name('workorders.view');
+      Route::get('/download/{id}', [WorkordersController::class, 'downloadPDF'])->name('workorders.download');
 
       Route::group(["prefix" => "/edit", "middleware" => "check.permission:manage workorders"], function(){
         Route::get("/{id}", [WorkordersController::class, 'getEditWorkorder'])->name('workorders.edit');
@@ -117,6 +118,7 @@ Route::middleware(['auth'])->group(function () {
       });
     });
 
+    //reports
     Route::group(["prefix" => "/reports", "middleware" => "check.permission:view reports"], function(){
       Route::get('/', [ReportsController::class, "getReports"])->name('reports.index');
 

@@ -90,9 +90,9 @@
                   @endif
                 @endcan
                 <x-buttons
-                  class="downloadBtn tooltip tooltip-left"
-                  data-tip="Download Excel File"
-                  aria-label="Download Workorder Excel File"
+                  class="downloadBtn tooltip tooltip-top"
+                  data-tip="Download"
+                  aria-label="Download PDF"
                   data-route="{{ route('workorders.download', $workorder->id ) }}">
                   <x-heroicon-o-arrow-down-tray class="size-4 sm:size-5" />
                 </x-buttons>

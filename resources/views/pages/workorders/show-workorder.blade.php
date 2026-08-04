@@ -229,7 +229,7 @@
 
       <div class="form-row flex-1">
         <x-page-label for="accepted_by">Accepted By</x-page-label>
-        <x-page-input name="accepted_by" id="accepted_by" value="{{ $workorder->status->value === 'cancelled' ? '' : $workorder->request->requestedBy->name }}" readonly/>
+        <x-page-input name="accepted_by" id="accepted_by" value="{{ $workorder->status->value === 'completed' ? $workorder->request?->requestedBy?->name : '' }}" readonly/>
       </div>
     </div>
 

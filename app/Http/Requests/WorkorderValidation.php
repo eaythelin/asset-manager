@@ -55,7 +55,7 @@ class WorkorderValidation extends FormRequest
 
             "sub_name" => ["nullable", "string", "max:100"],
             "sub_document" => ["nullable","string", "max:100"],
-            "sub_details" => ["nullable","string", "max:100"],
+            "sub_details" => ["nullable","string", "max:200"],
             "sub_cost" => ["nullable", "numeric", "min:1"],
             "sub_date_released" => ["nullable", "date",
                 Rule::excludeIf(function () use ($id){
@@ -89,7 +89,7 @@ class WorkorderValidation extends FormRequest
             "has_registration" => ["boolean"],
             "registration_date" => ["nullable", "date", "after_or_equal:today"],
             "has_other" => ["boolean"],
-            "other_details" => ["nullable", "string", "max:255"],
+            "other_details" => ["nullable", "string", "max:100"],
 
             'has_spare_parts' => ['boolean'],
             'spare_parts' => ['nullable', 'array'],
@@ -97,7 +97,7 @@ class WorkorderValidation extends FormRequest
             'spare_parts.*.description' => ['nullable', 'string'],
             'spare_parts.*.quantity' => ['nullable', 'integer', 'min:1', 'required_with:spare_parts.*.part'],
 
-            "accomplishment_details" => ["nullable", "string", "max:255"]
+            "accomplishment_details" => ["nullable", "string", "max:240"]
         ];
     }
 }

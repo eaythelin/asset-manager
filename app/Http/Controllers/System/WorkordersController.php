@@ -17,9 +17,8 @@ use Exception;
 use App\Models\ActivityLog;
 use App\Enums\ActivityAction;
 use App\Enums\ActivityModule;
-use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Pdf\Dompdf as PdfWriter;
+use PDF;
 
 class WorkordersController extends Controller
 {
@@ -188,7 +187,7 @@ class WorkordersController extends Controller
                 return back()->with('error', 'Please fill in required In-House fields before completing!');
             }
 
-            if($workorder->assignedEmployees->isEmpty()){
+            if($workorder->assignedMaintenanceCrew->isEmpty()){
                 return back()->with('error', 'Please assigned at least one maintenance crew before completing!');
             }
         }
@@ -231,33 +230,61 @@ class WorkordersController extends Controller
     }
 
     public function downloadPDF($id){
-        $workorder = Workorder::findOrFail($id);
+        // $workorder = Workorder::findOrFail($id);
 
-        $templatePath = storage_path('app/templates/rmrf_template_2.xlsx');
-        $spreadsheet = IOFactory::load($templatePath);
-        $sheet = $spreadsheet->getActiveSheet();
+        // $templatePath = storage_path('app/templates/rmrf_template_2.xlsx');
+        // $spreadsheet = IOFactory::load($templatePath);
+        // $sheet = $spreadsheet->getActiveSheet();
 
-        //inserting data (Request Head)
-        $sheet->setCellValue('K4', $workorder->request->control_number);
-        $sheet->setCellValue('C6', $workorder->request->requestedBy->name);
-        $sheet->setCellValue('G6', $workorder->request->department->name);
-        $sheet->setCellValue('K6', $workorder->request->created_at->format('M d, Y'));
-        $sheet->setCellValue('C7', $workorder->request->asset->name);
-        $sheet->setCellValue('D8', $workorder->request->description);
-        $sheet->setCellValue('I11', $workorder->request->approvedBy->name);
+        // //inserting data (Request Head)
+        // $sheet->setCellValue('K4', $workorder->request->control_number);
+        // $sheet->setCellValue('C6', $workorder->request->requestedBy->name);
+        // $sheet->setCellValue('G6', $workorder->request->department->name);
+        // $sheet->setCellValue('K6', $workorder->request->created_at->format('M d, Y'));
+        // $sheet->setCellValue('C7', $workorder->request->asset->name);
+        // $sheet->setCellValue('D8', $workorder->request->description);
+        // $sheet->setCellValue('I11', $workorder->request->approvedBy->name);
 
-        //shrink to fit
-        $sheet->getStyle('K4')->getAlignment()->setShrinkToFit(true);
-        $sheet->getStyle('C6')->getAlignment()->setShrinkToFit(true);
-        $sheet->getStyle('C7')->getAlignment()->setShrinkToFit(true);
+        // if($workorder->request->request_type === RequestTypes::MAINTENANCE){
+        //     $sheet->setCellValue('K7', '✔');
+        // }elseif($workorder->request->request_type === RequestTypes::FABRICATION){
+        //     $sheet->setCellValue('I7', '✔');
+        // }elseif($workorder->request->request_type === RequestTypes::REPAIR){
+        //     $sheet->setCellValue('G7', '✔');
+        // }
 
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $filename = 'RMRF_Form.xlsx';
+        // if($workorder->type === WorkorderType::IN_HOUSE){
+        //     $sheet->setCellValue('B21', '✔');
+        // }elseif($workorder->type === WorkorderType::SUBCONTRACTOR){
+        //     $sheet->setCellValue('B14', '✔');
+        // }
 
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ]);
+        // //shrink to fit
+        // $sheet->getStyle('K4')->getAlignment()->setShrinkToFit(true);
+        // $sheet->getStyle('C6')->getAlignment()->setShrinkToFit(true);
+        // $sheet->getStyle('C7')->getAlignment()->setShrinkToFit(true);
+
+        // $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        // $filename = 'RMRF_Form.xlsx';
+
+        // return response()->streamDownload(function () use ($writer) {
+        //     $writer->save('php://output');
+        // }, $filename, [
+        //     'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        // ]);
+
+        $workorder = Workorder::with([
+            'request.requestedBy',
+            'request.department',
+            'request.asset',
+            'request.approvedBy'
+        ])->findOrFail($id);
+
+        // This package expects config as an array in loadView options
+        $pdf = PDF::loadView('pdf.maintenance-form', compact('workorder'));
+
+        $filename = 'RMRF_Form_' . $workorder->request->control_number . '.pdf';
+
+        return $pdf->stream($filename);
     }
 }

@@ -2,387 +2,534 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Repair and Maintenance Request Form</title>
+    <title>RMRF Form</title>
     <style>
         @page {
-            margin: 15px 45px;
+            margin-top: 12mm;
+            margin-bottom: 12mm;
+            margin-left: 16mm;
+            margin-right: 16mm;
         }
         body {
-            font-family: Arial, sans-serif;
-            font-size: 8.5pt;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10px;
             color: #000;
-            line-height: 1.15;
+            line-height: 1.2;
         }
-        .bold { font-weight: bold; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .nowrap { white-space: nowrap; }
-
-        .title {
-            font-size: 13pt;
-            font-weight: bold;
+        .header-title {
             text-align: center;
-            margin-bottom: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
         }
 
-        /* Layout Tables */
+        /* Utility styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
         }
         td {
-            padding: 1px 2px;
+            padding: 2px 2px;
             vertical-align: bottom;
         }
-
-        /* Fillable Lines using TD borders */
-        .fill-line {
+        .line {
             border-bottom: 1px solid #000;
         }
+        .bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
 
-        /* Checkboxes & Control Box */
-        .control-box {
-            border: 2px solid #000;
-            height: 18px;
-            width: 100px;
-            float: right;
-        }
-        .checkbox {
-            width: 9px;
-            height: 9px;
-            border: 1px solid #000;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 3px;
-        }
-
-        /* Dividers */
-        .divider {
-            border-top: 1px solid #000;
-            margin: 4px 0;
-        }
-
-        /* Grid Table for Spare Parts */
-        .grid-table {
-            border: 2px solid #000;
-            margin-top: 3px;
-        }
-        .grid-table th, .grid-table td {
-            border: 1px solid #000;
+        /* Control number box */
+        .box-title {
+            border: 1.5px solid #000 !important;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
             padding: 2px 4px;
-            vertical-align: middle;
-        }
-        .grid-table th {
-            text-align: left;
-            font-weight: bold;
         }
 
-        .footer {
-            font-size: 8pt;
+        /* Native Symbol Checkboxes (No CSS box collapsing) */
+        .checkbox-symbol {
+            font-size: 17px !important; /* Scaled up from 13px */
+            line-height: 1;
+            vertical-align: -2px;       /* Aligns the bottom of the box neatly with text */
+            margin-right: 2px;
+        }
+
+        .section-divider {
+            border-top: 1.5px solid #000;
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+        /* Spare parts table */
+        .parts-table {
+            border: 1.5px solid #000;
+            margin-top: 4px;
+        }
+        .parts-table th, .parts-table td {
+            border: 1px solid #000;
+            padding: 3px;
+            height: 16px;
+        }
+        .parts-table th {
             font-weight: bold;
+            background-color: #ffffff;
+        }
+
+        .sub-label {
+            font-size: 8px;
+            color: #333;
+        }
+
+        .footer-code {
             text-align: right;
-            margin-top: 6px;
+            font-weight: bold;
+            font-size: 9px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
     <!-- Header Title -->
-    <div class="title">Repair and Maintenance Request Form (RMRF)</div>
-
-    <!-- Control Number -->
-    <table style="margin-bottom: 2px;">
-        <tr>
-            <td style="width: 65%;"></td>
-            <td class="nowrap text-right bold" style="width: 18%; vertical-align: middle;">Control Number:</td>
-            <td style="width: 17%; text-align: right; vertical-align: middle;">
-                <div class="control-box"></div>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Header Fields -->
-    <table>
-        <tr>
-            <td class="nowrap" style="width: 16%;">Requisitioner's name:</td>
-            <td class="fill-line" style="width: 42%;"></td>
-            <td class="nowrap text-right" style="width: 9%;">Sec/Dept:</td>
-            <td class="fill-line" style="width: 13%;"></td>
-            <td class="nowrap text-right" style="width: 5%;">Date:</td>
-            <td class="fill-line" style="width: 15%;"></td>
-        </tr>
-    </table>
-
-    <table style="margin-top: 1px;">
-        <tr>
-            <td class="nowrap" style="width: 19%;">Equipment/Vehicle Type:</td>
-            <td class="fill-line" style="width: 31%;"></td>
-            <td class="nowrap text-right" style="width: 15%;">Type of request:</td>
-            <td class="nowrap text-right" style="width: 35%;">
-                <span class="checkbox"></span> Repair &nbsp;
-                <span class="checkbox"></span> Fabrication &nbsp;
-                <span class="checkbox"></span> Maintenance
-            </td>
-        </tr>
-    </table>
-
-    <table style="margin-top: 1px;">
-        <tr>
-            <td class="nowrap" style="width: 23%;">Request Description/Plate No.:</td>
-            <td class="fill-line" style="width: 77%;"></td>
-        </tr>
-    </table>
-
-    <!-- Signatures Header -->
-    <table style="margin-top: 6px;">
-        <tr>
-            <td style="width: 50%;">
-                Requested by:<br><br>
-                <table style="width: 80%;">
-                    <tr><td class="fill-line"></td></tr>
-                    <tr><td class="bold text-center" style="font-size: 8pt;">Signature</td></tr>
-                </table>
-            </td>
-            <td style="width: 50%;">
-                Request approved by:<br><br>
-                <table style="width: 80%;">
-                    <tr><td class="fill-line"></td></tr>
-                    <tr><td class="bold text-center" style="font-size: 8pt;">Department Head</td></tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-
-    <div class="divider"></div>
-
-    <!-- Subcontractor Section -->
-    <div>
-        <span class="checkbox"></span>
-        <strong style="font-size: 9pt;">Repair by Subcontractor</strong>
+    <div class="header-title">
+        Repair and Maintenance Request Form (RMRF)
     </div>
 
-    <table style="margin-top: 2px;">
+    <!-- Control Number Section -->
+    <table style="width: 100%; margin-bottom: 15px;">
         <tr>
-            <!-- Static left label -->
-            <td class="nowrap" style="width: 20%; vertical-align: top; padding-top: 2px;">
-                Subcontractor Details:
+            <!-- Left empty space to push everything to the right -->
+            <td style="width: 60%;"></td>
+
+            <!-- Label right next to the box -->
+            <td style="width: 15%; white-space: nowrap; text-align: right; padding-right: 8px;" class="bold">
+                Control Number:
             </td>
-            <!-- Nested grid that handles all 4 lines cleanly -->
-            <td style="width: 80%; vertical-align: top; padding: 0;">
+
+            <!-- Boxed value with increased width and horizontal padding -->
+            <td style="width: 25%; border: 1px solid black; text-align: center; padding: 3px 15px;" class="bold">
+                {{ $workorder->request->control_number ?? '' }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Main Request Details -->
+    <table>
+        <tr>
+            <td style="width: 18%; white-space: nowrap;" class="bold">Requisitioner's name:</td>
+            <td style="width: 32%; white-space: nowrap;" class="line">{{ $workorder->request->requestedBy->name ?? '' }}</td>
+            <td style="width: 8%; white-space: nowrap;" class="bold text-right">Sec/Dept:</td>
+            <td style="width: 20%; white-space: nowrap;" class="line">{{ $workorder->request->department->name ?? '' }}</td>
+            <td style="width: 6%; white-space: nowrap;" class="bold text-right">Date:</td>
+            <td style="width: 16%; white-space: nowrap;" class="line">{{ $workorder->request->created_at->format('M d, Y') }}</td>
+        </tr>
+    </table>
+
+    <table style="margin-top: 3px;">
+        <tr>
+            <td style="width: 20%; white-space: nowrap;" class="bold">Equipment/Vehicle Type:</td>
+            <td style="width: 28%; white-space: nowrap;" class="line">{{ $workorder->request->asset->name ?? '' }}</td>
+            <td style="width: 12%; white-space: nowrap;" class="bold text-right">Type of request:</td>
+            <td style="width: 40%; white-space: nowrap;">
+                <span class="checkbox-symbol">{!! $workorder->request->request_type === \App\Enums\RequestTypes::REPAIR ? '&#9745;' : '&#9744;' !!}</span> Repair &nbsp;&nbsp;
+                <span class="checkbox-symbol">{!! $workorder->request->request_type === \App\Enums\RequestTypes::FABRICATION ? '&#9745;' : '&#9744;' !!}</span> Fabrication &nbsp;&nbsp;
+                <span class="checkbox-symbol">{!! $workorder->request->request_type === \App\Enums\RequestTypes::MAINTENANCE ? '&#9745;' : '&#9744;' !!}</span> Maintenance
+            </td>
+        </tr>
+    </table>
+
+    <table style="margin-top: 3px;">
+        <tr>
+            <td style="width: 22%; white-space: nowrap;" class="bold">Request Description/Plate No.:</td>
+            <td style="width: 33%;" class="line">{{ $workorder->request->description ?? '' }}</td>
+            <td style="width: 45%;"></td> <!-- Empty spacer to shorten the line -->
+        </tr>
+    </table>
+
+    <!-- Signature Block (Flat Structure) -->
+    <table style="width: 100%; margin-top: 15px;">
+        <!-- Row 1: Labels -->
+        <tr>
+            <td style="width: 32%;" class="bold">Requested by:</td>
+            <td style="width: 36%;"></td>
+            <td style="width: 32%;" class="bold">Request approved by:</td>
+        </tr>
+
+        <!-- Row 2: Name & Line -->
+        <tr>
+            <!-- Left Line with side margin -->
+            <td style="width: 32%;">
                 <table style="width: 100%;">
                     <tr>
-                        <td class="nowrap" style="width: 20%;">Name/Company:</td>
-                        <td class="fill-line" style="width: 50%;"></td>
-                        <td class="nowrap text-right" style="width: 10%;">Cost:</td>
-                        <td class="fill-line" style="width: 20%;"></td>
-                    </tr>
-                    <tr>
-                        <td class="nowrap">Request Document:</td>
-                        <td class="fill-line"></td>
-                        <td class="nowrap text-right">Date Released:</td>
-                        <td class="fill-line"></td>
-                    </tr>
-                    <tr>
-                        <td class="nowrap" style="vertical-align: top;">
-                            Details of Activities:<br>
-                            <span style="font-size: 7pt;">(Optional)</span>
+                        <td class="line text-center" style="height: 14px; vertical-align: bottom;">
+                            {{ $workorder->request->requestedBy->name ?? '' }}
                         </td>
-                        <td class="fill-line" style="vertical-align: top;"></td>
-                        <td class="nowrap text-right" style="vertical-align: top;">Date returned:</td>
-                        <td class="fill-line" style="vertical-align: top;"></td>
                     </tr>
+                </table>
+            </td>
+
+            <!-- Middle Gap Spacer -->
+            <td style="width: 36%;"></td>
+
+            <!-- Right Line with side margin -->
+            <td style="width: 32%;">
+                <table style="width: 100%;">
                     <tr>
-                        <td colspan="4" class="fill-line" style="height: 10px;"></td>
+                        <td class="line text-center" style="height: 14px; vertical-align: bottom;">
+                            {{ $workorder->request->approvedBy->name ?? '' }}
+                        </td>
                     </tr>
                 </table>
             </td>
         </tr>
-    </table>
 
-    <div class="divider"></div>
-
-    <!-- In House Maintenance -->
-    <div>
-        <span class="checkbox"></span>
-        <strong style="font-size: 9pt;">In House Maintenance</strong>
-    </div>
-    <table style="margin-top: 2px;">
+        <!-- Row 3: Sub-labels -->
         <tr>
-            <td class="nowrap" style="width: 22%;">Assigned maintenance crew(s)</td>
-            <td class="fill-line" style="width: 78%;"></td>
-        </tr>
-    </table>
-    <table style="margin-top: 2px;">
-        <tr>
-            <td class="nowrap" style="width: 13%;">PRIORITY level:</td>
-            <td class="fill-line" style="width: 32%;"></td>
-            <td class="nowrap text-right" style="width: 25%;">Estimated day(s) Hour(s):</td>
-            <td class="fill-line" style="width: 30%;"></td>
-        </tr>
-        <tr>
-            <td colspan="2" style="font-size: 7pt; vertical-align: top;">(Priority means most important to acomplish)</td>
-            <td class="nowrap text-right">Cost:</td>
-            <td class="fill-line"></td>
-        </tr>
-    </table>
-    <table style="margin-top: 2px;">
-        <tr>
-            <td class="nowrap" style="width: 11%;">Instructions: <span style="font-size: 7pt;">(optional)</span></td>
-            <td class="fill-line" style="width: 89%;"></td>
-        </tr>
-        <tr>
-            <td colspan="2" class="fill-line" style="height: 10px;"></td>
+            <td class="text-center bold" style="padding-top: 2px;">Signature</td>
+            <td></td>
+            <td class="text-center bold" style="padding-top: 2px;">Department Head</td>
         </tr>
     </table>
 
-    <div class="divider"></div>
+    <!-- Section 1: Subcontractor -->
+    <div class="section-divider"></div>
+    <table style="margin-left: 25px;">
+        <tr>
+            <td colspan="4" class="bold">
+                <span class="checkbox-symbol">{!! $workorder->type === \App\Enums\WorkorderType::SUBCONTRACTOR ? '&#9745;' : '&#9744;' !!}</span>
+                Repair by Subcontractor
+            </td>
+        </tr>
 
-    <!-- Requested Spare Parts -->
+        <!-- Subcontractor Details Header -->
+        <tr>
+            <td colspan="2" style="padding-left: 5px; white-space: nowrap;">Subcontractor Details:</td>
+            <td style="width: 15%; text-align: right; white-space: nowrap; padding-left: 10px;">Cost:</td>
+            <td style="width: 35%;" class="line">{{ $workorder->sub_cost }}</td>
+        </tr>
+
+        <!-- Reduced Indent to 6px & Column Width to 20% -->
+        <tr>
+            <td style="width: 20%; text-align: right; white-space: nowrap; padding-left: 6px;">Name/Company:</td>
+            <td style="width: 30%;" class="line">{{ $workorder->sub_name ?? '' }}</td>
+
+            <td style="text-align: right; white-space: nowrap; padding-left: 10px;">Date Released:</td>
+            <td class="line">{{ $workorder->sub_date_released?->format('M d, Y') ?? '' }}</td>
+        </tr>
+
+        <tr>
+            <td style="text-align: right; white-space: nowrap; padding-left: 6px;">Request Document:</td>
+            <td class="line">{{ $workorder->sub_document ?? '' }}</td>
+
+            <td style="text-align: right; white-space: nowrap; padding-left: 10px;">Date Returned:</td>
+            <td class="line">{{ $workorder->sub_date_returned?->format('M d, Y') ?? '' }}</td>
+        </tr>
+
+        @php
+            // Top line fits around 65-70 chars before wrapping; second line gets the rest.
+            // wordwrap() guarantees words are NOT broken in half.
+            $wrappedText = wordwrap($workorder->sub_details ?? '', 100, "\n");
+            $lines = explode("\n", $wrappedText, 2);
+        @endphp
+
+        <tr>
+            <td style="text-align: right; white-space: nowrap; padding-left: 6px;">Details of Activities:</td>
+            <td class="line" colspan="3">
+                {{ $lines[0] ?? '' }}
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: right; padding-left: 6px;" class="sub-label">(Optional)</td>
+            <td class="line" colspan="3">
+                {{ $lines[1] ?? '' }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Section 2: In House Maintenance -->
+    <div class="section-divider"></div>
+    <table style="width: 100%; margin-left: 25px;">
+        <tr>
+            <td colspan="4" class="bold">
+                <span class="checkbox-symbol">{!! $workorder->type === \App\Enums\WorkorderType::IN_HOUSE ? '&#9745;' : '&#9744;' !!}</span> In House Maintenance
+            </td>
+        </tr>
+        <tr ma>
+            <!-- Left Label -->
+            <td style="width: 20%; padding-left: 15px; white-space: nowrap; vertical-align: bottom;">
+                Assigned maintenance crew(s)
+            </td>
+
+            <!-- First Crew Member Line -->
+            <td style="width: 35%; height: 18px; vertical-align: bottom;" class="line text-center">
+                {{ $workorder->assignedMaintenanceCrew->get(0)->name ?? '' }}
+            </td>
+
+            <!-- Gap Spacer -->
+            <td style="width: 5%;"></td>
+
+            <!-- Second Crew Member Line -->
+            <td style="width: 40%; height: 18px; vertical-align: bottom;" class="line text-center">
+                {{ $workorder->assignedMaintenanceCrew->get(1)->name ?? '' }}
+            </td>
+        </tr>
+    </table>
+    <!-- Priority, Duration & Cost Section (Right-Aligned Edges) -->
+    <table style="width: 100%; margin-left:35px">
+        <!-- Row 1: Priority Level & Estimated Time -->
+        <tr>
+            <td style="width: 12%; white-space: nowrap;">PRIORITY level:</td>
+            <td style="width: 38%;" class="line text-center">
+                {{ $workorder->priority_level->label() ?? '' }}
+            </td>
+
+            <td style="width: 25%; white-space: nowrap; text-align: left; padding-left: 10px;" class="bold">
+                Estimated day(s) Hour(s):
+            </td>
+            <td style="width: 25%;" class="line">
+                {{ $workorder->estimated_duration ?? '' }}
+            </td>
+        </tr>
+
+        <!-- Row 2: Sub-label & Cost Line extending back -->
+        <tr>
+            <td class="sub-label" colspan="2">(Priority means most important to accomplish)</td>
+
+            <td style="white-space: nowrap; text-align: left; padding-left: 10px;" class="bold">
+                Cost:
+            </td>
+            <!-- Combining width to let the Cost line stretch and align with top right edge -->
+            <td class="line">
+                {{ $workorder->inhouse_cost }}
+            </td>
+        </tr>
+    </table>
+    @php
+        // ~85 characters per line across 3 lines = ~255 total max length
+        $wrappedInstructions = wordwrap($workorder->instructions ?? '', 130, "\n");
+        $instructionLines = explode("\n", $wrappedInstructions, 3);
+    @endphp
+
+    <!-- Instructions Block -->
+    <table style="width: 100%; margin-top: 10px; margin-left: 35px; margin-bottom: 15px;">
+        <!-- Label Row -->
+        <tr>
+            <td style="padding-bottom: 4px;">
+                <span class="bold">Instructions:</span>
+                <span style="font-size: 10px;">(optional)</span>
+            </td>
+        </tr>
+
+        <!-- Line 1 -->
+        <tr>
+            <td style="height: 18px; vertical-align: bottom;" class="line">
+                {{ $instructionLines[0] ?? '' }}
+            </td>
+        </tr>
+
+        <!-- Line 2 -->
+        <tr>
+            <td style="height: 18px; vertical-align: bottom;" class="line">
+                {{ $instructionLines[1] ?? '' }}
+            </td>
+        </tr>
+
+        <!-- Line 3 -->
+        <tr>
+            <td style="height: 18px; vertical-align: bottom;" class="line">
+                {{ $instructionLines[2] ?? '' }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Section 3: Spare Parts -->
+    <div class="section-divider"></div>
     <table>
         <tr>
-            <td style="width: 50%;">
-                <span class="checkbox"></span>
-                <strong style="font-size: 9pt;">Requested Spare Parts:</strong>
+            <td class="bold" style="width: 80%;">
+                <span class="checkbox-symbol">&#9744;</span> Requested Spare Parts:
             </td>
-            <td class="text-right" style="width: 50%;">Others:</td>
+            <td class="text-right bold" style="width: 20%;">Others: _________</td>
         </tr>
     </table>
 
-    <table class="grid-table">
+    <table class="parts-table">
         <thead>
             <tr>
-                <th style="width: 26%;">Parts/Supplies</th>
-                <th style="width: 56%;">Description & Specification <span style="font-size: 7pt; font-weight: normal;">(Brand name,size,code number, etc.)</span></th>
-                <th style="width: 18%;">Quantity</th>
+                <th style="width: 28%;">Parts/Supplies</th>
+                <th style="width: 52%;">Description & Specification <span style="font-weight:normal; font-size: 8px;">(Brand name,size,code number, etc.)</span></th>
+                <th style="width: 20%;">Quantity</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td style="height: 13px;"></td><td></td><td></td></tr>
-            <tr><td style="height: 13px;"></td><td></td><td></td></tr>
-            <tr><td style="height: 13px;"></td><td></td><td></td></tr>
-            <tr><td style="height: 13px;"></td><td></td><td></td></tr>
-            <tr><td style="height: 13px;"></td><td></td><td></td></tr>
+            @php
+                $spareParts = is_array($workorder->spare_parts)
+                    ? $workorder->spare_parts
+                    : json_decode($workorder->spare_parts ?? '[]', true);
+
+                $maxRows = 5;
+                $partsCount = count($spareParts ?? []);
+            @endphp
+
+            {{-- Loop through JSON items --}}
+            @foreach ($spareParts as $part)
+                <tr>
+                    <td>{{ $part['name'] ?? $part['part'] ?? '' }}</td>
+                    <td>{{ $part['description'] ?? $part['desc'] ?? '' }}</td>
+                    <td class="text-center">{{ $part['quantity'] ?? $part['qty'] ?? '' }}</td>
+                </tr>
+            @endforeach
+
+            {{-- Pad remaining empty rows to maintain Dompdf table height --}}
+            @for ($i = $partsCount; $i < $maxRows; $i++)
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="text-center">&nbsp;</td>
+                </tr>
+            @endfor
         </tbody>
     </table>
 
-    <div class="divider"></div>
-
-    <!-- Accomplishment Report -->
-    <div class="bold">Accomplishment Report:</div>
-    <table style="margin-top: 2px;">
+    <!-- Section: Accomplishment Report -->
+    <div class="section-divider"></div>
+    <table style="width: 100%;">
         <tr>
-            <td class="nowrap" style="width: 15%;">Date/hour started:</td>
-            <td class="fill-line" style="width: 35%;"></td>
-            <td class="nowrap text-right" style="width: 15%;">Date/Hour Finished:</td>
-            <td class="fill-line" style="width: 35%;"></td>
+            <td colspan="4" class="bold" style="padding-bottom: 20px">Accomplishment Report:</td>
+        </tr>
+
+        <!-- Dates Row -->
+        <tr>
+            <td style="width: 18%; white-space: nowrap; padding-left: 40px;">Date/hour started:</td>
+            <td style="width: 32%;" class="line">{{ $workorder->started_at?->format('M d, Y h:i A') }}</td>
+
+            <td style="width: 18%; white-space: nowrap; text-align: right; padding-right: 5px;">Date/Hour Finished:</td>
+            <td style="width: 32%;" class="line">{{ $workorder->finished_at?->format('M d, Y h:i A') }}</td>
+        </tr>
+
+        @php
+            $wrappedDetails = wordwrap($workorder->accomplishment_details ?? '', 120, "\n");
+            $DetailsLines = explode("\n", $wrappedDetails, 2);
+        @endphp
+
+        <!-- Details Row -->
+        <tr>
+            <td style="white-space: nowrap; padding-left: 40px">Details (if any):</td>
+            <td class="line" colspan="3">{{ $DetailsLines[0] ?? '' }}</td>
         </tr>
         <tr>
-            <td class="nowrap" style="vertical-align: top;">Detailes (if nay):<br><span style="font-size: 7pt;">(optional)</span></td>
-            <td colspan="3" class="fill-line" style="height: 14px;"></td>
+            <td style="padding-left: 40px" class="sub-label">(optional)</td>
+            <td class="line" colspan="3">{{ $DetailsLines[1] ?? '' }}</td>
         </tr>
     </table>
 
     <br>
 
-    <table>
+    <!-- Signatures Row (Fixed Alignment) -->
+    <table style="width: 100%; margin-top: 10px;">
+        <!-- Row 1: Labels & Lines -->
         <tr>
-            <td style="width: 50%;">
-                <table style="width: 90%;">
-                    <tr>
-                        <td class="nowrap" style="width: 22%;">Inspected by:</td>
-                        <td class="fill-line" style="width: 78%;"></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td class="bold text-center" style="font-size: 8pt;">Department Head</td>
-                    </tr>
-                </table>
+            <td style="width: 12%; white-space: nowrap; vertical-align: bottom;">Inspected by:</td>
+            <td style="width: 32%; height: 18px; vertical-align: bottom;" class="line text-center">
+                {{ $workorder->completedBy?->name }}
             </td>
-            <td style="width: 50%;">
-                <table style="width: 90%;">
-                    <tr>
-                        <td class="nowrap" style="width: 22%;">Accepted by:</td>
-                        <td class="fill-line" style="width: 78%;"></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td class="bold text-center" style="font-size: 8pt;">Requisitioner /Date</td>
-                    </tr>
-                </table>
+
+            <td style="width: 12%;"></td> <!-- Middle gap -->
+
+            <td style="width: 12%; white-space: nowrap; vertical-align: bottom;">Accepted by:</td>
+            <td style="width: 32%; height: 18px; vertical-align: bottom;" class="line text-center">
+                {{ $workorder->status->value === 'completed' ? $workorder->request?->requestedBy?->name : '' }}
             </td>
+        </tr>
+
+        <!-- Row 2: Sub-labels directly under lines -->
+        <tr>
+            <td></td> <!-- Spacer under 'Inspected by:' -->
+            <td class="text-center bold" style="padding-top: 2px; white-space: nowrap;">Department Head</td>
+
+            <td></td> <!-- Spacer under middle gap -->
+
+            <td></td> <!-- Spacer under 'Accepted by:' -->
+            <td class="text-center bold" style="padding-top: 2px; white-space: nowrap;">Requisitioner / Date</td>
         </tr>
     </table>
 
-    <div class="divider"></div>
-
-    <!-- Vehicle Repairs and Maintenance -->
-    <div>
-        <span class="checkbox"></span>
-        <strong style="font-size: 9pt;">Vehicle Repairs and Maintenance</strong>
+    <!-- Section 5: Vehicle Repairs -->
+    <div class="section-divider"></div>
+    <div class="bold" style="margin-bottom: 4px; margin-left: 35px;">
+        <span class="checkbox-symbol">{!! $workorder->has_vehicle ? '&#9745;' : '&#9744;' !!}</span>
+        Vehicle Repairs and Maintenance
     </div>
 
-    <table style="margin-top: 2px;">
+    <table style="width: 100%; margin-left: 35px;">
         <tr>
-            <!-- Left Column -->
-            <td style="width: 48%; vertical-align: top; padding: 0;">
-                <table style="width: 100%;">
+            <!-- Left sub-block (48%) -->
+            <td style="width: 48%; vertical-align: top;">
+                <table style="width: 100%; table-layout: fixed;">
                     <tr>
-                        <td class="nowrap" style="width: 35%;"><span class="checkbox"></span> Minor:</td>
-                        <td style="width: 20%;"></td>
-                        <td class="fill-line" style="width: 45%;"></td>
+                        <td style="width: 35%;"><span class="checkbox-symbol">{!! $workorder->has_minor ? '&#9745;' : '&#9744;' !!}</span> Minor:</td>
+                        <td style="width: 65%;" class="line">{{ $workorder->vehicle_minor_details ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td class="nowrap"><span class="checkbox"></span> Major:</td>
-                        <td></td>
-                        <td class="fill-line"></td>
+                        <td><span class="checkbox-symbol">{!! $workorder->has_major ? '&#9745;' : '&#9744;' !!}</span> Major:</td>
+                        <td class="line">{{ $workorder->vehicle_major_details ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td class="nowrap"><span class="checkbox"></span> Change Oil</td>
-                        <td></td>
-                        <td class="fill-line"></td>
+                        <td colspan="2"><span class="checkbox-symbol">{!! $workorder->has_change_oil ? '&#9745;' : '&#9744;' !!}</span> Change Oil</td>
                     </tr>
                     <tr>
-                        <td class="nowrap" colspan="2" style="padding-left: 12px;">Last Change Oil Date:</td>
-                        <td class="fill-line"></td>
+                        <td style="padding-left: 15px; white-space: nowrap;">Last Change Oil Date:</td>
+                        <td class="line">{{ $workorder->last_change_oil_date?->format('M d, Y') }}</td>
                     </tr>
                     <tr>
-                        <td class="nowrap" colspan="2" style="padding-left: 12px;">Meter Reading:</td>
-                        <td class="fill-line"></td>
+                        <td style="padding-left: 15px; white-space: nowrap;">Meter Reading:</td>
+                        <td class="line">{{ $workorder->meter_reading }}</td>
                     </tr>
                 </table>
             </td>
 
+            <!-- Spacer Gap -->
             <td style="width: 4%;"></td>
 
-            <!-- Right Column -->
-            <td style="width: 48%; vertical-align: top; padding: 0;">
-                <table style="width: 100%;">
+            <!-- Right sub-block (48%) -->
+            <td style="width: 48%; vertical-align: top;">
+                <table style="width: 100%; table-layout: fixed;">
                     <tr>
-                        <td class="nowrap" style="width: 25%;"><span class="checkbox"></span> Insurance</td>
-                        <td class="bold nowrap" style="width: 25%;">Expiry Date:</td>
-                        <td class="fill-line" style="width: 50%;"></td>
+                        <td style="width: 30%;"><span class="checkbox-symbol">{!! $workorder->has_insurance ? '&#9745;' : '&#9744;' !!}</span> Insurance</td>
+                        <td style="width: 30%; white-space: nowrap;" class="bold">Expiry Date:</td>
+                        <td style="width: 40%;" class="line">{{ $workorder->insurance_date?->format('M d, Y') }}</td>
                     </tr>
                     <tr>
-                        <td class="nowrap"><span class="checkbox"></span> Registration</td>
-                        <td class="bold nowrap">Expiry Date:</td>
-                        <td class="fill-line"></td>
+                        <td><span class="checkbox-symbol">{!! $workorder->has_registration ? '&#9745;' : '&#9744;' !!}</span> Registration</td>
+                        <td style="white-space: nowrap;" class="bold">Expiry Date:</td>
+                        <td class="line">{{ $workorder->registration_date?->format('M d, Y') }}</td>
+                    </tr>
+
+                    @php
+                        // Pass true as the 4th parameter so wordwrap forces long strings to break
+                        $wrappedOther = wordwrap($workorder->other_details ?? '', 35, "\n", true);
+                        $otherLines = explode("\n", $wrappedOther, 2);
+                    @endphp
+
+                    <tr>
+                        <td style="white-space: nowrap;"><span class="checkbox-symbol">{!! $workorder->has_other ? '&#9745;' : '&#9744;' !!}</span> Others:</td>
+                        <td class="line" colspan="2" style="word-wrap: break-word; word-break: break-all;">{{ $otherLines[0] ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td class="nowrap"><span class="checkbox"></span> Others:</td>
-                        <td></td>
-                        <td class="fill-line"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td class="fill-line" style="height: 10px;"></td>
+                        <td>&nbsp;</td>
+                        <td class="line" colspan="2" style="word-wrap: break-word; word-break: break-all;">{{ $otherLines[1] ?? '' }}</td>
                     </tr>
                 </table>
             </td>
         </tr>
     </table>
 
-    <div class="footer">MCITI-RPMN-002 REV.1 2/15/2017</div>
+    <!-- Footer Code -->
+    <div class="footer-code">
+        MCITI-RPMN-002 REV.1 2/15/2017
+    </div>
 
 </body>
 </html>
